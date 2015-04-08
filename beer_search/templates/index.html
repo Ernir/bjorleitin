@@ -20,7 +20,13 @@
 
 <div id="content" class="container">
     {% block content %}
-        This should be overridden.
+        <ul>
+            {% for beer in beers %}
+                <li>
+                    <a href="http://www.vinbudin.is/DesktopDefault.aspx/tabid-54?productID={{ beer.atvr_id }}">{{ beer.name }}</a>
+                </li>
+            {% endfor %}
+        </ul>
     {% endblock %}
 </div>
 
