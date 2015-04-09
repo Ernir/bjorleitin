@@ -6,7 +6,7 @@
         <thead>
         <tr>
             <th>Nafn bjórs</th>
-            <th>Stílar</th>
+            <th>Stíll</th>
             <th>Ílát</th>
             <th>Styrkur</th>
             <th>Magn</th>
@@ -21,7 +21,11 @@
                     <a href="http://www.vinbudin.is/DesktopDefault.aspx/tabid-54?productID={{ beer.atvr_id }}">{{ beer.name }}</a>
                 </td>
                 <td>
-                    {{ beer.style.all|join:", " }}
+                    {% if beer.style %}
+                        {{ beer.style }}
+                    {% else %}
+                        ?
+                    {% endif %}
                 </td>
                 <td>
                     {% if beer.container %}

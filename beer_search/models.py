@@ -31,7 +31,7 @@ class Beer(models.Model):
     atvr_id = models.CharField(max_length=5)
 
     container = models.ForeignKey(ContainerType, null=True, default=None)
-    style = models.ManyToManyField(Style)
+    style = models.ForeignKey(Style, null=True, default=None)
 
     updated_at = models.DateField(default=date.today)
 
