@@ -2,7 +2,7 @@
 {% load mathfilters %}
 
 {% block content %}
-    <table class="table">
+    <table class="table table-striped">
         <thead>
         <tr>
             <th>Nafn bjórs</th>
@@ -11,7 +11,7 @@
             <th>Styrkur</th>
             <th>Magn</th>
             <th>Verð</th>
-            <th>Uppfært</th>
+            <th>Lítraverð</th>
         </tr>
         </thead>
         <tbody>
@@ -45,17 +45,13 @@
                     {{ beer.abv }}%
                 </td>
                 <td>
-                    {% if beer.volume < 1000 %}
-                        {{ beer.volume }} mL
-                    {% else %}
-                        {{ beer.volume|div:1000 }} L
-                    {% endif %}
+                    {{ beer.volume }} mL
                 </td>
                 <td>
                     {{ beer.price }} kr.
                 </td>
                 <td>
-                    {{ beer.updated_at }}
+                    {{ beer.price_per_litre }} kr./L
                 </td>
             </tr>
         {% endfor %}

@@ -60,7 +60,7 @@ class Beer(models.Model):
         return n > 1
 
     def _price_per_litre(self):
-        return self.price / self.volume * 1000
+        return int(self.price / self.volume * 1000)
 
     has_duplicate_name = property(_has_duplicate_name)
     has_duplicate_container = property(_has_duplicate_container)
