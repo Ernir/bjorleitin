@@ -3,6 +3,7 @@
 
 {% block content %}
     <table class="table">
+        <thead>
         <tr>
             <th>Nafn bjórs</th>
             <th>Stílar</th>
@@ -12,13 +13,15 @@
             <th>Verð</th>
             <th>Uppfært</th>
         </tr>
+        </thead>
+        <tbody>
         {% for beer in beers %}
             <tr>
                 <td>
                     <a href="http://www.vinbudin.is/DesktopDefault.aspx/tabid-54?productID={{ beer.atvr_id }}">{{ beer.name }}</a>
                 </td>
                 <td>
-                {{ beer.style.all|join:", " }}
+                    {{ beer.style.all|join:", " }}
                 </td>
                 <td>
                     {% if beer.container %}
@@ -45,5 +48,6 @@
                 </td>
             </tr>
         {% endfor %}
+        </tbody>
     </table>
 {% endblock %}
