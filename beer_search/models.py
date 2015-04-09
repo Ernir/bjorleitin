@@ -1,5 +1,5 @@
 from django.db import models
-
+from datetime import date
 
 class Style(models.Model):
     name = models.CharField(max_length=100)
@@ -30,14 +30,19 @@ class Beer(models.Model):
     atvr_id = models.CharField(max_length=5)
 
     container = models.ForeignKey(ContainerType, null=True, default=None)
-
     style = models.ManyToManyField(Style)
+
+    updated_at = models.DateField(default=date.today)
 
     def __str__(self):
         if self.container:
             return self.name + " ( " + str(self.volume) + "mL " + self.container.name + " )"
         else:
             return self.name + " ( " + str(self.volume) + "mL )"
+
+    def save(self, *args, **kwargs):
+        self.updated_at = date.today()  # Automatic updates
+        super(Beer, self).save(*args, **kwargs)
 
     class Meta:
         ordering = ("name",)

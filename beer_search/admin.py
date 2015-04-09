@@ -2,5 +2,11 @@ from beer_search.models import Style, Beer, ContainerType
 from django.contrib import admin
 
 admin.site.register(Style)
-admin.site.register(Beer)
 admin.site.register(ContainerType)
+
+
+class BeerAdmin(admin.ModelAdmin):
+    exclude = ("updated_at",)
+
+
+admin.site.register(Beer, BeerAdmin)
