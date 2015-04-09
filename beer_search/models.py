@@ -36,14 +36,35 @@ class Beer(models.Model):
     updated_at = models.DateField(default=date.today)
 
     def __str__(self):
-        if self.container:
-            return self.name + " ( " + str(self.volume) + "mL " + self.container.name + " )"
-        else:
-            return self.name + " ( " + str(self.volume) + "mL )"
+        name = self.name
+        if self.has_duplicate_name:
+            if not self.container:
+                name += " ( ?"
+            else:
+                name = name + " ( " + self.container.name
+            if self.has_duplicate_container:
+                name = name + ", " + str(self.volume) + " mL"
+            name += " )"
+        return name
 
     def save(self, *args, **kwargs):
         self.updated_at = date.today()  # Automatic updates
         super(Beer, self).save(*args, **kwargs)
 
+    def _has_duplicate_name(self):
+        n = Beer.objects.filter(name=self.name).count()
+        return n > 1
+
+    def _has_duplicate_container(self):
+        n = Beer.objects.filter(name=self.name, container=self.container).count()
+        return n > 1
+
+    def _price_per_litre(self):
+        return self.price / self.volume * 1000
+
+    has_duplicate_name = property(_has_duplicate_name)
+    has_duplicate_container = property(_has_duplicate_container)
+    price_per_litre = property(_price_per_litre)
+
     class Meta:
-        ordering = ("name",)
+        ordering = ("name","container__name")

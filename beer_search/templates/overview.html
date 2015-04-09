@@ -19,6 +19,13 @@
             <tr>
                 <td>
                     <a href="http://www.vinbudin.is/DesktopDefault.aspx/tabid-54?productID={{ beer.atvr_id }}">{{ beer.name }}</a>
+                    {% if beer.has_duplicate_name %}
+                        ( {{ beer.container.name }}
+                        {% if beer.has_duplicate_container %}
+                            , {{ beer.volume }} mL
+                        {% endif %}
+                        )
+                    {% endif %}
                 </td>
                 <td>
                     {% if beer.style %}
