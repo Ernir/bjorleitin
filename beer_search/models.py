@@ -1,6 +1,7 @@
 from django.db import models
 from datetime import date
 
+
 class Style(models.Model):
     name = models.CharField(max_length=100)
 

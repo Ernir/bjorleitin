@@ -1,0 +1,40 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+
+    <!-- minified bootstrap -->
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css"/>
+    <!-- theme -->
+    <link rel="stylesheet"
+          href="//maxcdn.bootstrapcdn.com/bootswatch/3.3.2/flatly/bootstrap.min.css"/>
+
+    <link rel="stylesheet" href="{% static "style.css" %}"/>
+
+    <title>Bjór</title>
+</head>
+<body>
+
+<div id="content" class="container">
+    {% block content %}
+        This should be overridden.
+    {% endblock %}
+</div>
+
+<!-- minified jQuery -->
+<script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
+
+<!-- minified bootstrap -->
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+
+<!-- common JS -->
+<script src="{% static "app.js" %}"></script>
+
+{% block scripts %}
+{% endblock %}
+
+</body>
+</html>

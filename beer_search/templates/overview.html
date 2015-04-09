@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load mathfilters %}
+
+{% block content %}
+    <table class="table">
+        <tr>
+            <th>Nafn bjórs</th>
+            <th>Stílar</th>
+            <th>Ílát</th>
+            <th>Styrkur</th>
+            <th>Magn</th>
+            <th>Verð</th>
+            <th>Uppfært</th>
+        </tr>
+        {% for beer in beers %}
+            <tr>
+                <td>
+                    <a href="http://www.vinbudin.is/DesktopDefault.aspx/tabid-54?productID={{ beer.atvr_id }}">{{ beer.name }}</a>
+                </td>
+                <td>
+                {{ beer.style.all|join:", " }}
+                </td>
+                <td>
+                    {% if beer.container %}
+                        {{ beer.container.name }}
+                    {% else %}
+                        ?
+                    {% endif %}
+                </td>
+                <td>
+                    {{ beer.abv }}%
+                </td>
+                <td>
+                    {% if beer.volume < 1000 %}
+                        {{ beer.volume }} mL
+                    {% else %}
+                        {{ beer.volume|div:1000 }} L
+                    {% endif %}
+                </td>
+                <td>
+                    {{ beer.price }} kr.
+                </td>
+                <td>
+                    {{ beer.updated_at }}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

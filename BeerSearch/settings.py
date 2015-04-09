@@ -14,7 +14,7 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 import os
 import dj_database_url
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'templates')]
 
 # Quick-start development settings - unsuitable for production
@@ -37,6 +37,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     "beer_search",
+    "mathfilters"
 )
 
 MIDDLEWARE_CLASSES = (

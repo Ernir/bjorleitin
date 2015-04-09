@@ -1,46 +1,13 @@
+{% extends "base.html" %}
 {% load static %}
 
-<!DOCTYPE html>
-<html>
-<head lang="en">
-    <meta charset="UTF-8">
 
-    <!-- minified bootstrap -->
-    <link rel="stylesheet"
-          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css"/>
-    <!-- theme -->
-    <link rel="stylesheet"
-          href="//maxcdn.bootstrapcdn.com/bootswatch/3.3.2/flatly/bootstrap.min.css"/>
-
-    <link rel="stylesheet" href="{% static "style.css" %}"/>
-
-    <title>Bjór</title>
-</head>
-<body>
-
-<div id="content" class="container">
-    {% block content %}
-        <ul>
-            {% for beer in beers %}
-                <li>
-                    <a href="http://www.vinbudin.is/DesktopDefault.aspx/tabid-54?productID={{ beer.atvr_id }}">{{ beer.name }}</a>
-                </li>
-            {% endfor %}
-        </ul>
-    {% endblock %}
-</div>
-
-<!-- minified jQuery -->
-<script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
-
-<!-- minified bootstrap -->
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
-
-<!-- common JS -->
-<script src="{% static "app.js" %}"></script>
-
-{% block scripts %}
+{% block content %}
+    <ul>
+        {% for beer in beers %}
+            <li>
+                <a href="http://www.vinbudin.is/DesktopDefault.aspx/tabid-54?productID={{ beer.atvr_id }}">{{ beer.name }}</a>
+            </li>
+        {% endfor %}
+    </ul>
 {% endblock %}
-
-</body>
-</html>
