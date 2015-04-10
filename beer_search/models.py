@@ -47,10 +47,6 @@ class Beer(models.Model):
             name += " )"
         return name
 
-    def save(self, *args, **kwargs):
-        self.updated_at = date.today()  # Automatic updates
-        super(Beer, self).save(*args, **kwargs)
-
     def _has_duplicate_name(self):
         n = Beer.objects.filter(name=self.name).count()
         return n > 1
@@ -65,6 +61,23 @@ class Beer(models.Model):
     has_duplicate_name = property(_has_duplicate_name)
     has_duplicate_container = property(_has_duplicate_container)
     price_per_litre = property(_price_per_litre)
+
+    def save(self, *args, **kwargs):
+        self.updated_at = date.today()  # Automatic updates
+
+        # Finds beers with the same name, and assigns the same style.
+        if self.style:
+            duplicates = Beer.objects\
+                .filter(name=self.name, style=None)\
+                .exclude(atvr_id=self.atvr_id)
+            if duplicates.count() > 0:
+                # Sometimes superfluous saving, but meh.
+                super(Beer, self).save(*args, **kwargs)
+            for beer in duplicates.all():
+                beer.style = self.style
+                beer.save()
+
+        super(Beer, self).save(*args, **kwargs)
 
     class Meta:
         ordering = ("name","container__name")
