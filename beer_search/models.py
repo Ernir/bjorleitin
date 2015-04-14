@@ -33,6 +33,9 @@ class Beer(models.Model):
     volume = models.IntegerField()
     atvr_id = models.CharField(max_length=5)
 
+    new = models.BooleanField(default=True)
+    available = models.BooleanField(default=True)
+
     container = models.ForeignKey(ContainerType, null=True, default=None)
     style = models.ForeignKey(Style, null=True, default=None)
 
