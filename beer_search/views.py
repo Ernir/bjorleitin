@@ -10,5 +10,9 @@ def index(request):
 
 def overview(request):
     all_beers = Beer.objects.all()
-
-    return render(request, "overview.html", {"beers": all_beers, "debug": DEBUG})
+    title = "yfirlit allra bjóra"
+    return render(request, "overview.html", {
+        "beers": all_beers,
+        "debug": DEBUG,
+        "title": title
+    })
