@@ -14,5 +14,5 @@ def overview(request):
     return render(request, "overview.html", {
         "beers": all_beers,
         "debug": DEBUG,
-        "title": title
+        "title": title,
     })

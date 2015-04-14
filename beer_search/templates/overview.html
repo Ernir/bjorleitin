@@ -26,14 +26,26 @@
                         )
                     {% endif %}
                     {% if debug %}
-                        (<a href="http://127.0.0.1:8000/admin/beer_search/beer/{{ beer.id }}/">breyta</a>)
+                        (
+                        <a href="http://127.0.0.1:8000/admin/beer_search/beer/{{ beer.id }}/">breyta</a>
+                        )
                     {% endif %}
                 </td>
                 <td>
-                    {% if beer.style %}
-                        {{ beer.style }}
+                    {% if not simplified %}
+                        {% if beer.style %}
+                            {{ beer.style }}
+                        {% else %}
+                            ?
+                        {% endif %}
                     {% else %}
-                        ?
+                        {% if beer.style.simplifies_to %}
+                            {{ beer.style.simplifies_to }}
+                        {% elif beer.style %}
+                            {{ beer.style }}
+                        {% else %}
+                            ?
+                        {% endif %}
                     {% endif %}
                 </td>
                 <td>
