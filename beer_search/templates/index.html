@@ -1,13 +1,36 @@
 {% extends "base.html" %}
-{% load static %}
-
+{% load crispy_forms_tags %}
+{% load staticfiles %}
 
 {% block content %}
-    <ul>
-        {% for beer in beers %}
-            <li>
-                <a href="http://www.vinbudin.is/DesktopDefault.aspx/tabid-54?productID={{ beer.atvr_id }}">{{ beer.name }}</a>
-            </li>
-        {% endfor %}
-    </ul>
+    <div class="jumbotron">
+        <h1>Bjórleitin</h1>
+        <p class="lead">Allir bjórar <a href="http://www.vinbudin.is/">vínbúðarinnar</a> á einum stað.</p>
+        <p><a class="btn btn-lg btn-success" href="#leit" role="button">Leita núna</a></p>
+      </div>
+    <div class="col-md-6">
+        {% crispy form %}
+    </div>
+
+    <div id="leit">
+        <div class="col-md-6">
+            <p id="results-found" class="alert alert-success">bjórar fundust.</p>
+
+            <p id="results-working" class="alert alert-info">
+                <span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>
+                Er að leita!
+            </p>
+
+            <p id="results-none" class="alert alert-info">Ekkert fannst. Má bjóða þér að leita aftur?</p>
+
+            <p id="results-error" class="alert alert-danger">Leitarvélin náði ekki sambandi. Er nettengingin ekki örugglega í lagi?</p>
+
+            <ul id="results-list">
+            </ul>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static "app.js" %}"></script>
 {% endblock %}

@@ -1,3 +1,4 @@
+from beer_search.forms import SearchForm
 from beer_search.models import Beer
 from django.http import JsonResponse
 from django.shortcuts import render
@@ -6,7 +7,7 @@ from BeerSearch.settings import DEBUG
 
 def index(request):
     all_beers = Beer.objects.all()
-    return render(request, "index.html", {"beers": all_beers})
+    return render(request, "index.html", {"form": SearchForm()})
 
 
 def overview(request):
@@ -24,8 +25,8 @@ def perform_search(request):
     Generates a list of beers to display based on POST parameters.
     Returns their names and slugs in JSON format.
     """
-    if request.method == "GET":
-        post_body = request.GET
+    if request.method == "POST":
+        post_body = request.POST
 
         # Beer list
         bl = Beer.objects
@@ -37,24 +38,28 @@ def perform_search(request):
                 if len(name) > 0:
                     bl = bl.filter(name__icontains=name)
 
+            if "style" in post_body:
+                bl = bl.filter(style__name__in=post_body.getlist("style"))
+
+            if "min_volume" in post_body:
+                min_volume = post_body["min_volume"]
+                bl = bl.filter(volume__gte=min_volume)
+
+            if "max_volume" in post_body:
+                max_volume = post_body["max_volume"]
+                bl = bl.filter(volume__lte=max_volume)
+
         return_list = []
-        for beer in bl.values(
-                "name",
-                "style__name",
-                "container__name",
-                "abv",
-                "volume",
-                "price",
-                "atvr_id"
-        ):
+        for beer in bl.all():
             return_list.append({
-                "name": beer["name"],
-                "style": beer["style__name"],
-                "container": beer["container__name"],
-                "abv": beer["abv"],
-                "volume": beer["volume"],
-                "price": beer["price"],
-                "atvr_id": beer["atvr_id"]
+                "name": beer.name,
+                "unique_name": beer.pretty_name,
+                "style": beer.style.name,
+                "container": beer.container.name,
+                "abv": beer.abv,
+                "volume": beer.volume,
+                "price": beer.price,
+                "atvr_id": beer.atvr_id
             })
 
         return JsonResponse(return_list, safe=False)

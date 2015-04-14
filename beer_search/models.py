@@ -67,6 +67,7 @@ class Beer(models.Model):
     has_duplicate_name = property(_has_duplicate_name)
     has_duplicate_container = property(_has_duplicate_container)
     price_per_litre = property(_price_per_litre)
+    pretty_name = property(__str__)
 
     def save(self, *args, **kwargs):
         self.updated_at = date.today()  # Automatic updates
