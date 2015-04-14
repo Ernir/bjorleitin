@@ -84,10 +84,10 @@ function updateResults(jsonData) {
     if (numResults === 0) {
         showMessage("#results-none");
     } else {
-        if (numResults > 1) {
+        if (numResults % 10 !== 1) {
             $("#results-found").text(numResults + " bjórar fundust.");
-        } else { // 1 result
-            $("#results-found").text(numResults + " bjórar fundust");
+        } else { // Result on the form 1+10k, k=0, 1, 2 ...
+            $("#results-found").text(numResults + " bjór fannst");
         }
         showMessage("#results-found");
     }
@@ -96,7 +96,7 @@ function updateResults(jsonData) {
     var $results = $("#results-list");
     $results.empty();
     for (var i = 0; i < jsonData.length; i++) {
-        $results.append("<li><a href='http://www.vinbudin.is/DesktopDefault.aspx/tabid-54?productID=" + jsonData[i].atvr_id + "/'>" + jsonData[i].unique_name + "</a></li>");
+        $results.append("<li><a href='http://www.vinbudin.is/DesktopDefault.aspx/tabid-54?productID=" + jsonData[i].atvr_id + "'>" + jsonData[i].unique_name + "</a></li>");
     }
 }
 
