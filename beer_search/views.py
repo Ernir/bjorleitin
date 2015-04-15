@@ -3,20 +3,19 @@ from beer_search.models import Beer
 from django.db.models import Max
 from django.http import JsonResponse
 from django.shortcuts import render
-from BeerSearch.settings import DEBUG
 
 
 def index(request):
-    all_beers = Beer.objects.all()
     return render(request, "index.html", {"form": SearchForm()})
 
 
 def overview(request):
     all_beers = Beer.objects.all()
     title = "yfirlit allra bjóra"
+    debug = False  # ToDo: use config var instead
     return render(request, "overview.html", {
         "beers": all_beers,
-        "debug": DEBUG,
+        "debug": debug,
         "title": title,
     })
 
