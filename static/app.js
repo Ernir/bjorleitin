@@ -61,22 +61,27 @@ $.ajaxSetup({
 var xhr;
 function getBeers() {
     showMessage("#results-working");
+    if (xhr) { // If we were already requesting data, start over.
+        xhr.abort();
+    }
     xhr = $.ajax({
         url: "/api/leit/",
         type: "post",
         data: $("#main-form").serialize(),
 
         success: function (json) {
-            updateResults(json);
+            displayResults(json);
         },
 
         error: function (xhr, errmsg, err) {
-            showMessage("#results-error");
+            if( errmsg !== "abort") { // Aborts don't count.
+                showMessage("#results-error");
+            }
         }
     });
 }
 
-function updateResults(jsonData) {
+function displayResults(jsonData) {
 
     var numResults = jsonData.length;
 
@@ -108,8 +113,7 @@ function showMessage(id) {
 /*
  Listeners
  */
-$("input[type=checkbox]").change(getBeers);
-$("input[type=number]").change(getBeers);
+$("input[type=checkbox],input[type=number]").change(getBeers);
 
 // Delayed calls for the text box.
 // Source: http://stackoverflow.com/a/23569018/1675015
