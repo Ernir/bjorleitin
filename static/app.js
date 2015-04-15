@@ -101,7 +101,7 @@ function displayResults(jsonData) {
     var $results = $("#results-list");
     $results.empty();
     for (var i = 0; i < jsonData.length; i++) {
-        $results.append("<li><a href='http://www.vinbudin.is/DesktopDefault.aspx/tabid-54?productID=" + jsonData[i].atvr_id + "'>" + jsonData[i].unique_name + "</a></li>");
+        $results.append("<li><a href='http://www.vinbudin.is/DesktopDefault.aspx/tabid-54?productID=" + jsonData[i].atvr_id + "'>" + jsonData[i].name + "</a> " + jsonData[i].suffix +"</li>");
     }
 }
 

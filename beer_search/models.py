@@ -41,15 +41,20 @@ class Beer(models.Model):
 
     def __str__(self):
         name = self.name
+        name += self._uniquely_identifying_suffix()
+        return name
+
+    def _uniquely_identifying_suffix(self):
+        suffix = ""
         if self.has_duplicate_name:
             if not self.container:
-                name += " ( ?"
+                suffix += " ( ?"
             else:
-                name = name + " ( " + self.container.name
+                suffix = suffix + " ( " + self.container.name
             if self.has_duplicate_container:
-                name = name + ", " + str(self.volume) + " mL"
-            name += " )"
-        return name
+                suffix = suffix + ", " + str(self.volume) + " mL"
+            suffix += " )"
+        return suffix
 
     def _has_duplicate_name(self):
         n = Beer.objects.filter(name=self.name).count()
@@ -65,7 +70,7 @@ class Beer(models.Model):
     has_duplicate_name = property(_has_duplicate_name)
     has_duplicate_container = property(_has_duplicate_container)
     price_per_litre = property(_price_per_litre)
-    pretty_name = property(__str__)
+    suffix = property(_uniquely_identifying_suffix)
 
     def save(self, *args, **kwargs):
         self.updated_at = date.today()  # Automatic updates

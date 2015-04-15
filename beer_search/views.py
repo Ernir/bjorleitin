@@ -60,12 +60,7 @@ def perform_search(request):
         for beer in bl.all():
             return_list.append({
                 "name": beer.name,
-                "unique_name": beer.pretty_name,
-                "style": beer.style.name,
-                "container": beer.container.name,
-                "abv": beer.abv,
-                "volume": beer.volume,
-                "price": beer.price,
+                "suffix": beer.suffix,
                 "atvr_id": beer.atvr_id
             })
 
