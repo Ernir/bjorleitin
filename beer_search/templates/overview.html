@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 
 {% block content %}
+    <p><a class="btn btn-success" href="{% url "beer_search.views.index" %}" role="button">Til baka</a></p>
+    {% if debug %}
+        Aflúsun: {{ debug }}
+    {% endif %}
     <table class="table table-striped">
         <thead>
         <tr>
