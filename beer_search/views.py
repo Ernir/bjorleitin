@@ -1,5 +1,6 @@
 from beer_search.forms import SearchForm
 from beer_search.models import Beer
+from django.db.models import Max
 from django.http import JsonResponse
 from django.shortcuts import render
 from BeerSearch.settings import DEBUG
@@ -38,15 +39,22 @@ def perform_search(request):
                 if len(name) > 0:
                     bl = bl.filter(name__icontains=name)
 
-            if "style" in post_body:
-                bl = bl.filter(style__name__in=post_body.getlist("style"))
+            if "styles" in post_body:
+                styles = post_body.getlist("styles")
+                if len(styles) > 0:
+                    bl = bl.filter(style__id__in=styles)
 
             if "min_volume" in post_body:
                 min_volume = post_body["min_volume"]
+                if not len(min_volume) > 0:
+                    min_volume = 0
                 bl = bl.filter(volume__gte=min_volume)
 
             if "max_volume" in post_body:
                 max_volume = post_body["max_volume"]
+                if not len(max_volume) > 0:
+                    # Setting default in case an empty string is sent
+                    max_volume = Beer.objects.aggregate(Max("volume"))["volume__max"]
                 bl = bl.filter(volume__lte=max_volume)
 
         return_list = []

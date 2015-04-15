@@ -109,11 +109,12 @@ function showMessage(id) {
  Listeners
  */
 $("input[type=checkbox]").change(getBeers);
+$("input[type=number]").change(getBeers);
 
 // Delayed calls for the text box.
 // Source: http://stackoverflow.com/a/23569018/1675015
 var requestTimer;
-$("input[type=text]").keyup(function () {
+$("input[type=text],input[type=number]").keyup(function () {
     showMessage("#results-working");
     if (requestTimer) {
         window.clearTimeout(requestTimer);
