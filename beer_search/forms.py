@@ -10,6 +10,7 @@ def generate_choices(model):
     all_objects = model.objects.all()
     return tuple([(object.id, object.name) for object in all_objects])
 
+
 class SearchForm(forms.Form):
     beer_name = forms.CharField(
         label="Nafn bjórs",
@@ -87,7 +88,8 @@ class SearchForm(forms.Form):
 
     containers = forms.MultipleChoiceField(
         label="Umbúðir",
-        choices=generate_choices(ContainerType),
+        # Skipping the "undefined" container.
+        choices=generate_choices(ContainerType)[:-1],
         widget=forms.CheckboxSelectMultiple,
         required=False,
     )
