@@ -11,6 +11,16 @@ def generate_choices(model):
     return tuple([(object.id, object.name) for object in all_objects])
 
 
+def min_for_attribute(model, attribute_name):
+    return model.objects.filter(available=True).\
+               aggregate(Min(attribute_name))[attribute_name + "__min"]
+
+
+def max_for_attribute(model, attribute_name):
+    return model.objects.filter(available=True).\
+               aggregate(Max(attribute_name))[attribute_name + "__max"]
+
+
 class SearchForm(forms.Form):
     beer_name = forms.CharField(
         label="Nafn bjórs",
@@ -24,8 +34,9 @@ class SearchForm(forms.Form):
             # "type": "range",  # TODO: Add slider in place of number input
             # "step": "10",
             "type": "number",
-            "min": Beer.objects.aggregate(Min("volume"))["volume__min"],
-            "max": Beer.objects.aggregate(Max("volume"))["volume__max"]
+            "value": min_for_attribute(Beer, "volume"),
+            "min": min_for_attribute(Beer, "volume"),
+            "max": max_for_attribute(Beer, "volume"),
         })
     )
 
@@ -34,8 +45,9 @@ class SearchForm(forms.Form):
         required=False,
         widget=NumberInput(attrs={
             "type": "number",
-            "min": Beer.objects.aggregate(Min("volume"))["volume__min"],
-            "max": Beer.objects.aggregate(Max("volume"))["volume__max"]
+            "value": max_for_attribute(Beer, "volume"),
+            "min": min_for_attribute(Beer, "volume"),
+            "max": max_for_attribute(Beer, "volume"),
         })
     )
 
@@ -44,8 +56,8 @@ class SearchForm(forms.Form):
         required=False,
         widget=NumberInput(attrs={
             "type": "number",
-            "min": Beer.objects.aggregate(Min("price"))["price__min"],
-            "max": Beer.objects.aggregate(Max("price"))["price__max"]
+            "min": min_for_attribute(Beer, "price"),
+            "max": max_for_attribute(Beer, "price"),
         })
     )
 
@@ -54,8 +66,8 @@ class SearchForm(forms.Form):
         required=False,
         widget=NumberInput(attrs={
             "type": "number",
-            "min": Beer.objects.aggregate(Min("price"))["price__min"],
-            "max": Beer.objects.aggregate(Max("price"))["price__max"]
+            "min": min_for_attribute(Beer, "price"),
+            "max": max_for_attribute(Beer, "price"),
         })
     )
 
@@ -64,8 +76,8 @@ class SearchForm(forms.Form):
         required=False,
         widget=NumberInput(attrs={
             "type": "number",
-            "min": Beer.objects.aggregate(Min("abv"))["abv__min"],
-            "max": Beer.objects.aggregate(Max("abv"))["abv__max"]
+            "min": min_for_attribute(Beer, "abv"),
+            "max": max_for_attribute(Beer, "abv"),
         })
     )
 
@@ -74,8 +86,8 @@ class SearchForm(forms.Form):
         required=False,
         widget=NumberInput(attrs={
             "type": "number",
-            "min": Beer.objects.aggregate(Min("abv"))["abv__min"],
-            "max": Beer.objects.aggregate(Max("abv"))["abv__max"]
+            "min": min_for_attribute(Beer, "abv"),
+            "max": max_for_attribute(Beer, "abv"),
         })
     )
 
@@ -88,7 +100,7 @@ class SearchForm(forms.Form):
 
     containers = forms.MultipleChoiceField(
         label="Umbúðir",
-        # Skipping the "undefined" container.
+        # Skipping the "undefined" container. # ToDo make not a hack.
         choices=generate_choices(ContainerType)[:-1],
         widget=forms.CheckboxSelectMultiple,
         required=False,
@@ -103,12 +115,19 @@ class SearchForm(forms.Form):
                 css_class="col-md-12"
             ),
             Div(
-                Field("min_volume", placeholder="Lágmarksrúmmál í ml"),
-                css_class="col-md-6"
-            ),
-            Div(
-                Field("max_volume", placeholder="Hámarksrúmmál í ml"),
-                css_class="col-md-6"
+                Div(
+                    Field("min_volume", placeholder="ml"),
+                    css_class="col-md-3"
+                ),
+                Div(
+                    css_id="volume-slider",
+                    css_class="col-md-6 form-slider"
+                ),
+                Div(
+                    Field("max_volume", placeholder="ml"),
+                    css_class="col-md-3"
+                ),
+                css_id="volume-container"
             ),
             Div(
                 Field("min_price", placeholder="Lágmarksverð í kr."),

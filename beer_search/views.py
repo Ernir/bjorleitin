@@ -99,3 +99,15 @@ def perform_search(request):
             })
 
         return JsonResponse(return_list, safe=False)
+
+
+def distinct_volumes(request):
+    volumes = Beer.objects.filter(available=True).values("volume")
+    numbers = []
+    for dictionary in volumes:
+        number = dictionary["volume"]
+        if number not in numbers:
+            numbers.append(number)
+    numbers.sort()
+
+    return JsonResponse(numbers, safe=False)

@@ -53,3 +53,21 @@ Source: http://www.bootply.com/128062
         transform: scale(1) rotate(360deg);
     }
 }
+
+/* Slider nonsense*/
+
+/* The slider's in-between color, taken from the theme */
+.ui-widget-header {
+    background: #18bc9c;
+}
+@media (min-width: 992px) {
+    .form-slider {
+        margin-top: 60px;
+    }
+}
+@media (max-width: 991px) {
+    .form-slider {
+        margin-left: 20px;
+        margin-right: 20px;
+    }
+}

@@ -74,7 +74,7 @@ function getBeers() {
         },
 
         error: function (xhr, errmsg, err) {
-            if( errmsg !== "abort") { // Aborts don't count.
+            if (errmsg !== "abort") { // Aborts don't count.
                 showMessage("#results-error");
             }
         }
@@ -101,7 +101,7 @@ function displayResults(jsonData) {
     var $results = $("#results-list");
     $results.empty();
     for (var i = 0; i < jsonData.length; i++) {
-        $results.append("<li><a href='http://www.vinbudin.is/DesktopDefault.aspx/tabid-54?productID=" + jsonData[i].atvr_id + "'>" + jsonData[i].name + "</a> " + jsonData[i].suffix +"</li>");
+        $results.append("<li><a href='http://www.vinbudin.is/DesktopDefault.aspx/tabid-54?productID=" + jsonData[i].atvr_id + "'>" + jsonData[i].name + "</a> " + jsonData[i].suffix + "</li>");
     }
 }
 
@@ -118,7 +118,9 @@ $("input[type=checkbox],input[type=number]").change(getBeers);
 // Delayed calls for the text box.
 // Source: http://stackoverflow.com/a/23569018/1675015
 var requestTimer;
-$("input[type=text],input[type=number]").keyup(function () {
+$("input[type=text],input[type=number]").keyup(requestLater);
+
+function requestLater() {
     showMessage("#results-working");
     if (requestTimer) {
         window.clearTimeout(requestTimer);
@@ -127,7 +129,7 @@ $("input[type=text],input[type=number]").keyup(function () {
         xhr.abort();
     }
     requestTimer = setTimeout(getBeers, 1000);
-});
+}
 
 // Override for normal form behaviour
 $('#main-form').on('submit', function (event) {
@@ -136,10 +138,35 @@ $('#main-form').on('submit', function (event) {
 });
 
 /*
+ Sliders
+ */
+
+function makeSliders() {
+    $.get("/api/rummal/", function (data) {
+        makeVolumeSlider(data);
+    });
+}
+
+function makeVolumeSlider(volumes) {
+    var $slider = $("#volume-slider").slider({
+        range: true,
+        min: 0,
+        max: volumes.length - 1,
+        values: [0, volumes.length - 1],
+        slide: function (event, ui) {
+            $("#id_min_volume").val(volumes[ui.values[0]]);
+            $("#id_max_volume").val(volumes[ui.values[1]]);
+            requestLater();
+        }
+    });
+}
+
+/*
  Initialization
  */
 
 function initialize() {
+    makeSliders();
     getBeers();
     $("table").tablesorter();
 }
