@@ -1,12 +1,18 @@
 from beer_search.forms import SearchForm
 from beer_search.models import Beer
-from django.db.models import Max
+from django.db.models import Max, Min
 from django.http import JsonResponse
 from django.shortcuts import render
 
 
 def index(request):
-    return render(request, "index.html", {"form": SearchForm()})
+    updated_at = Beer.objects.aggregate(
+        Min("updated_at")
+    )["updated_at__min"]
+    return render(request, "index.html", {
+        "form": SearchForm(),
+        "updated_at": updated_at
+    })
 
 
 def overview(request):
