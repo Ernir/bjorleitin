@@ -72,6 +72,12 @@ def perform_search(request):
                 if not len(min_price) > 0:
                     min_price = 0
                 bl = bl.filter(price__gte=min_price)
+            if "max_price" in post_body:
+                max_price = post_body["max_price"]
+                if not len(max_price) > 0:
+                    # Setting default in case an empty string is sent
+                    max_price = Beer.objects.aggregate(Max("price"))["price__max"]
+                bl = bl.filter(price__lte=max_price)
 
             if "max_abv" in post_body:
                 max_abv = post_body["max_abv"]
