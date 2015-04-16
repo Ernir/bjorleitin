@@ -43,6 +43,11 @@ def perform_search(request):
                 if len(styles) > 0:
                     bl = bl.filter(style__id__in=styles)
 
+            if "containers" in post_body:
+                containers = post_body.getlist("containers")
+                if len(containers) > 0:
+                    bl = bl.filter(container__id__in=containers)
+
             if "min_volume" in post_body:
                 min_volume = post_body["min_volume"]
                 if not len(min_volume) > 0:
@@ -55,6 +60,25 @@ def perform_search(request):
                     # Setting default in case an empty string is sent
                     max_volume = Beer.objects.aggregate(Max("volume"))["volume__max"]
                 bl = bl.filter(volume__lte=max_volume)
+
+            if "min_price" in post_body:
+                min_price = post_body["min_price"]
+                if not len(min_price) > 0:
+                    min_price = 0
+                bl = bl.filter(price__gte=min_price)
+
+            if "max_abv" in post_body:
+                max_abv = post_body["max_abv"]
+                if not len(max_abv) > 0:
+                    # Setting default in case an empty string is sent
+                    max_abv = Beer.objects.aggregate(Max("abv"))["abv__max"]
+                bl = bl.filter(abv__lte=max_abv)
+
+            if "min_abv" in post_body:
+                min_abv = post_body["min_abv"]
+                if not len(min_abv) > 0:
+                    min_abv = 0
+                bl = bl.filter(abv__gte=min_abv)
 
         return_list = []
         for beer in bl.all():

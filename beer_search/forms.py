@@ -3,13 +3,12 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Field, Div
 from django.db.models import Min, Max
 from django.forms import NumberInput
-from beer_search.models import Beer, Style
+from beer_search.models import Beer, Style, ContainerType
 
 
-def generate_style_choices():
-    all_styles = Style.objects.all()
-    return tuple([(style.id, style.name) for style in all_styles])
-
+def generate_choices(model):
+    all_objects = model.objects.all()
+    return tuple([(object.id, object.name) for object in all_objects])
 
 class SearchForm(forms.Form):
     beer_name = forms.CharField(
@@ -39,9 +38,56 @@ class SearchForm(forms.Form):
         })
     )
 
+    min_price = forms.IntegerField(
+        label="Lágmarksverð",
+        required=False,
+        widget=NumberInput(attrs={
+            "type": "number",
+            "min": Beer.objects.aggregate(Min("price"))["price__min"],
+            "max": Beer.objects.aggregate(Max("price"))["price__max"]
+        })
+    )
+
+    max_price = forms.IntegerField(
+        label="Hámarksverð",
+        required=False,
+        widget=NumberInput(attrs={
+            "type": "number",
+            "min": Beer.objects.aggregate(Min("price"))["price__min"],
+            "max": Beer.objects.aggregate(Max("price"))["price__max"]
+        })
+    )
+
+    min_abv = forms.DecimalField(
+        label="Lágmarks áfengisprósenta",
+        required=False,
+        widget=NumberInput(attrs={
+            "type": "number",
+            "min": Beer.objects.aggregate(Min("abv"))["abv__min"],
+            "max": Beer.objects.aggregate(Max("abv"))["abv__max"]
+        })
+    )
+
+    max_abv = forms.DecimalField(
+        label="Hámarks áfengisprósenta",
+        required=False,
+        widget=NumberInput(attrs={
+            "type": "number",
+            "min": Beer.objects.aggregate(Min("abv"))["abv__min"],
+            "max": Beer.objects.aggregate(Max("abv"))["abv__max"]
+        })
+    )
+
     styles = forms.MultipleChoiceField(
         label="Bjórstílar",
-        choices=generate_style_choices(),
+        choices=generate_choices(Style),
+        widget=forms.CheckboxSelectMultiple,
+        required=False,
+    )
+
+    containers = forms.MultipleChoiceField(
+        label="Umbúðir",
+        choices=generate_choices(ContainerType),
         widget=forms.CheckboxSelectMultiple,
         required=False,
     )
@@ -52,18 +98,39 @@ class SearchForm(forms.Form):
         Div(
             Div(
                 Field("beer_name", placeholder="Hluti af nafni bjórs"),
-                # css_class="row"
+                css_class="col-md-12"
             ),
             Div(
                 Field("min_volume", placeholder="Lágmarksrúmmál í ml"),
-                # css_class="row"
+                css_class="col-md-6"
             ),
             Div(
                 Field("max_volume", placeholder="Hámarksrúmmál í ml"),
+                css_class="col-md-6"
+            ),
+            Div(
+                Field("min_price", placeholder="Lágmarksverð í kr."),
+                css_class="col-md-6"
+            ),
+            Div(
+                Field("max_price", placeholder="Hámarksverð í kr."),
+                css_class="col-md-6"
+            ),
+            Div(
+                Field("min_abv", placeholder="%"),
+                css_class="col-md-6"
+            ),
+            Div(
+                Field("max_abv", placeholder="%"),
+                css_class="col-md-6"
+            ),
+            Div(
+                Field("containers"),
+                css_class="checkbox col-md-12"
             ),
             Div(
                 Field("styles"),
-                # css_class="row"
+                css_class="checkbox col-md-12"
             )
         )
     )
