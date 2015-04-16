@@ -60,9 +60,14 @@ Source: http://www.bootply.com/128062
 .ui-widget-header {
     background: #18bc9c;
 }
+
+/* I have no idea what I am doing. CAVEAT EMPTOR */
 @media (min-width: 992px) {
-    .form-slider {
+    #volume-slider {
         margin-top: 60px;
+    }
+    #price-slider {
+        margin-top: 40px;
     }
 }
 @media (max-width: 991px) {

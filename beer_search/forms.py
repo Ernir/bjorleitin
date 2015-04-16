@@ -28,11 +28,9 @@ class SearchForm(forms.Form):
     )
 
     min_volume = forms.IntegerField(
-        label="Lágmarks rúmmál",
+        label="Lágmarks rúmmál (ml)",
         required=False,
         widget=NumberInput(attrs={
-            # "type": "range",  # TODO: Add slider in place of number input
-            # "step": "10",
             "type": "number",
             "value": min_for_attribute(Beer, "volume"),
             "min": min_for_attribute(Beer, "volume"),
@@ -41,7 +39,7 @@ class SearchForm(forms.Form):
     )
 
     max_volume = forms.IntegerField(
-        label="Hámarks rúmmál",
+        label="Hámarks rúmmál (ml)",
         required=False,
         widget=NumberInput(attrs={
             "type": "number",
@@ -56,6 +54,7 @@ class SearchForm(forms.Form):
         required=False,
         widget=NumberInput(attrs={
             "type": "number",
+            "value": min_for_attribute(Beer, "price"),
             "min": min_for_attribute(Beer, "price"),
             "max": max_for_attribute(Beer, "price"),
         })
@@ -66,6 +65,7 @@ class SearchForm(forms.Form):
         required=False,
         widget=NumberInput(attrs={
             "type": "number",
+            "value": max_for_attribute(Beer, "price"),
             "min": min_for_attribute(Beer, "price"),
             "max": max_for_attribute(Beer, "price"),
         })
@@ -130,12 +130,18 @@ class SearchForm(forms.Form):
                 css_id="volume-container"
             ),
             Div(
-                Field("min_price", placeholder="Lágmarksverð í kr."),
-                css_class="col-md-6"
-            ),
-            Div(
-                Field("max_price", placeholder="Hámarksverð í kr."),
-                css_class="col-md-6"
+                Div(
+                    Field("min_price", placeholder="kr."),
+                    css_class="col-md-3"
+                ),
+                Div(
+                    css_id="price-slider",
+                    css_class="col-md-6 form-slider"
+                ),
+                Div(
+                    Field("max_price", placeholder="kr."),
+                    css_class="col-md-3 "
+                ),
             ),
             Div(
                 Field("min_abv", placeholder="%"),

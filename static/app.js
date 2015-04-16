@@ -142,13 +142,17 @@ $('#main-form').on('submit', function (event) {
  */
 
 function makeSliders() {
-    $.get("/api/rummal/", function (data) {
+    // ToDo: Combine into one function call.
+    $.get("/api/gildi/rummal/", function (data) {
         makeVolumeSlider(data);
+    });
+    $.get("/api/gildi/verd/", function (data) {
+        makePriceSlider(data);
     });
 }
 
 function makeVolumeSlider(volumes) {
-    var $slider = $("#volume-slider").slider({
+    $("#volume-slider").slider({
         range: true,
         min: 0,
         max: volumes.length - 1,
@@ -156,6 +160,20 @@ function makeVolumeSlider(volumes) {
         slide: function (event, ui) {
             $("#id_min_volume").val(volumes[ui.values[0]]);
             $("#id_max_volume").val(volumes[ui.values[1]]);
+            requestLater();
+        }
+    });
+}
+
+function makePriceSlider(prices) {
+    $("#price-slider").slider({
+        range: true,
+        min: 0,
+        max: prices.length - 1,
+        values: [0, prices.length - 1],
+        slide: function (event, ui) {
+            $("#id_min_price").val(prices[ui.values[0]]);
+            $("#id_max_price").val(prices[ui.values[1]]);
             requestLater();
         }
     });

@@ -7,5 +7,5 @@ urlpatterns = \
              url(r"^yfirlit/$", views.overview, name="overview"),
 
              url(r"^api/leit/$", views.perform_search, name="perform_search"),
-             url(r"^api/rummal/$", views.distinct_volumes, name="distinct_volumes")
+             url(r"^api/gildi/(?P<eiginleiki>.+)/$", views.distinct_properties, name="distinct_properties")
     )

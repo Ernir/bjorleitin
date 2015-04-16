@@ -101,11 +101,18 @@ def perform_search(request):
         return JsonResponse(return_list, safe=False)
 
 
-def distinct_volumes(request):
-    volumes = Beer.objects.filter(available=True).values("volume")
+def distinct_properties(request, eiginleiki):
+
+    p = "name"  # p for property
+    if eiginleiki == "rummal":
+        p = "volume"
+    elif eiginleiki == "verd":
+        p = "price"
+
+    objects = Beer.objects.filter(available=True).values(p)
     numbers = []
-    for dictionary in volumes:
-        number = dictionary["volume"]
+    for dictionary in objects:
+        number = dictionary[p]
         if number not in numbers:
             numbers.append(number)
     numbers.sort()
