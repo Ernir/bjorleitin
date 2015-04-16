@@ -50,11 +50,20 @@ def parse_csv(filename):
 
 
 def update_beers(beer_list):
+
+    # Marking all preexisting beers as not-new, and not available
+    # until proven otherwise.
+    for beer in Beer.objects.all():
+        beer.new = False
+        beer.available = False
+        beer.save()
+
     for beer_dict in beer_list:
         already_exists = False
         try:  # Checking if we've found the beer previously
             atvr_id = beer_dict["id"]
             beer = Beer.objects.get(atvr_id=atvr_id)
+            beer.available = True
             already_exists = True
         except ObjectDoesNotExist:  # Else, we initialize it
             beer = Beer()

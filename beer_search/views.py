@@ -35,7 +35,7 @@ def perform_search(request):
         post_body = request.POST
 
         # Beer list
-        bl = Beer.objects
+        bl = Beer.objects.filter(available=True)
 
         # Perform successive filtering based on POST contents.
         if len(post_body) > 0:
@@ -59,7 +59,6 @@ def perform_search(request):
                 if not len(min_volume) > 0:
                     min_volume = 0
                 bl = bl.filter(volume__gte=min_volume)
-
             if "max_volume" in post_body:
                 max_volume = post_body["max_volume"]
                 if not len(max_volume) > 0:
@@ -85,7 +84,6 @@ def perform_search(request):
                     # Setting default in case an empty string is sent
                     max_abv = Beer.objects.aggregate(Max("abv"))["abv__max"]
                 bl = bl.filter(abv__lte=max_abv)
-
             if "min_abv" in post_body:
                 min_abv = post_body["min_abv"]
                 if not len(min_abv) > 0:
