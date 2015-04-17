@@ -12,13 +12,13 @@ def generate_choices(model):
 
 
 def min_for_attribute(model, attribute_name):
-    return model.objects.filter(available=True).\
-               aggregate(Min(attribute_name))[attribute_name + "__min"]
+    return model.objects.filter(available=True). \
+        aggregate(Min(attribute_name))[attribute_name + "__min"]
 
 
 def max_for_attribute(model, attribute_name):
-    return model.objects.filter(available=True).\
-               aggregate(Max(attribute_name))[attribute_name + "__max"]
+    return model.objects.filter(available=True). \
+        aggregate(Max(attribute_name))[attribute_name + "__max"]
 
 
 class SearchForm(forms.Form):
@@ -76,6 +76,7 @@ class SearchForm(forms.Form):
         required=False,
         widget=NumberInput(attrs={
             "type": "number",
+            "value": min_for_attribute(Beer, "abv"),
             "min": min_for_attribute(Beer, "abv"),
             "max": max_for_attribute(Beer, "abv"),
         })
@@ -86,6 +87,7 @@ class SearchForm(forms.Form):
         required=False,
         widget=NumberInput(attrs={
             "type": "number",
+            "value": max_for_attribute(Beer, "abv"),
             "min": min_for_attribute(Beer, "abv"),
             "max": max_for_attribute(Beer, "abv"),
         })
@@ -142,14 +144,21 @@ class SearchForm(forms.Form):
                     Field("max_price", placeholder="kr."),
                     css_class="col-md-3 "
                 ),
+                css_id="price_container"
             ),
             Div(
-                Field("min_abv", placeholder="%"),
-                css_class="col-md-6"
-            ),
-            Div(
-                Field("max_abv", placeholder="%"),
-                css_class="col-md-6"
+                Div(
+                    Field("min_abv", placeholder="%"),
+                    css_class="col-md-3"
+                ),
+                Div(
+                    css_id="abv-slider",
+                    css_class="col-md-6 form-slider"
+                ),
+                Div(
+                    Field("max_abv", placeholder="%"),
+                    css_class="col-md-3"
+                ),
             ),
             Div(
                 Field("containers"),

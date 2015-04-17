@@ -89,9 +89,9 @@ function displayResults(jsonData) {
     if (numResults === 0) {
         showMessage("#results-none");
     } else {
-        if (numResults % 10 !== 1) {
+        if (numResults % 10 !== 1 || numResults === 11) {
             $("#results-found").text(numResults + " bjórar fundust.");
-        } else { // Result on the form 1+10k, k=0, 1, 2 ...
+        } else { // Result on the form 1+10k, k=0, 2, 3, 4, ...
             $("#results-found").text(numResults + " bjór fannst");
         }
         showMessage("#results-found");
@@ -149,6 +149,7 @@ function makeSliders() {
     $.get("/api/gildi/verd/", function (data) {
         makePriceSlider(data);
     });
+    makeAbvSlider();
 }
 
 function makeVolumeSlider(volumes) {
@@ -177,6 +178,26 @@ function makePriceSlider(prices) {
             requestLater();
         }
     });
+}
+
+function makeAbvSlider() {
+    var abvs = {
+        min: parseFloat($("#id_min_abv").val()),
+        max: parseFloat($("#id_max_abv").val())
+    };
+    $("#abv-slider").slider({
+        range: true,
+        min: abvs.min,
+        max: abvs.max,
+        step: 0.1,
+        values: [abvs.min, abvs.max],
+        slide: function (event, ui) {
+            $("#id_min_abv").val(ui.values[0]);
+            $("#id_max_abv").val(ui.values[1]);
+            requestLater();
+        }
+    });
+    // TODO finish
 }
 
 /*

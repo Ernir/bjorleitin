@@ -108,6 +108,8 @@ def distinct_properties(request, eiginleiki):
         p = "volume"
     elif eiginleiki == "verd":
         p = "price"
+    elif eiginleiki == "prosenta":
+        p = "abv"
 
     objects = Beer.objects.filter(available=True).values(p)
     numbers = []
