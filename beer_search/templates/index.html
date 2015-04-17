@@ -16,6 +16,8 @@
             {% crispy form %}
         </div>
         <div class="col-md-6">
+            <p id="results-initial" class="alert alert-info">Fiktaðu í stjórntækjunum til að hefja leit.</p>
+
             <p id="results-found" class="alert alert-success">bjórar fundust.</p>
 
             <p id="results-working" class="alert alert-info">
@@ -29,6 +31,7 @@
 
             <ul id="results-list">
             </ul>
+            {% include "small_table.html" %}
         </div>
     </div>
 {% endblock %}

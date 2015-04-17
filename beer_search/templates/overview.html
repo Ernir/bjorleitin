@@ -38,13 +38,7 @@
                     </td>
                     <td>
                         <a href="http://www.vinbudin.is/DesktopDefault.aspx/tabid-54?productID={{ beer.atvr_id }}">{{ beer.name }}</a>
-                        {% if beer.has_duplicate_name %}
-                            ( {{ beer.container.name }}
-                            {% if beer.has_duplicate_container %}
-                                , {{ beer.volume }} ml
-                            {% endif %}
-                            )
-                        {% endif %}
+                        {{ beer.suffix }}
                         {% if debug %}
                             (
                             <a href="http://127.0.0.1:8000/admin/beer_search/beer/{{ beer.id }}/">breyta</a>
@@ -52,20 +46,10 @@
                         {% endif %}
                     </td>
                     <td>
-                        {% if not simplified %}
-                            {% if beer.style %}
-                                {{ beer.style }}
-                            {% else %}
-                                ?
-                            {% endif %}
+                        {% if beer.style %}
+                            {{ beer.style }}
                         {% else %}
-                            {% if beer.style.simplifies_to %}
-                                {{ beer.style.simplifies_to }}
-                            {% elif beer.style %}
-                                {{ beer.style }}
-                            {% else %}
-                                ?
-                            {% endif %}
+                            ?
                         {% endif %}
                     </td>
                     <td>

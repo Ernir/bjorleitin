@@ -1,0 +1,25 @@
+<table class="table table-hover">
+    <thead>
+    <tr>
+        <th>Nafn bjórs</th>
+        <th>Stíll</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for beer in beers %}
+        <tr id="beer-{{ beer.atvr_id }}" class="beer-row">
+            <td>
+                <a href="http://www.vinbudin.is/DesktopDefault.aspx/tabid-54?productID={{ beer.atvr_id }}">{{ beer.name }}</a>
+                {{ beer.suffix }}
+            </td>
+            <td>
+                {% if beer.style %}
+                    {{ beer.style }}
+                {% else %}
+                    ?
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

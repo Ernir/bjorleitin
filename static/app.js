@@ -97,12 +97,24 @@ function displayResults(jsonData) {
         showMessage("#results-found");
     }
 
-    // Writing out the lists
-    var $results = $("#results-list");
-    $results.empty();
+    // Extracting the atvr-IDs of all found beers.
+    var atvr_ids = [];
     for (var i = 0; i < jsonData.length; i++) {
-        $results.append("<li><a href='http://www.vinbudin.is/DesktopDefault.aspx/tabid-54?productID=" + jsonData[i].atvr_id + "'>" + jsonData[i].name + "</a> " + jsonData[i].suffix + "</li>");
+        atvr_ids.push(jsonData[i].atvr_id);
     }
+
+    // Iterate over rows, displaying or hiding them based on whether
+    // their associated atvr-ID was found in the current search.
+    $(".beer-row").each(function (k, v) {
+        var row_id = v.id;
+        row_id = row_id.slice(5);
+        var index = atvr_ids.indexOf(row_id);
+        if (index === -1) {
+            $(v).fadeOut("slow");
+        } else {
+            $(v).fadeIn("slow");
+        }
+    });
 }
 
 function showMessage(id) {
@@ -197,7 +209,6 @@ function makeAbvSlider() {
             requestLater();
         }
     });
-    // TODO finish
 }
 
 /*
@@ -206,7 +217,7 @@ function makeAbvSlider() {
 
 function initialize() {
     makeSliders();
-    getBeers();
+    $("#results-initial").show();
     $("table").tablesorter();
 }
 $(initialize());

@@ -6,11 +6,12 @@ from django.shortcuts import render
 
 
 def index(request):
-    updated_at = Beer.objects.aggregate(
-        Min("updated_at")
-    )["updated_at__min"]
+    beers = Beer.objects.filter(available=True).all()
+    updated_at = Beer.objects.\
+        aggregate(Min("updated_at"))["updated_at__min"]
     return render(request, "index.html", {
         "form": SearchForm(),
+        "beers": beers,
         "updated_at": updated_at
     })
 
@@ -63,7 +64,8 @@ def perform_search(request):
                 max_volume = post_body["max_volume"]
                 if not len(max_volume) > 0:
                     # Setting default in case an empty string is sent
-                    max_volume = Beer.objects.aggregate(Max("volume"))["volume__max"]
+                    max_volume = Beer.objects.aggregate(Max("volume"))[
+                        "volume__max"]
                 bl = bl.filter(volume__lte=max_volume)
 
             if "min_price" in post_body:
@@ -75,14 +77,16 @@ def perform_search(request):
                 max_price = post_body["max_price"]
                 if not len(max_price) > 0:
                     # Setting default in case an empty string is sent
-                    max_price = Beer.objects.aggregate(Max("price"))["price__max"]
+                    max_price = Beer.objects.aggregate(Max("price"))[
+                        "price__max"]
                 bl = bl.filter(price__lte=max_price)
 
             if "max_abv" in post_body:
                 max_abv = post_body["max_abv"]
                 if not len(max_abv) > 0:
                     # Setting default in case an empty string is sent
-                    max_abv = Beer.objects.aggregate(Max("abv"))["abv__max"]
+                    max_abv = Beer.objects.aggregate(Max("abv"))[
+                        "abv__max"]
                 bl = bl.filter(abv__lte=max_abv)
             if "min_abv" in post_body:
                 min_abv = post_body["min_abv"]
@@ -102,7 +106,6 @@ def perform_search(request):
 
 
 def distinct_properties(request, eiginleiki):
-
     p = "name"  # p for property
     if eiginleiki == "rummal":
         p = "volume"
