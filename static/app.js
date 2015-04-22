@@ -123,24 +123,19 @@ function showMessage(id) {
 }
 
 function updateColumns() {
-//    var notSelected = $('form input[type=radio]:not(:checked)');
-
-    $(".column-radio:checked").each(function (k,v){
+    $(".column-control:checked").each(function (k,v){
         $("." + $(this).val()).show();
     });
-    $(".column-radio:not(:checked)").each(function (k,v){
+    $(".column-control:not(:checked)").each(function (k,v){
         $("." + $(this).val()).hide();
     });
-
-//    var selected = $('form input[type=radio]:checked').val();
-//    $("." + selected).show();
 }
 
 /*
  Listeners
  */
-$("#main-form input[type=checkbox],input[type=number]").change(getBeers);
-$(".column-radio").change(updateColumns);
+$("input[type=checkbox]:not(.column-control),input[type=number]").change(getBeers);
+$(".column-control").change(updateColumns);
 
 // Delayed calls for the text box.
 // Source: http://stackoverflow.com/a/23569018/1675015

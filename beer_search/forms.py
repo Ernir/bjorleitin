@@ -109,6 +109,19 @@ class SearchForm(forms.Form):
         required=False,
     )
 
+    column = forms.MultipleChoiceField(
+        label="Viðbótarupplýsingar til að sýna",
+        required=False,
+        choices=(
+            ("beer-style", "Stíll"),
+            ("beer-container", "Ílát"),
+            ("beer-abv", "Styrkur"),
+            ("beer-volume", "Magn"),
+            ("beer-price", "Verð")
+        ),
+        initial="beer-style"
+    )
+
     helper = FormHelper()
     helper.form_id = "main-form"
     helper.layout = Layout(
@@ -169,29 +182,13 @@ class SearchForm(forms.Form):
                 Field("containers"),
                 css_class="checkbox col-md-6"
             ),
+            Div(
+                InlineCheckboxes(
+                    "column",
+                    css_class="column-control"
+                ),
+                css_class="col-md-12"
+            )
         )
     )
     helper.form_action = "/search/"
-
-
-class ColumnSelectForm(forms.Form):
-    column = forms.MultipleChoiceField(
-        label="Viðbótarupplýsingar",
-        required=False,
-        choices=(
-            ("beer-style", "Stíll"),
-            ("beer-container", "Ílát"),
-            ("beer-abv", "Styrkur"),
-            ("beer-volume", "Magn"),
-            ("beer-price", "Verð")
-        ),
-        initial="beer-style"
-    )
-    helper = FormHelper()
-    helper.form_id = "column-form"
-    helper.layout = Layout(
-        InlineCheckboxes(
-            "column",
-            css_class="column-radio "
-        )
-    )
