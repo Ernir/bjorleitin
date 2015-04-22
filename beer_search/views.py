@@ -1,4 +1,4 @@
-from beer_search.forms import SearchForm
+from beer_search.forms import SearchForm, ColumnSelectForm
 from beer_search.models import Beer
 from django.db.models import Max, Min
 from django.http import JsonResponse
@@ -11,6 +11,7 @@ def index(request):
         aggregate(Min("updated_at"))["updated_at__min"]
     return render(request, "index.html", {
         "form": SearchForm(),
+        "column_form": ColumnSelectForm(),
         "beers": beers,
         "updated_at": updated_at
     })

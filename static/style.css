@@ -79,3 +79,8 @@ Source: http://www.bootply.com/128062
         margin-right: 20px;
     }
 }
+
+/* Column hiding... */
+.beer-container, .beer-abv, .beer-volume, .beer-price {
+    display: none;
+}

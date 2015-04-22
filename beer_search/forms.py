@@ -1,6 +1,7 @@
 from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Field, Div
+from crispy_forms.bootstrap import InlineRadios, InlineCheckboxes
 from django.db.models import Min, Max
 from django.forms import NumberInput
 from beer_search.models import Beer, Style, ContainerType
@@ -161,16 +162,36 @@ class SearchForm(forms.Form):
                 ),
             ),
             Div(
-                Field("containers"),
-                css_class="checkbox col-md-12"
+                Field("styles"),
+                css_class="checkbox col-md-6"
             ),
             Div(
-                Field("styles"),
-                css_class="checkbox col-md-12"
-            )
+                Field("containers"),
+                css_class="checkbox col-md-6"
+            ),
         )
     )
     helper.form_action = "/search/"
 
 
-
+class ColumnSelectForm(forms.Form):
+    column = forms.MultipleChoiceField(
+        label="Viðbótarupplýsingar",
+        required=False,
+        choices=(
+            ("beer-style", "Stíll"),
+            ("beer-container", "Ílát"),
+            ("beer-abv", "Styrkur"),
+            ("beer-volume", "Magn"),
+            ("beer-price", "Verð")
+        ),
+        initial="beer-style"
+    )
+    helper = FormHelper()
+    helper.form_id = "column-form"
+    helper.layout = Layout(
+        InlineCheckboxes(
+            "column",
+            css_class="column-radio "
+        )
+    )

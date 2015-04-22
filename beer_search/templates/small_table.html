@@ -2,7 +2,11 @@
     <thead>
     <tr>
         <th>Nafn bjórs</th>
-        <th>Stíll</th>
+        <th class="beer-style beer-infocolumn">Stíll</th>
+        <th class="beer-container beer-infocolumn">Ílát</th>
+        <th class="beer-abv beer-infocolumn">Styrkur</th>
+        <th class="beer-volume beer-infocolumn">Magn</th>
+        <th class="beer-price beer-infocolumn">Verð</th>
     </tr>
     </thead>
     <tbody>
@@ -12,12 +16,28 @@
                 <a href="http://www.vinbudin.is/DesktopDefault.aspx/tabid-54?productID={{ beer.atvr_id }}">{{ beer.name }}</a>
                 {{ beer.suffix }}
             </td>
-            <td>
+            <td class="beer-style beer-infocolumn">
                 {% if beer.style %}
                     {{ beer.style }}
                 {% else %}
                     ?
                 {% endif %}
+            </td>
+            <td class="beer-container beer-infocolumn">
+                {% if beer.container %}
+                    {{ beer.container.name }}
+                {% else %}
+                    ?
+                {% endif %}
+            </td>
+            <td class="beer-abv beer-infocolumn">
+                {{ beer.abv }}%
+            </td>
+            <td class="beer-volume beer-infocolumn">
+                {{ beer.volume }} ml
+            </td>
+            <td class="beer-price beer-infocolumn">
+                {{ beer.price }} kr.
             </td>
         </tr>
     {% endfor %}
