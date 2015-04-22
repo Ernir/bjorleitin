@@ -175,12 +175,12 @@ class SearchForm(forms.Form):
                 ),
             ),
             Div(
-                Field("styles"),
-                css_class="checkbox col-md-6"
+                InlineCheckboxes("containers"),
+                css_class="checkbox col-md-12",
             ),
             Div(
-                Field("containers"),
-                css_class="checkbox col-md-6"
+                Field("styles"),
+                css_class="checkbox col-md-8"
             ),
             Div(
                 InlineCheckboxes(
