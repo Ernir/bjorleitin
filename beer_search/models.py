@@ -25,30 +25,34 @@ class ContainerType(models.Model):
 
 class Beer(models.Model):
 
+    # Base fields
     name = models.CharField(max_length=200)
     abv = models.FloatField()
     price = models.IntegerField()
     volume = models.IntegerField()
     atvr_id = models.CharField(max_length=5)
 
-    new = models.BooleanField(default=True)
-    available = models.BooleanField(default=True)
-
+    # FK fields
     container = models.ForeignKey(ContainerType, null=True, default=None)
     style = models.ForeignKey(Style, null=True, default=None)
 
+    # Boolean/availability fields
+    new = models.BooleanField(default=True)
+    available = models.BooleanField(default=True)
+    seasonal = models.BooleanField(default=False)
+
+    # Hidden fields
     updated_at = models.DateField(default=date.today)
+    suffix = models.CharField(max_length=100, default="")
 
     def __str__(self):
-        name = self.name
-        name += self._uniquely_identifying_suffix()
-        return name
+        return self.name + self.suffix
 
-    def _uniquely_identifying_suffix(self):
+    def _calculate_uniquely_identifying_suffix(self):
         suffix = ""
         if self.has_duplicate_name:
             if not self.container:
-                suffix += " ( ?"
+                suffix += " ( ?"  # Unknown container placeholder
             else:
                 suffix = suffix + " ( " + self.container.name
             if self.has_duplicate_container:
@@ -70,11 +74,11 @@ class Beer(models.Model):
     has_duplicate_name = property(_has_duplicate_name)
     has_duplicate_container = property(_has_duplicate_container)
     price_per_litre = property(_price_per_litre)
-    suffix = property(_uniquely_identifying_suffix)
 
     def save(self, *args, **kwargs):
         self.updated_at = date.today()  # Automatic updates
 
+        self.suffix = self._calculate_uniquely_identifying_suffix()
         # Finds beers with the same name, and assigns the same style.
         if self.style:
             duplicates = Beer.objects\

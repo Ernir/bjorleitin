@@ -35,6 +35,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # "debug_toolbar", # I comment this in and out, sue me.
     "beer_search",
     "crispy_forms"
 )

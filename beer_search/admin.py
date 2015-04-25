@@ -6,7 +6,7 @@ admin.site.register(ContainerType)
 
 
 class BeerAdmin(admin.ModelAdmin):
-    exclude = ("updated_at",)
+    exclude = ("updated_at", "suffix")
 
 
 admin.site.register(Beer, BeerAdmin)

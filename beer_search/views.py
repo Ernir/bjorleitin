@@ -6,7 +6,7 @@ from django.shortcuts import render
 
 
 def index(request):
-    beers = Beer.objects.filter(available=True).all()
+    beers = Beer.objects.filter(available=True).all().prefetch_related("style", "container")
     updated_at = Beer.objects.\
         aggregate(Min("updated_at"))["updated_at__min"]
     return render(request, "index.html", {
