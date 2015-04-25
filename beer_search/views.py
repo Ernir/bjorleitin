@@ -17,7 +17,7 @@ def index(request):
 
 
 def overview(request):
-    all_beers = Beer.objects.all()
+    all_beers = Beer.objects.all().prefetch_related("style", "container")
     title = "yfirlit allra bjóra"
     debug = False  # ToDo: use config var instead
     return render(request, "overview.html", {
