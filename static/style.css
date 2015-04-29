@@ -1,6 +1,11 @@
-/* Search page has multiple alert boxes in HTML, hidden on page initialization. */
+/* Search page has multiple alert boxes in HTML,
+   hidden on page initialization... */
 .alert {
     display: none;
+}
+/* ... except for this one. */
+#results-initial {
+    display: block;
 }
 
 /* Wrapper for page content to push down footer */

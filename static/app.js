@@ -227,7 +227,6 @@ function makeAbvSlider() {
 
 function initialize() {
     makeSliders();
-    $("#results-initial").show();
     $("table").tablesorter();
 }
 $(initialize());
