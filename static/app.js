@@ -83,24 +83,32 @@ function getBeers() {
 
 function displayResults(jsonData) {
 
+    // Extracting the atvr-IDs of all found beers.
+    var atvr_ids = [];
+    var uniqueNames = {}; // ToDo use an actual ES6 set object...
+    for (var i = 0; i < jsonData.length; i++) {
+        atvr_ids.push(jsonData[i].atvr_id);
+        uniqueNames[jsonData[i].name] = true;
+    }
+
     var numResults = jsonData.length;
+    var numUnique = Object.keys(uniqueNames).length;
 
     // Handling the messages
     if (numResults === 0) {
         showMessage("#results-none");
     } else {
+        var info = "";
+        if (numResults !== numUnique) {
+            info = " ( " + numUnique + " mismunandi )";
+        }
+
         if (numResults % 10 !== 1 || numResults === 11) {
-            $("#results-found").text(numResults + " bjórar fundust.");
+            $("#results-found").text(numResults + " bjórar fundust." + info);
         } else { // Result on the form 1+10k, k=0, 2, 3, 4, ...
-            $("#results-found").text(numResults + " bjór fannst");
+            $("#results-found").text(numResults + " bjór fannst" + info);
         }
         showMessage("#results-found");
-    }
-
-    // Extracting the atvr-IDs of all found beers.
-    var atvr_ids = [];
-    for (var i = 0; i < jsonData.length; i++) {
-        atvr_ids.push(jsonData[i].atvr_id);
     }
 
     // Iterate over rows, displaying or hiding them based on whether
