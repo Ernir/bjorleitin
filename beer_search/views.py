@@ -21,10 +21,14 @@ def overview(request):
     all_beers = Beer.objects.all().prefetch_related("style", "container")
     title = "yfirlit allra bjóra"
     debug = settings.DEBUG
+    updated_at = Beer.objects.\
+        aggregate(Min("updated_at"))["updated_at__min"]
+
     return render(request, "overview.html", {
         "beers": all_beers,
         "debug": debug,
         "title": title,
+        "updated_at": updated_at
     })
 
 
