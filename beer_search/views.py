@@ -3,6 +3,7 @@ from beer_search.models import Beer
 from django.db.models import Max, Min
 from django.http import JsonResponse
 from django.shortcuts import render
+from django.conf import settings
 
 
 def index(request):
@@ -19,7 +20,7 @@ def index(request):
 def overview(request):
     all_beers = Beer.objects.all().prefetch_related("style", "container")
     title = "yfirlit allra bjóra"
-    debug = False  # ToDo: use config var instead
+    debug = settings.DEBUG
     return render(request, "overview.html", {
         "beers": all_beers,
         "debug": debug,

@@ -23,17 +23,17 @@
         {% for beer in beers %}
             {% if beer.available %}
                 <tr
-                        {% if beer.new %}
+                        {% if beer.seasonal %}
+                            class="success"
+                        {% elif beer.new %}
                             class="info"
-                        {% else %}
-                            {% if not beer.available %}
-                            class="warning"
-                            {% endif %}
                         {% endif %}
                         >
                     <td>
-                        {% if beer.new %}
-                            Nýr!
+                        {% if beer.seasonal %}
+                            Árstíðabundinn
+                        {% elif beer.new %}
+                            Nýr
                         {% endif %}
                     </td>
                     <td>
