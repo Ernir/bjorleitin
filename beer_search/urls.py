@@ -6,6 +6,6 @@ urlpatterns = \
              url(r"^$", views.index, name="index"),
              url(r"^yfirlit/$", views.overview, name="overview"),
 
-             url(r"^api/leit/$", views.perform_search, name="perform_search"),
-             url(r"^api/gildi/(?P<eiginleiki>.+)/$", views.distinct_properties, name="distinct_properties")
+             url(r"^api/leit/$", views.filter_beers_by_request_params, name="filter_beers_by_request_params"),
+             url(r"^api/einstok-gildi/(?P<eiginleiki>.+)/$", views.distinct_properties, name="distinct_properties")
     )

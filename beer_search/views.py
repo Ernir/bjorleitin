@@ -1,15 +1,23 @@
 from beer_search.forms import SearchForm
 from beer_search.models import Beer
-from django.db.models import Max, Min
+from beer_search.utils import perform_filtering
+from django.db.models import Min
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.conf import settings
 
 
 def index(request):
-    beers = Beer.objects.filter(available=True).all().prefetch_related("style", "container")
-    updated_at = Beer.objects.\
+    """
+
+    The main page.
+    """
+    beers = Beer.objects.filter(available=True).all(). \
+        prefetch_related("style", "container")
+
+    updated_at = Beer.objects. \
         aggregate(Min("updated_at"))["updated_at__min"]
+
     return render(request, "index.html", {
         "form": SearchForm(),
         "beers": beers,
@@ -18,10 +26,15 @@ def index(request):
 
 
 def overview(request):
+    """
+
+    A page consisting mostly of a single large table of all beers.
+    """
+
     all_beers = Beer.objects.all().prefetch_related("style", "container")
     title = "yfirlit allra bjóra"
     debug = settings.DEBUG
-    updated_at = Beer.objects.\
+    updated_at = Beer.objects. \
         aggregate(Min("updated_at"))["updated_at__min"]
 
     return render(request, "overview.html", {
@@ -32,8 +45,9 @@ def overview(request):
     })
 
 
-def perform_search(request):
+def filter_beers_by_request_params(request):
     """
+
     Generates a list of beers to display based on POST parameters.
     Returns their names and slugs in JSON format.
     """
@@ -43,61 +57,7 @@ def perform_search(request):
         # Beer list
         bl = Beer.objects.filter(available=True)
 
-        # Perform successive filtering based on POST contents.
-        if len(post_body) > 0:
-            if "beer_name" in post_body:
-                name = post_body["beer_name"]
-                if len(name) > 0:
-                    bl = bl.filter(name__icontains=name)
-
-            if "styles" in post_body:
-                styles = post_body.getlist("styles")
-                if len(styles) > 0:
-                    bl = bl.filter(style__id__in=styles)
-
-            if "containers" in post_body:
-                containers = post_body.getlist("containers")
-                if len(containers) > 0:
-                    bl = bl.filter(container__id__in=containers)
-
-            if "min_volume" in post_body:
-                min_volume = post_body["min_volume"]
-                if not len(min_volume) > 0:
-                    min_volume = 0
-                bl = bl.filter(volume__gte=min_volume)
-            if "max_volume" in post_body:
-                max_volume = post_body["max_volume"]
-                if not len(max_volume) > 0:
-                    # Setting default in case an empty string is sent
-                    max_volume = Beer.objects.aggregate(Max("volume"))[
-                        "volume__max"]
-                bl = bl.filter(volume__lte=max_volume)
-
-            if "min_price" in post_body:
-                min_price = post_body["min_price"]
-                if not len(min_price) > 0:
-                    min_price = 0
-                bl = bl.filter(price__gte=min_price)
-            if "max_price" in post_body:
-                max_price = post_body["max_price"]
-                if not len(max_price) > 0:
-                    # Setting default in case an empty string is sent
-                    max_price = Beer.objects.aggregate(Max("price"))[
-                        "price__max"]
-                bl = bl.filter(price__lte=max_price)
-
-            if "max_abv" in post_body:
-                max_abv = post_body["max_abv"]
-                if not len(max_abv) > 0:
-                    # Setting default in case an empty string is sent
-                    max_abv = Beer.objects.aggregate(Max("abv"))[
-                        "abv__max"]
-                bl = bl.filter(abv__lte=max_abv)
-            if "min_abv" in post_body:
-                min_abv = post_body["min_abv"]
-                if not len(min_abv) > 0:
-                    min_abv = 0
-                bl = bl.filter(abv__gte=min_abv)
+        bl = perform_filtering(bl, post_body)
 
         return_list = []
         for beer in bl.all():
@@ -111,6 +71,15 @@ def perform_search(request):
 
 
 def distinct_properties(request, eiginleiki):
+    """
+
+    Accepts a standard Django request object, and the Icelandic name of
+    one property from the following list:
+
+    ["rummal", "verd", "prosenta"]
+
+    And returns all unique value stored for that property, in JSON format.
+    """
     p = "name"  # p for property
     if eiginleiki == "rummal":
         p = "volume"

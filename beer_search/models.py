@@ -3,6 +3,12 @@ from datetime import date
 
 
 class Style(models.Model):
+    """
+
+    Represents one style, or "category" of beer (bjórstíll).
+    Examples include "Common Pale Lager" and "Dubbel".
+    """
+
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True, default="")
 
@@ -14,16 +20,27 @@ class Style(models.Model):
 
 
 class ContainerType(models.Model):
+    """
+
+    Represents one type of beer container: Can, bottle, etc.
+    """
     name = models.CharField(max_length=100)
 
     def __str__(self):
-            return self.name
+        return self.name
 
     class Meta:
         ordering = ("name",)
 
 
 class Beer(models.Model):
+    """
+
+    Represents one type of beer, in one type of container at one particular
+    volume - A.K.A. one ATVR product.
+
+    Objects of this type are heavyweight, forming the backbone of the app.
+    """
 
     # Base fields
     name = models.CharField(max_length=200)
@@ -49,6 +66,14 @@ class Beer(models.Model):
         return self.name + self.suffix
 
     def _calculate_uniquely_identifying_suffix(self):
+        """
+
+        Many beers have non-unique names, due to different volumes and
+        container types counting as separate ATVR products.
+        If [self.name] is not unique among beer objects, this generates
+        and returns a human-readable, uniquely-identifying string.
+        Otherwise, returns empty string.
+        """
         suffix = ""
         if self.has_duplicate_name:
             if not self.container:
@@ -65,7 +90,8 @@ class Beer(models.Model):
         return n > 1
 
     def _has_duplicate_container(self):
-        n = Beer.objects.filter(name=self.name, container=self.container).count()
+        n = Beer.objects.filter(name=self.name, container=self.container) \
+            .count()
         return n > 1
 
     def _price_per_litre(self):
@@ -81,8 +107,8 @@ class Beer(models.Model):
         self.suffix = self._calculate_uniquely_identifying_suffix()
         # Finds beers with the same name, and assigns the same style.
         if self.style:
-            duplicates = Beer.objects\
-                .filter(name=self.name, style=None)\
+            duplicates = Beer.objects \
+                .filter(name=self.name, style=None) \
                 .exclude(atvr_id=self.atvr_id)
             if duplicates.count() > 0:
                 # Sometimes superfluous saving, but meh.
@@ -94,4 +120,4 @@ class Beer(models.Model):
         super(Beer, self).save(*args, **kwargs)
 
     class Meta:
-        ordering = ("name","container__name")
+        ordering = ("name", "container__name")

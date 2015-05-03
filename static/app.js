@@ -173,10 +173,10 @@ $('#main-form').on('submit', function (event) {
 
 function makeSliders() {
     // ToDo: Combine into one function call.
-    $.get("/api/gildi/rummal/", function (data) {
+    $.get("/api/einstok-gildi/rummal/", function (data) {
         makeVolumeSlider(data);
     });
-    $.get("/api/gildi/verd/", function (data) {
+    $.get("/api/einstok-gildi/verd/", function (data) {
         makePriceSlider(data);
     });
     makeAbvSlider();
