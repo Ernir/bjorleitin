@@ -7,8 +7,9 @@
         <h1>Bjórleitin</h1>
         <p class="lead">Allir bjórar <a href="http://www.vinbudin.is/">vínbúðarinnar</a> á einum stað.</p>
         <p>
-            <a class="btn btn-lg btn-success" href="#leit" role="button">Leita núna</a>
-            <a class="btn btn-lg btn-success" href="{% url "beer_search.views.overview" %}" role="button">Yfirlit</a>
+            <a class="btn btn-success" href="#leit" role="button">Leita núna</a>
+            <a class="btn btn-success" href="{% url "beer_search.views.overview" %}" role="button">Yfirlit bjóra</a>
+            <a class="btn btn-success" href="{% url "beer_search.views.about" %}" role="button">Um Bjórleitina</a>
         </p>
       </div>
     <div id="leit">

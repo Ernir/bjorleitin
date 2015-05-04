@@ -45,6 +45,17 @@ def overview(request):
     })
 
 
+def about(request):
+    title = "um Bjórleitina"
+    updated_at = Beer.objects. \
+        aggregate(Min("updated_at"))["updated_at__min"]
+
+    return render(request, "about.html", {
+        "title": title,
+        "updated_at": updated_at
+    })
+
+
 def filter_beers_by_request_params(request):
     """
 
