@@ -5,7 +5,7 @@ Gögn síðunnar eru skröpuð.
 
 Síðan notar Django 1.8 á Python 3. Uppsetning gerir ráð fyrir Heroku.
 
-A live version can be found at [bjorleit.info](http://bjorleit.info/).
+Keyrandi útgáfu má finna á [bjorleit.info](http://bjorleit.info/).
 
 # The Beer Search
 
