@@ -23,6 +23,12 @@ def max_for_attribute(model, attribute_name):
 
 
 class SearchForm(forms.Form):
+    """
+
+    Convenience class for defining the main search form on the index.
+    """
+
+
     beer_name = forms.CharField(
         label="Nafn bjórs",
         required=False
@@ -109,9 +115,17 @@ class SearchForm(forms.Form):
         required=False,
     )
 
+    noteworthy = forms.MultipleChoiceField(
+        label="Nýir og árstíðabundnir",
+        choices=(
+            ("new", "Nýr"),
+            ("seasonal", "Árstíðabundinn")
+        ),
+        required=False
+    )
+
     column = forms.MultipleChoiceField(
         label="Viðbótarupplýsingar til að sýna",
-        required=False,
         choices=(
             ("beer-style", "Stíll"),
             ("beer-container", "Ílát"),
@@ -119,7 +133,8 @@ class SearchForm(forms.Form):
             ("beer-volume", "Magn"),
             ("beer-price", "Verð")
         ),
-        initial="beer-style"
+        initial="beer-style",
+        required=False
     )
 
     helper = FormHelper()
@@ -184,11 +199,18 @@ class SearchForm(forms.Form):
             ),
             Div(
                 InlineCheckboxes(
+                    "noteworthy",
+                    css_class="checkbox"
+                ),
+                css_class="col-md-8"
+            ),
+            Div(
+                InlineCheckboxes(
                     "column",
                     css_class="column-control"
                 ),
                 css_class="col-md-12"
-            )
+            ),
         )
     )
     helper.form_action = "/search/"
