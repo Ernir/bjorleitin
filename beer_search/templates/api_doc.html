@@ -3,7 +3,7 @@
 
 {% block content %}
     <p><a class="btn btn-success" href="{% url "beer_search.views.index" %}" role="button">Til baka á upphafssíðu</a></p>
-    <div class="col-md-6">
+    <div class="api-description">
         <p>Þetta er upplýsingasíða fyrir forritara sem vilja vinna með gögn Bjórleitarinnar.</p>
         <h2>API endapunktar</h2>
         <p>Eftirfarandi endapunktar eru skilgreindir:</p>
@@ -13,29 +13,34 @@
             <li><a href="#ilat">Ílát</a></li>
         </ul>
         <p>Líta skal á þennan API sem svo að hann sé <strong>enn á beta-stigi</strong>. Hann gæti tekið breytingum. </p>
-        <div class="api-description">
-            <h3 id="bjorar"><a href="#bjorar">Bjórar</a></h3>
-            <p>Skilar lista af öllum bjórum sem til voru í Vínbúðinni við síðustu skröpun, ásamt dagsetningu skröpunarinnar. Býður upp á síun líkri þeirri sem er á <a href="{% url "beer_search.views.index" %}">aðalsíðunni</a>.</p>
+    </div>
 
-            <h4>Endapunktur</h4>
-            <p><code>GET</code> <a href="{% url "beer_search.views.get_beers" %}"><code>{% url "beer_search.views.get_beers" %}</code></a></p>
 
-            <h4>Viðtökubreytur</h4>
-            <ul>
+    <div class="api-description row">
+    <h3 id="bjorar"><a href="#bjorar">Bjórar</a></h3>
+    <div class="col-md-6">
+        <p>Skilar lista af öllum bjórum sem til voru í Vínbúðinni við síðustu skröpun, ásamt dagsetningu skröpunarinnar. Býður upp á síun líkri þeirri sem er á <a href="{% url "beer_search.views.index" %}">aðalsíðunni</a>.</p>
 
-                <li><code>beer_name</code> (valkvæm). Ef strengur er gefinn, útilokar alla bjóra sem ekki hafa strenginn sem hlutstreng í nafni sínu.</li>
-                <li><code>styles</code> (valkvæm). Ef tala sem samsvarar auðkenni (id) <a href="#stilar">stíls</a> er gefin, útilokar alla bjóra sem ekki tilheyra þeim stíl. Sé þessi breyta skilgreind oft eru allir bjórar sem ekki tilheyra neinum hinna gefnu stíla útilokaðir.</li>
-                <li><code>containers</code> (valkvæm). Ef tala sem samsvarar auðkenni (id) <a href="#ilat">íláts</a> er gefin, útilokar alla bjóra sem ekki eru í slíku íláti. Sé þessi breyta skilgreind oft eru allir bjórar sem ekki eru í neinu ílátanna útilokaðir.</li>
-                <li><code>min_volume</code> (valkvæm). Ef tala er gefin, útilokar alla bjóra sem eru minni að rúmmáli í millilítrum heldur en talan.</li>
-                <li><code>max_volume</code> (valkvæm). Ef tala er gefin, útilokar alla bjóra sem eru meiri að rúmmáli í millilítrum heldur en talan.</li>
-                <li><code>min_price</code> (valkvæm). Ef tala er gefin, útilokar alla bjóra sem kosta lægri krónutölu en talan.</li>
-                <li><code>max_price</code> (valkvæm). Ef tala er gefin, útilokar alla bjóra sem kosta hærri krónutölu en talan.</li>
-                <li><code>min_abv</code> (valkvæm). Ef tala er gefin, útilokar alla bjóra sem eru með lægri áfengisprósentu en talan.</li>
-                <li><code>max_abv</code> (valkvæm). Ef tala er gefin, útilokar alla bjóra sem eru með lægri áfengisprósentu en talan.</li>
-            </ul>
+        <h4>Endapunktur</h4>
+        <p><code>GET</code> <a href="{% url "beer_search.views.get_beers" %}"><code>{% url "beer_search.views.get_beers" %}</code></a></p>
 
-            <h4>Dæmi um svar</h4>
-            <pre>
+        <h4>Viðtökubreytur</h4>
+        <ul>
+
+            <li><code>beer_name</code> (valkvæm). Ef strengur er gefinn, útilokar alla bjóra sem ekki hafa strenginn sem hlutstreng í nafni sínu.</li>
+            <li><code>styles</code> (valkvæm). Ef tala sem samsvarar auðkenni (id) <a href="#stilar">stíls</a> er gefin, útilokar alla bjóra sem ekki tilheyra þeim stíl. Sé þessi breyta skilgreind oft eru allir bjórar sem ekki tilheyra neinum hinna gefnu stíla útilokaðir.</li>
+            <li><code>containers</code> (valkvæm). Ef tala sem samsvarar auðkenni (id) <a href="#ilat">íláts</a> er gefin, útilokar alla bjóra sem ekki eru í slíku íláti. Sé þessi breyta skilgreind oft eru allir bjórar sem ekki eru í neinu ílátanna útilokaðir.</li>
+            <li><code>min_volume</code> (valkvæm). Ef tala er gefin, útilokar alla bjóra sem eru minni að rúmmáli í millilítrum heldur en talan.</li>
+            <li><code>max_volume</code> (valkvæm). Ef tala er gefin, útilokar alla bjóra sem eru meiri að rúmmáli í millilítrum heldur en talan.</li>
+            <li><code>min_price</code> (valkvæm). Ef tala er gefin, útilokar alla bjóra sem kosta lægri krónutölu en talan.</li>
+            <li><code>max_price</code> (valkvæm). Ef tala er gefin, útilokar alla bjóra sem kosta hærri krónutölu en talan.</li>
+            <li><code>min_abv</code> (valkvæm). Ef tala er gefin, útilokar alla bjóra sem eru með lægri áfengisprósentu en talan.</li>
+            <li><code>max_abv</code> (valkvæm). Ef tala er gefin, útilokar alla bjóra sem eru með lægri áfengisprósentu en talan.</li>
+        </ul>
+    </div>
+    <div class="col-md-6">
+        <h4>Dæmi um svar</h4>
+        <pre>
 {
     "beers": [
         {
@@ -59,10 +64,14 @@
     ],
     "updated_at": "2015-05-01"
 }
-            </pre>
-        </div>
-        <div class="api-description">
-            <h3 id="stilar"><a href="#stilar">Stílar</a></h3>
+        </pre>
+    </div>
+    </div>
+
+
+    <div class="api-description row">
+        <h3 id="stilar"><a href="#stilar">Stílar</a></h3>
+        <div class="col-md-6">
             <p>Skilar lista af öllum stílum sem skilgreindir eru í Bjórleitinni.</p>
 
             <h4>Endapunktur</h4>
@@ -70,7 +79,8 @@
 
             <h4>Viðtökubreytur</h4>
             <p>Engar.</p>
-
+        </div>
+        <div class="col-md-6">
             <h4>Dæmi um svar</h4>
             <pre>
 {
@@ -87,8 +97,13 @@
 }
             </pre>
         </div>
-        <div class="api-description">
-            <h3 id="ilat"><a href="#ilat">Ílát</a></h3>
+    </div>
+
+
+
+    <div class="api-description row">
+        <h3 id="ilat"><a href="#ilat">Ílát</a></h3>
+        <div class="col-md-6">
             <p>Skilar lista af öllum gerðum íláta sem skilgreindar eru í Bjórleitinni.</p>
 
             <h4>Endapunktur</h4>
@@ -96,7 +111,8 @@
 
             <h4>Viðtökubreytur</h4>
             <p>Engar.</p>
-
+        </div>
+        <div class="col-md-6">
             <h4>Dæmi um svar</h4>
             <pre>
 {
