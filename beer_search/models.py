@@ -15,6 +15,16 @@ class Style(models.Model):
     def __str__(self):
         return self.name
 
+    def get_as_dict(self):
+        """
+
+        Returns a dictionary object representing this style.
+        """
+        return {
+            "id": self.id,
+            "name": self.name
+        }
+
     class Meta:
         ordering = ("name",)
 
@@ -28,6 +38,16 @@ class ContainerType(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_as_dict(self):
+        """
+
+        Returns a dictionary object representing this container.
+        """
+        return {
+            "id": self.id,
+            "name": self.name
+        }
 
     class Meta:
         ordering = ("name",)
@@ -118,6 +138,22 @@ class Beer(models.Model):
                 beer.save()
 
         super(Beer, self).save(*args, **kwargs)
+
+    def get_as_dict(self):
+        """
+
+        Returns a human-readable dictionary object representing the beer.
+        """
+
+        return {
+            "name": self.name,
+            "style": self.style.name,
+            "container": self.container.name,
+            "abv": self.abv,
+            "volume": self.volume,
+            "price": self.price,
+            "atvr_id": self.atvr_id
+        }
 
     class Meta:
         ordering = ("name", "container__name")

@@ -1,8 +1,13 @@
 from beer_search.models import Beer
-from django.db.models import Max
+from django.db.models import Max, Min
+
+
+def get_update_date():
+    return Beer.objects.aggregate(Min("updated_at"))["updated_at__min"]
 
 
 def perform_filtering(beer_q, request_body):
+    print(request_body)
     """
 
     :param beer_q: An un-evaluated query for Beer objects.

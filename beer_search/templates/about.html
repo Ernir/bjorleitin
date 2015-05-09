@@ -5,8 +5,8 @@
     <p><a class="btn btn-success"
           href="{% url "beer_search.views.index" %}" role="button">Til
         baka</a></p>
-    <h2>Um bjórleitina</h2>
     <div class="col-md-6">
+    <h2>Um bjórleitina</h2>
 
     <p>Bjórleitin er hobbýverkefni eins bjóráhugamanns, Eiríks Ernis Þorsteinssonar, sem þyrsti í gott yfirlit yfir hið íslenska bjórúrval.</p>
 
@@ -17,18 +17,18 @@
     <p>Að mestu leyti eru stílsupplýsingarnar fengnar frá <a href="http://www.beeradvocate.com/beer/style/">Beeradvocate</a>, en um þó nokkra einföldun er að ræða. Við einföldun voru fyrst og fremst eftirfarandi atriði höfð í huga:</p>
         <ul>
             <li>Íslensk orðræða. Hér á landi er t.d. oftast talað um einfaldlega "IPA" frekar en bandaríska IPA og breska IPA, svo IPA er talinn fram sem einn flokkur.</li>
-            <li>Stærð hvers flokks fyrir sig. Bjórúrvalið hér á landi er takmarkað, það að skilgreina mjög nákvæma flokka myndi skilja eftir mjög fáa bjóra eftir í hverjum flokki fyrir sig. Slík leit er ekki mjög skilvirk eða gagnleg.</li>
+            <li>Stærð hvers flokks fyrir sig. Bjórúrvalið hér á landi er takmarkað, það að skilgreina mjög nákvæma flokka myndi skilja eftir fáa bjóra eftir í hverjum flokki fyrir sig. Slík leit væri hvorki skilvirk né gagnleg.</li>
         </ul>
 
     <h3>Hversu oft eru bjórarnir uppfærðir?</h3>
-    <p>Stefnan er að það sé gert um hver mánaðamót.</p>
+    <p>Núverandi stefna er að það sé gert um hver mánaðamót.</p>
     <p>Gagnagrunnurinn var síðast uppfærður {{ updated_at }}.</p>
 
     <h3>Kemst ég í gögnin?</h3>
-    <p>Já, síðan er með API sem gerir öll áhugaverð gögn opinber.</p>
+    <p>Já, síðan er með <a href="{% url "beer_search.views.api_doc" %}">API</a> sem gerir öll áhugaverð gögn opinber.</p>
 
     <h3>Kemst ég í kóðann?</h3>
-    <p>Já, kóði síðunnar er á <a href="https://github.com/Ernir/bjorleitin">Github</a> skyldi einhver hafa áhuga.</p>
+    <p>Já, kóði síðunnar er á <a href="https://github.com/Ernir/bjorleitin">Github</a>.</p>
 
     <h3>Hvert er samband síðunnar við Vínbúðina?</h3>
     <p>Þessi síða tengist Vínbúðinni ekki á neinn hátt annan en að nota frá henni opinber gögn.</p>
