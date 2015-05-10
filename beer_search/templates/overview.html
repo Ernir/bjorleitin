@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 
+{% block metatags %}
+    <meta name="description" content="Allir bjórar á einni síðu."/>
+{% endblock %}
+
 {% block content %}
     <p><a class="btn btn-success"
           href="{% url "beer_search.views.index" %}" role="button">Til

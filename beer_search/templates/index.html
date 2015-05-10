@@ -2,10 +2,14 @@
 {% load crispy_forms_tags %}
 {% load staticfiles %}
 
+{% block metatags %}
+    <meta name="description" content="Leitarsíða fyrir bjóra vínbúðarinnar."/>
+{% endblock %}
+
 {% block content %}
     <div class="jumbotron">
         <h1>Bjórleitin</h1>
-        <p class="lead">Allir bjórar <a href="http://www.vinbudin.is/">vínbúðarinnar</a> á einum stað.</p>
+        <p class="lead">Allir bjórar <a href="http://www.vinbudin.is/">Vínbúðarinnar</a> á einum stað.</p>
         <p>
             <a class="btn btn-success" href="#leit" role="button">Leita núna</a>
             <a class="btn btn-success" href="{% url "beer_search.views.overview" %}" role="button">Yfirlit bjóra</a>
