@@ -92,33 +92,29 @@ def get_beers_main_form(request):
         return JsonResponse(return_list, safe=False)
 
 
-def get_distinct_properties(request, eiginleiki):
+def get_distinct_properties(request, prop):
     """
 
-    Accepts a standard Django request object, and the Icelandic name of
-    one property from the following list:
+    Accepts a standard Django request object, and the name of
+    one property (prop) from the following list:
 
-    ["rummal", "verd", "prosenta"]
+    ["name", "price", "abv"]
 
-    And returns all unique value stored for that property, in JSON format.
+    And returns all unique values stored for that property, in JSON format.
     """
-    p = "name"  # p for property
-    if eiginleiki == "rummal":
-        p = "volume"
-    elif eiginleiki == "verd":
-        p = "price"
-    elif eiginleiki == "prosenta":
-        p = "abv"
 
-    objects = Beer.objects.filter(available=True).values(p)
+    objects = Beer.objects.filter(available=True).values(prop)
+
+    return_dict = {}
     numbers = []
     for dictionary in objects:
-        number = dictionary[p]
+        number = dictionary[prop]
         if number not in numbers:
             numbers.append(number)
     numbers.sort()
+    return_dict["values"] = numbers
 
-    return JsonResponse(numbers, safe=False)
+    return JsonResponse(return_dict)
 
 
 def get_beers(request):

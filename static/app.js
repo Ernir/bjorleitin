@@ -65,7 +65,7 @@ function getBeers() {
         xhr.abort();
     }
     xhr = $.ajax({
-        url: "/api/leit/",
+        url: "/api/beers-minimal/",
         type: "post",
         data: $("#main-form").serialize(),
 
@@ -105,7 +105,7 @@ function displayResults(jsonData) {
 
         if (numResults % 10 !== 1 || numResults === 11) {
             $("#results-found").text(numResults + " bjórar fundust." + info);
-        } else { // Result on the form 1+10k, k=0, 2, 3, 4, ...
+        } else { // Result of the form 1+10k, k=0, 2, 3, 4, ...
             $("#results-found").text(numResults + " bjór fannst" + info);
         }
         showMessage("#results-found");
@@ -173,11 +173,11 @@ $('#main-form').on('submit', function (event) {
 
 function makeSliders() {
     // ToDo: Combine into one function call.
-    $.get("/api/einstok-gildi/rummal/", function (data) {
-        makeVolumeSlider(data);
+    $.get("/api/distinct-values/volume/", function (data) {
+        makeVolumeSlider(data.values);
     });
-    $.get("/api/einstok-gildi/verd/", function (data) {
-        makePriceSlider(data);
+    $.get("/api/distinct-values/price/", function (data) {
+        makePriceSlider(data.values);
     });
     makeAbvSlider();
 }
