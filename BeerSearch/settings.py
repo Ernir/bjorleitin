@@ -37,7 +37,8 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     # "debug_toolbar", # I comment this in and out, sue me.
     "beer_search",
-    "crispy_forms"
+    "crispy_forms",
+    "storages"
 )
 
 CRISPY_TEMPLATE_PACK = "bootstrap3"
@@ -82,7 +83,10 @@ WSGI_APPLICATION = 'BeerSearch.wsgi.application'
 DATABASES = {"default": dj_database_url.config("BEER_DB_URL")}
 # Enable Connection Pooling
 DATABASES["default"]["ENGINE"] = "django_postgrespool"
+# Stuff from Heroku quickstart:
 
+# Parse database configuration from $DATABASE_URL
+DATABASES['default'] = dj_database_url.config("BEER_DB_URL")
 
 
 # Internationalization
@@ -102,11 +106,6 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
-# Stuff from Heroku quickstart:
-
-# Parse database configuration from $DATABASE_URL
-DATABASES['default'] = dj_database_url.config("BEER_DB_URL")
-
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
@@ -114,10 +113,21 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 ALLOWED_HOSTS = ['*']
 
 # Static asset configuration
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
-# Simplified static file serving.
-# https://warehouse.python.org/project/whitenoise/
-STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+AWS_ACCESS_KEY_ID = os.environ.get("BEER_AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.environ.get("BEER_AWS_SECRET_ACCESS_KEY")
+AWS_STORAGE_BUCKET_NAME = "bjorleit"
+AWS_PRELOAD_METADATA = True
+
+AWS_HEADERS = {
+    "Cache-Control": "max-age=21600",  # 6 hours
+}
+
+DEFAULT_FILE_STORAGE = 'BeerSearch.s3utils.MediaRootS3BotoStorage'
+STATICFILES_STORAGE = 'BeerSearch.s3utils.StaticRootS3BotoStorage'
+
+MEDIA_URL = '//s3.amazonaws.com/%s/media/' % AWS_STORAGE_BUCKET_NAME
+STATIC_URL = '//s3.amazonaws.com/%s/static/' % AWS_STORAGE_BUCKET_NAME
+
+ADMIN_MEDIA_PREFIX = 'https://bjorleit.s3.amazonaws.com/static/admin/'
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
