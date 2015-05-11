@@ -23,6 +23,26 @@
     height: 60px;
 }
 
+/* Facebook button stuff. */
+
+#content > div.jumbotron > div {
+    position: relative;
+}
+
+.facebook-wrapper {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+@media (max-width: 991px) {
+    .facebook-wrapper {
+        position: relative;
+        height: 21px;
+        margin-top: 15px;
+    }
+}
+
 /*
 Spinning the load indicator for queries.
 Source: http://www.bootply.com/128062
