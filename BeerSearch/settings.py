@@ -119,6 +119,7 @@ AWS_ACCESS_KEY_ID = os.environ.get("BEER_AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.environ.get("BEER_AWS_SECRET_ACCESS_KEY")
 AWS_STORAGE_BUCKET_NAME = "bjorleit"
 AWS_PRELOAD_METADATA = True
+AWS_QUERYSTRING_AUTH = False
 
 AWS_HEADERS = {
     "Cache-Control": "max-age=21600",  # 6 hours
