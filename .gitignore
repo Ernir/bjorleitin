@@ -1,5 +1,6 @@
 venv
 *.pyc
+static/images/
 staticfiles
 .idea
 *.csv
