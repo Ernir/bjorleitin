@@ -30,6 +30,12 @@
     margin-top: 15px;
 }
 
+/* Navbar logo centering */
+
+.navbar-brand {
+    padding-top: 10px;
+}
+
 /*
 Spinning the load indicator for queries.
 Source: http://www.bootply.com/128062
