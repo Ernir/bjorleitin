@@ -8,7 +8,8 @@ urlpatterns = \
         # Actual pages
         url(r"^$", views.index, name="index"),
         url(r"^yfirlit/$", views.overview, name="overview"),
-        url(r"^um/", views.about, name="about"),
+        url(r"^spennandi/$", views.exciting, name="exciting"),
+        url(r"^um/$", views.about, name="about"),
         url(r"^api/$", views.api_doc, name="api-doc"),
 
         # API endpoints used internally

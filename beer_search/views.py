@@ -1,7 +1,7 @@
 from beer_search.forms import SearchForm
 from beer_search.models import Beer, Style, ContainerType
 from beer_search.utils import perform_filtering, get_update_date
-from django.db.models import Min
+from django.db.models import Min, Q
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
 from django.conf import settings
@@ -35,16 +35,37 @@ def overview(request):
     A page consisting mostly of a single large table of all beers.
     """
 
-    all_beers = Beer.objects.all().prefetch_related("style", "container")
+    beer_q = Beer.objects.all().prefetch_related("style", "container")
     title = "yfirlit allra bjóra"
     debug = settings.DEBUG
     updated_at = get_update_date()
 
     return render(request, "overview.html", {
-        "beers": all_beers,
+        "beers": beer_q,
         "debug": debug,
         "title": title,
-        "updated_at": updated_at
+        "updated_at": updated_at,
+        "filtered": False
+    })
+
+
+def exciting(request):
+    """
+
+    As overview, above, but only shows new and/or seasonal beers.
+    """
+    beer_q = Beer.objects.filter(Q(new=True) | Q(seasonal=True))\
+        .all().prefetch_related("style", "container")
+    title = "nýir og árstíðabundnir bjórar"
+    debug = settings.DEBUG
+    updated_at = get_update_date()
+
+    return render(request, "overview.html", {
+        "beers": beer_q,
+        "debug": debug,
+        "title": title,
+        "updated_at": updated_at,
+        "filtered": True
     })
 
 

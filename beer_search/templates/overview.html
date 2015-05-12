@@ -27,10 +27,12 @@
         {% for beer in beers %}
             {% if beer.available %}
                 <tr
-                        {% if beer.seasonal %}
-                            class="success"
-                        {% elif beer.new %}
-                            class="info"
+                        {% if not filtered %}
+                            {% if beer.seasonal %}
+                                class="success"
+                            {% elif beer.new %}
+                                class="info"
+                            {% endif %}
                         {% endif %}
                         >
                     <td>
