@@ -1,5 +1,5 @@
 from beer_search.models import Beer
-from django.db.models import Max, Min
+from django.db.models import Max, Min, Q
 
 
 def get_update_date():
@@ -79,11 +79,15 @@ def perform_filtering(beer_q, request_body):
                 min_abv = 0
             beer_q = beer_q.filter(abv__gte=min_abv)
 
+        # Filter for new and seasonal beers.
         if "noteworthy" in request_body:
             properties = request_body.getlist("noteworthy")
-            if "new" in properties:
-                beer_q = beer_q.filter(new=True)
-            if "seasonal" in properties:
-                beer_q = beer_q.filter(seasonal=True)
+            if "new" in properties and "seasonal" in properties:
+                beer_q = beer_q.filter(Q(new=True) | Q(seasonal=True))
+            else:
+                if "new" in properties:
+                    beer_q = beer_q.filter(new=True)
+                if "seasonal" in properties:
+                    beer_q = beer_q.filter(seasonal=True)
 
     return beer_q
