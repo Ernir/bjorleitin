@@ -39,12 +39,15 @@ def overview(request):
     title = "yfirlit allra bjóra"
     debug = settings.DEBUG
     updated_at = get_update_date()
+    explanation = "Hér má sjá alla bjóra sem til eru í " \
+                  "Vínbúðinni á einni síðu."
 
     return render(request, "overview.html", {
         "beers": beer_q,
         "debug": debug,
         "title": title,
         "updated_at": updated_at,
+        "explanation": explanation,
         "filtered": False
     })
 
@@ -54,17 +57,20 @@ def exciting(request):
 
     As overview, above, but only shows new and/or seasonal beers.
     """
-    beer_q = Beer.objects.filter(Q(new=True) | Q(seasonal=True))\
+    beer_q = Beer.objects.filter(Q(new=True) | Q(seasonal=True)) \
         .all().prefetch_related("style", "container")
     title = "nýir og árstíðabundnir bjórar"
     debug = settings.DEBUG
     updated_at = get_update_date()
+    explanation = "Hér má sjá þá bjóra sem eru tiltölulega nýir í " \
+                  "Vínbúðinni og/eða árstíðabundnir."
 
     return render(request, "overview.html", {
         "beers": beer_q,
         "debug": debug,
         "title": title,
         "updated_at": updated_at,
+        "explanation": explanation,
         "filtered": True
     })
 

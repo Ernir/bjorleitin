@@ -6,7 +6,10 @@
 
 {% block content %}
     {% if debug %}
-        Aflúsun: {{ debug }}
+        <p>Aflúsun: {{ debug }}</p>
+    {% endif %}
+    {% if explanation %}
+        <p>{{ explanation }}</p>
     {% endif %}
     <table class="table table-striped table-hover">
         <thead>
