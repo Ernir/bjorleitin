@@ -10,4 +10,3 @@ class BeerAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Beer, BeerAdmin)
-admin.site.register(Image)
