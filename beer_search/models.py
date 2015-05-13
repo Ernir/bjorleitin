@@ -157,3 +157,7 @@ class Beer(models.Model):
 
     class Meta:
         ordering = ("name", "container__name")
+
+
+class Image(models.Model):
+    image = models.ImageField()

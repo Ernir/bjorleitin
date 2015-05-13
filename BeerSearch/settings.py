@@ -113,7 +113,7 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 # Allow all host headers
 ALLOWED_HOSTS = ['*']
 
-# AWS for media (if those ever come along...)
+# AWS setup
 
 AWS_ACCESS_KEY_ID = os.environ.get("BEER_AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.environ.get("BEER_AWS_SECRET_ACCESS_KEY")
@@ -125,12 +125,16 @@ AWS_HEADERS = {
     "Cache-Control": "max-age=86400",  # 6 hours
 }
 
+# Media file configuration
+
 DEFAULT_FILE_STORAGE = 'BeerSearch.s3utils.MediaRootS3BotoStorage'
 MEDIA_URL = '//s3.amazonaws.com/%s/media/' % AWS_STORAGE_BUCKET_NAME
 
 # Static file configuration
 
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+if not DEBUG:
+    STATIC_URL = '//s3.amazonaws.com/%s/static/' % AWS_STORAGE_BUCKET_NAME
+    STATICFILES_STORAGE = 'BeerSearch.s3utils.StaticRootS3BotoStorage'
+else:
+    STATIC_URL = '/static/'
