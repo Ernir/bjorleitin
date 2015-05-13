@@ -17,15 +17,24 @@ def index(request):
 
     The main page.
     """
-    beers = Beer.objects.filter(available=True).all(). \
-        prefetch_related("style", "container")
-
     updated_at = get_update_date()
 
     return render(request, "index.html", {
         "form": SearchForm(),
-        "beers": beers,
         "updated_at": updated_at
+    })
+
+
+def index_table(request):
+    """
+    Returns a rather raw HTML table of all available beers.
+    Called via AJAX on the index page.
+    """
+    beers = Beer.objects.filter(available=True).all(). \
+        prefetch_related("style", "container")
+
+    return render(request, "small_table.html", {
+        "beers": beers,
     })
 
 

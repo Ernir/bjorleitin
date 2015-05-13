@@ -59,8 +59,12 @@ $.ajaxSetup({
 
 // Main AJAX function
 var xhr;
-function getBeers() {
-    showMessage("#results-working");
+function getBeers(noDisplay) {
+
+    if (!noDisplay) {
+        showMessage("#results-working");
+    }
+
     if (xhr) { // If we were already requesting data, start over.
         xhr.abort();
     }
@@ -82,6 +86,9 @@ function getBeers() {
 }
 
 function displayResults(jsonData) {
+    /*
+    Hides all beer rows not matching the given data.
+     */
 
     // Extracting the atvr-IDs of all found beers.
     var atvr_ids = [];
@@ -233,8 +240,23 @@ function makeAbvSlider() {
  Initialization
  */
 
+function makeBeerTable() {
+    /*
+    One initial AJAX call to create the list of beers.
+     */
+    $.get("/small-table/", function(data) {
+        var $tableContainer = $("#table-container");
+        $tableContainer.html(data);
+        $("table").tablesorter();
+        $tableContainer.fadeIn("slow", function() {
+            getBeers(true);
+        });
+    });
+}
+
 function initialize() {
     makeSliders();
-    $("table").tablesorter();
+    makeBeerTable();
 }
+
 $(initialize());

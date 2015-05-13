@@ -22,7 +22,10 @@
             {% crispy form %}
         </div>
         <div class="col-md-6">
-            <p id="results-initial" class="alert alert-info">Fiktaðu í stjórntækjunum til að hefja leit.</p>
+            <p id="results-initial" class="alert alert-info">
+                <span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>
+                Augnablik...
+            </p>
 
             <p id="results-found" class="alert alert-success">bjórar fundust.</p>
 
@@ -35,7 +38,7 @@
 
             <p id="results-error" class="alert alert-danger">Leitarvélin náði ekki sambandi. Er nettengingin ekki örugglega í lagi?</p>
 
-            {% include "small_table.html" %}
+            <div id="table-container"></div>
         </div>
     </div>
 {% endblock %}

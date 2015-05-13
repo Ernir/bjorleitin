@@ -23,6 +23,9 @@ urlpatterns = \
         url(r"^api/beers/", views.get_beers, name="all_beers"),
         url(r"^api/styles/", views.get_styles, name="all_styles"),
         url(r"^api/containers/", views.get_containers,
-            name="all_containers")
+            name="all_containers"),
 
+        # No idea what to call something like this.
+        # TODO Clean up the names.
+        url(r"^small-table/$", views.index_table, name="index_table")
     )

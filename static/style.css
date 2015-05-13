@@ -8,6 +8,11 @@
     display: block;
 }
 
+/* Initial container hiding. Is faded in by jQuery once beers are loaded.*/
+#table-container {
+    display: none;
+}
+
 /* Wrapper for page content to push down footer */
 #content {
     min-height: 100%;
