@@ -121,7 +121,7 @@ AWS_PRELOAD_METADATA = True
 AWS_QUERYSTRING_AUTH = False
 
 AWS_HEADERS = {
-    "Cache-Control": "max-age=86400",  # 6 hours
+    "Cache-Control": "max-age=86400",  # 24 hours
 }
 
 # Media file configuration
