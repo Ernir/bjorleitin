@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = bool(int(os.environ.get("DEBUG_MODE")))
+DEBUG = False #bool(int(os.environ.get("DEBUG_MODE")))
 TEMPLATE_DEBUG = DEBUG
 
 # Application definition
@@ -119,6 +119,7 @@ AWS_SECRET_ACCESS_KEY = os.environ.get("BEER_AWS_SECRET_ACCESS_KEY")
 AWS_STORAGE_BUCKET_NAME = "bjorleit"
 AWS_PRELOAD_METADATA = True
 AWS_QUERYSTRING_AUTH = False
+AWS_IS_GZIPPED = True
 
 AWS_HEADERS = {
     "Cache-Control": "max-age=86400",  # 24 hours
