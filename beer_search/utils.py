@@ -7,7 +7,6 @@ def get_update_date():
 
 
 def perform_filtering(beer_q, request_body):
-    print(request_body)
     """
 
     :param beer_q: An un-evaluated query for Beer objects.
