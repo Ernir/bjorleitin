@@ -2,33 +2,49 @@
 {% load staticfiles %}
 
 {% block content %}
-    <div class="col-md-6">
+    <div class="row">
+    <div class="col-md-12">
     <h2>Um bjórleitina</h2>
+    </div>
+    </div>
+    <div  class="row">
+        <div class="col-md-6">
 
-    <p>Bjórleitin er hobbýverkefni eins bjóráhugamanns, Eiríks Ernis Þorsteinssonar, sem þyrsti í gott yfirlit yfir hið íslenska bjórúrval.</p>
+        <p>Bjórleitin er hobbýverkefni eins bjóráhugamanns, Eiríks Ernis Þorsteinssonar, sem þyrsti í gott yfirlit yfir hið íslenska bjórúrval.</p>
 
-    <h3>Hvaðan koma gögnin?</h3>
-    <p>Grunngögnunum er safnað af <a href="http://www.vinbudin.is/">síðu vínbúðarinnar</a> með sjálfvirku tóli. Upplýsingum sem ekki finnast á síðu vínbúðarinnar (bjórstílar, umbúðir og hvort að viðkomandi bjór sé árstíðabundinn) er bætt við handvirkt.</p>
+        <h3>Hvaðan koma gögnin?</h3>
+        <p>Grunngögnunum er safnað af <a href="http://www.vinbudin.is/">síðu vínbúðarinnar</a> með sjálfvirku tóli. Upplýsingum sem ekki finnast á síðu vínbúðarinnar (bjórstílar, umbúðir og hvort að viðkomandi bjór sé árstíðabundinn) er bætt við handvirkt.</p>
 
-    <h4>Hvernig er bjórunum raðað í stíla?</h4>
-    <p>Að mestu leyti eru stílsupplýsingarnar fengnar frá <a href="http://www.beeradvocate.com/beer/style/">Beeradvocate</a>, en um þó nokkra einföldun er að ræða. Við einföldun voru fyrst og fremst eftirfarandi atriði höfð í huga:</p>
-        <ul>
-            <li>Íslensk orðræða. Hér á landi er t.d. oftast talað um einfaldlega "IPA" frekar en bandaríska IPA og breska IPA, svo IPA er talinn fram sem einn flokkur.</li>
-            <li>Stærð hvers flokks fyrir sig. Bjórúrvalið hér á landi er takmarkað, það að skilgreina mjög nákvæma flokka myndi skilja eftir fáa bjóra eftir í hverjum flokki fyrir sig. Slík leit væri hvorki skilvirk né gagnleg.</li>
-        </ul>
+        <h4>Hvernig er bjórunum raðað í stíla?</h4>
+        <p>Að mestu leyti eru stílsupplýsingarnar fengnar frá <a href="http://www.beeradvocate.com/beer/style/">Beeradvocate</a>, en um þó nokkra einföldun er að ræða. Við einföldun voru fyrst og fremst eftirfarandi atriði höfð í huga:</p>
+            <ul>
+                <li>Íslensk orðræða. Hér á landi er t.d. oftast talað um einfaldlega "IPA" frekar en bandaríska IPA og breska IPA, svo IPA er talinn fram sem einn flokkur.</li>
+                <li>Stærð hvers flokks fyrir sig. Bjórúrvalið hér á landi er takmarkað, það að skilgreina mjög nákvæma flokka myndi skilja eftir fáa bjóra eftir í hverjum flokki fyrir sig. Slík leit væri hvorki skilvirk né gagnleg.</li>
+            </ul>
 
-    <h3>Hversu oft eru bjórarnir uppfærðir?</h3>
-    <p>Núverandi stefna er að það sé gert um hver mánaðamót.</p>
-    <p>Gagnagrunnurinn var síðast uppfærður {{ updated_at }}.</p>
+        <h3>Hversu oft eru bjórarnir uppfærðir?</h3>
+        <p>Núverandi stefna er að það sé gert um hver mánaðamót.</p>
+        <p>Gagnagrunnurinn var síðast uppfærður {{ updated_at }}.</p>
 
-    <h3>Kemst ég í gögnin?</h3>
-    <p>Já, síðan er með <a href="{% url "beer_search.views.api_doc" %}">API</a> sem gerir öll áhugaverð gögn opinber.</p>
+        <h3>Kemst ég í gögnin?</h3>
+        <p>Já, síðan er með <a href="{% url "beer_search.views.api_doc" %}">API</a> sem gerir öll áhugaverð gögn opinber.</p>
 
-    <h3>Kemst ég í kóðann?</h3>
-    <p>Já, kóði síðunnar er á <a href="https://github.com/Ernir/bjorleitin">Github</a>.</p>
+        <h3>Kemst ég í kóðann?</h3>
+        <p>Já, kóði síðunnar er á <a href="https://github.com/Ernir/bjorleitin">Github</a>.</p>
 
-    <h3>Hvert er samband síðunnar við Vínbúðina?</h3>
-    <p>Þessi síða tengist Vínbúðinni ekki á neinn hátt annan en að nota frá henni opinber gögn.</p>
+        <h3>Hvert er samband síðunnar við Vínbúðina?</h3>
+        <p>Þessi síða tengist Vínbúðinni ekki á neinn hátt annan en að nota frá henni opinber gögn.</p>
+        </div>
+        <div class="col-md-6 text-center">
+            <h4>Bjórleitin er á Facebook!</h4>
+            <div class="fb-page" data-href="https://www.facebook.com/bjorleit" data-hide-cover="true" data-show-facepile="true" data-show-posts="true">
+                <div class="fb-xfbml-parse-ignore">
+                    <blockquote cite="https://www.facebook.com/bjorleit">
+                        <a href="https://www.facebook.com/bjorleit">Bjórleitin</a>
+                    </blockquote>
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}
 

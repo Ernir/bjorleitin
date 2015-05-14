@@ -250,6 +250,7 @@ function makeBeerTable() {
         $("table").tablesorter();
         $tableContainer.fadeIn("slow", function() {
             getBeers(true);
+            $(".fb-page").show();
         });
     });
 }

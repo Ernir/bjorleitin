@@ -35,6 +35,10 @@
     margin-top: 15px;
 }
 
+.fb-page {
+    display: none;
+}
+
 /* Navbar logo centering */
 
 .navbar-brand {
