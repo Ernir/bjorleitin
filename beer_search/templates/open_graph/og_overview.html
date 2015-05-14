@@ -1,0 +1,24 @@
+{% load staticfiles %}
+
+<meta property="og:url"
+      content="http://bjorleit.info/spennandi/"/>
+
+<meta property="og:type"
+      content="website" />
+
+<meta property="og:title"
+      content="Spennandi bjórar" />
+
+{% if explanation %}
+    <meta property="og:description"
+        content="{{ explanation }}" />
+{% endif %}
+
+<meta property="og:image"
+      content="{% static "images/logo200x200.png" %}" />
+
+<meta property="fb:app_id"
+      content="453162018180328"/>
+
+<meta property="og:locale"
+      content="is_IS"/>

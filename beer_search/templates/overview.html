@@ -1,7 +1,10 @@
 {% extends "base.html" %}
 
 {% block metatags %}
-    <meta name="description" content="Allir bjórar á einni síðu."/>
+    {% if explanation %}
+        <meta name="description" content="{{ explanation }}"/>
+    {% endif %}
+    {% include "open_graph/og_overview.html" %}
 {% endblock %}
 
 {% block content %}
