@@ -38,7 +38,8 @@ INSTALLED_APPS = (
     # "debug_toolbar", # I comment this in and out, sue me.
     "beer_search",
     "crispy_forms",
-    "storages"
+    "storages",
+    "compressor"
 )
 
 CRISPY_TEMPLATE_PACK = "bootstrap3"
@@ -138,3 +139,6 @@ if not DEBUG:
     STATICFILES_STORAGE = 'BeerSearch.s3utils.StaticRootS3BotoStorage'
 else:
     STATIC_URL = '/static/'
+
+# Compressor configuration
+COMPRESS_ROOT = 'BeerSearch.s3utils.StaticRootS3BotoStorage'
