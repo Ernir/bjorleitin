@@ -1,4 +1,5 @@
 {% load static %}
+{% load compress %}
 
 <!DOCTYPE html>
 <html>
@@ -20,8 +21,9 @@
     <!-- library -->
     <link rel="stylesheet"
           href="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.css"/>
-
-    <link rel="stylesheet" href="{% static "style.css" %}"/>
+    {% compress css %}
+        <link rel="stylesheet" href="{% static "style.css" %}"/>
+    {% endcompress %}
 
     <link rel="shortcut icon" type="image/png" sizes="16x16 24x24 32x32 48x48" href="{% static "beer.ico" %}"/>
 
@@ -75,10 +77,12 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
 
 <!-- common JS -->
-<script src="{% static "app.js" %}"></script>
+{% compress js %}
+    <script src="{% static "app.js" %}"></script>
 
-{% block scripts %}
-{% endblock %}
+    {% block scripts %}
+    {% endblock %}
+{% endcompress %}
 
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){

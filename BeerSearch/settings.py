@@ -74,6 +74,12 @@ TEMPLATES = [
     },
 ]
 
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'compressor.finders.CompressorFinder',
+)
+
 WSGI_APPLICATION = 'BeerSearch.wsgi.application'
 
 
@@ -120,7 +126,7 @@ AWS_SECRET_ACCESS_KEY = os.environ.get("BEER_AWS_SECRET_ACCESS_KEY")
 AWS_STORAGE_BUCKET_NAME = "bjorleit"
 AWS_PRELOAD_METADATA = True
 AWS_QUERYSTRING_AUTH = False
-AWS_IS_GZIPPED = True
+# AWS_IS_GZIPPED = True
 
 AWS_HEADERS = {
     "Cache-Control": "max-age=86400",  # 24 hours
@@ -134,11 +140,25 @@ MEDIA_URL = '//s3.amazonaws.com/%s/media/' % AWS_STORAGE_BUCKET_NAME
 # Static file configuration
 
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-if not DEBUG:
-    STATIC_URL = '//s3.amazonaws.com/%s/static/' % AWS_STORAGE_BUCKET_NAME
-    STATICFILES_STORAGE = 'BeerSearch.s3utils.StaticRootS3BotoStorage'
-else:
-    STATIC_URL = '/static/'
+
+STATIC_URL = '//s3.amazonaws.com/%s/compressor/' % AWS_STORAGE_BUCKET_NAME
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Compressor configuration
-COMPRESS_ROOT = 'BeerSearch.s3utils.StaticRootS3BotoStorage'
+COMPRESS_ENABLED = True  # ToDo make this a config var
+if COMPRESS_ENABLED:
+    STATICFILES_STORAGE = 'BeerSearch.s3utils.CompressorS3BotoStorage'
+    COMPRESS_OFFLINE = True
+    COMPRESS_URL = STATIC_URL
+    COMPRESS_STORAGE = STATICFILES_STORAGE
+    COMPRESS_ROOT = STATIC_ROOT
+    COMPRESS_CSS_FILTERS = [
+        'compressor.filters.css_default.CssAbsoluteFilter',
+        'compressor.filters.cssmin.CSSMinFilter',
+        'compressor.filters.jsmin.JSMinFilter'
+    ]
+else:
+    STATICFILES_STORAGE = 'BeerSearch.s3utils.StaticRootS3BotoStorage'
+
+if not DEBUG and not COMPRESS_ENABLED:
+    STATIC_URL = '/static/'
