@@ -62,7 +62,7 @@
 {% block footer %}
 <div id="footer">
     <div class="container text-muted">
-        <p class="small">Bjórleitin er gæluverkefni <a href="mailto:e.ernir@gmail.com?Subject=Bjórleitin" target="_top">Eiríks Ernis Þorsteinssonar</a>. Gagnagrunnur var síðast uppfærður {{ updated_at }}.</p>
+        <p class="small">Bjórleitin er gæluverkefni <a href="mailto:e.ernir@gmail.com?Subject=Bjórleitin" target="_top">Eiríks Ernis Þorsteinssonar</a>. (<a href="{% url "beer_search.views.about" %}">Lesa meira</a>)</p>
     </div>
 </div>
 {% endblock %}

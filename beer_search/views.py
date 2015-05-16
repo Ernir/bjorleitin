@@ -17,11 +17,8 @@ def index(request):
 
     The main page.
     """
-    updated_at = get_update_date()
-
     return render(request, "index.html", {
         "form": SearchForm(),
-        "updated_at": updated_at
     })
 
 
@@ -47,7 +44,6 @@ def overview(request):
     beer_q = Beer.objects.all().prefetch_related("style", "container")
     title = "yfirlit allra bjóra"
     debug = settings.DEBUG
-    updated_at = get_update_date()
     explanation = "Hér má sjá alla bjóra sem til eru í " \
                   "Vínbúðinni á einni síðu."
 
@@ -55,7 +51,6 @@ def overview(request):
         "beers": beer_q,
         "debug": debug,
         "title": title,
-        "updated_at": updated_at,
         "explanation": explanation,
         "filtered": False
     })
@@ -70,7 +65,6 @@ def exciting(request):
         .all().prefetch_related("style", "container")
     title = "nýir og árstíðabundnir bjórar"
     debug = settings.DEBUG
-    updated_at = get_update_date()
     explanation = "Hér má sjá þá bjóra sem eru tiltölulega nýir í " \
                   "Vínbúðinni og/eða árstíðabundnir."
 
@@ -78,7 +72,6 @@ def exciting(request):
         "beers": beer_q,
         "debug": debug,
         "title": title,
-        "updated_at": updated_at,
         "explanation": explanation,
         "filtered": True
     })
@@ -86,8 +79,7 @@ def exciting(request):
 
 def about(request):
     title = "um Bjórleitina"
-    updated_at = Beer.objects. \
-        aggregate(Min("updated_at"))["updated_at__min"]
+    updated_at = get_update_date()
 
     return render(request, "about.html", {
         "title": title,
