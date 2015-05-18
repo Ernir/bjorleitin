@@ -1,8 +1,9 @@
-from beer_search.models import Style, Beer, ContainerType, Image
+from beer_search.models import Style, Beer, ContainerType, Country
 from django.contrib import admin
 
 admin.site.register(Style)
 admin.site.register(ContainerType)
+admin.site.register(Country)
 
 
 class BeerAdmin(admin.ModelAdmin):

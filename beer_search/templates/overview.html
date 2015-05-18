@@ -24,6 +24,7 @@
             <th>Styrkur</th>
             <th>Magn</th>
             <th>Verð</th>
+            <th>Upprunaland</th>
         </tr>
         </thead>
         <tbody>
@@ -76,6 +77,9 @@
                     </td>
                     <td>
                         {{ beer.price }} kr.
+                    </td>
+                    <td>
+                        {{ beer.country.name }}
                     </td>
                 </tr>
             {% endif %}

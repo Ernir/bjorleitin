@@ -1,5 +1,5 @@
 import json
-from beer_search.models import Beer
+from beer_search.models import Beer, Country
 from django.core.exceptions import ObjectDoesNotExist
 
 
@@ -37,6 +37,16 @@ def parse_volume(volume_string):
     return volume
 
 
+def get_or_create_country(country_name):
+    try:
+        country = Country.objects.get(name=country_name)
+    except ObjectDoesNotExist:
+        country = Country()
+        country.name = country_name
+        country.save()
+    return country
+
+
 def update_beers(beer_list, reset_new_status):
 
     # Marking all preexisting beers as not available until proven wrong.
@@ -58,6 +68,9 @@ def update_beers(beer_list, reset_new_status):
             beer.name = beer_json_object["title"]
             beer.abv = parse_abv(beer_json_object["abv"])
             beer.volume = parse_volume(beer_json_object["volume"])
+
+            country_name = beer_json_object["country"]
+            beer.country = get_or_create_country(country_name)
             
             print("New beer created: " + beer_json_object["title"])
 

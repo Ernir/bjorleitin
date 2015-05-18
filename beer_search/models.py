@@ -53,6 +53,17 @@ class ContainerType(models.Model):
         ordering = ("name",)
 
 
+class Country(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name_plural = "countries"
+        ordering = ("name",)
+
+
 class Beer(models.Model):
     """
 
@@ -72,6 +83,7 @@ class Beer(models.Model):
     # FK fields
     container = models.ForeignKey(ContainerType, null=True, default=None)
     style = models.ForeignKey(Style, null=True, default=None)
+    country = models.ForeignKey(Country, null=True, default=None)
 
     # Boolean/availability fields
     new = models.BooleanField(default=True)
@@ -157,7 +169,3 @@ class Beer(models.Model):
 
     class Meta:
         ordering = ("name", "container__name")
-
-
-class Image(models.Model):
-    image = models.ImageField()

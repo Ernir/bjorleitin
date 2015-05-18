@@ -41,7 +41,8 @@ def overview(request):
     A page consisting mostly of a single large table of all beers.
     """
 
-    beer_q = Beer.objects.all().prefetch_related("style", "container")
+    beer_q = Beer.objects.all().\
+        prefetch_related("style", "container", "country")
     title = "yfirlit allra bjóra"
     debug = settings.DEBUG
     explanation = "Hér má sjá alla bjóra sem til eru í " \
