@@ -1,87 +1,74 @@
-import csv
+import json
 from beer_search.models import Beer
 from django.core.exceptions import ObjectDoesNotExist
 
 
-def clean_csv(input_filename, output_filename):
-    raw_file = open(input_filename, "r")
-    cleaned_file = open(output_filename, 'w+')
+def read_file(path):
+    with open(path) as data_file:
+        products = json.load(data_file)
 
-    is_odd = True  # The file comes with messed up newlines.
-    next(raw_file)  # skipping the header
-    for line in raw_file:
-        line = line.replace("                                    ", "")
-        if is_odd:
-            last = line
-        else:
-            newline = last + line  # Goes to hell if is_odd = False on init
-            newline = newline.replace("\n", "\",\"", 1)
-            cleaned_file.write(newline)
-        is_odd = not is_odd
+    beers = []  # We don't care about other products.
+
+    for product in products:
+        if "category" in product:
+            atvr_beercategories = ["Lagerbjór", "Öl", "Aðrar bjórtegundir"]
+            if product["category"] in atvr_beercategories:
+                beers.append(product)
+
+    return beers
 
 
-def parse_csv(filename):
-    file = open(filename, "r")
-    beer_reader = csv.reader(file, delimiter=",")
-    beer_list = []
-    for row in beer_reader:
-        beer = {"name": row[0]}
-
-        beer["id"] = row[1][1:-1]  # The id is surrounded by parentheses
-
-        if "L" in row[2]:  # Some beers are in L, others in mL
-            # Cleanup, standardizing to mL
-            raw_volume = row[2][:-2].replace(",", ".")
-            volume = int(float(raw_volume)*1000)
-        else:
-            raw_volume = row[2][:-2].strip(" ")
-            volume = int(raw_volume)
-        beer["volume"] = volume
-
-        # Storing ABV: strip off the % sign,
-        beer["abv"] = float(row[3][:-1].replace(",", "."))
-
-        # Stripping out the Icelandic thousand markers and ISK unit.
-        beer["price"] = int(row[4][:-3].replace(".", ""))
-
-        beer_list.append(beer)
-
-    return beer_list
+def parse_price(price_string):
+    price_string = price_string.replace("kr", "").replace(".", "")
+    return int(price_string.strip())
 
 
-def update_beers(beer_list):
+def parse_abv(abv_string):
+    return float(abv_string.replace(",", "."))
 
-    # Marking all preexisting beers as not-new, and not available
-    # until proven otherwise.
+
+def parse_volume(volume_string):
+    if "L" in volume_string:
+        volume_string = volume_string.replace("L", "").replace(",", ".")
+        volume = int(float(volume_string.strip())*1000)
+    else:
+        volume_string = volume_string.replace("ml", "")
+        volume = int(volume_string.strip())
+    return volume
+
+
+def update_beers(beer_list, reset_new_status):
+
+    # Marking all preexisting beers as not available until proven wrong.
+    # If reset_new_status == True, all beers are also set as not_new.
     for beer in Beer.objects.all():
-        beer.new = False
         beer.available = False
+        if reset_new_status:
+            beer.new = False
         beer.save()
 
-    for beer_dict in beer_list:
-        already_exists = False
+    for beer_json_object in beer_list:
         try:  # Checking if we've found the beer previously
-            atvr_id = beer_dict["id"]
+            atvr_id = beer_json_object["id"]
             beer = Beer.objects.get(atvr_id=atvr_id)
             beer.available = True
-            already_exists = True
         except ObjectDoesNotExist:  # Else, we initialize it
             beer = Beer()
+            beer.atvr_id = beer_json_object["id"]
+            beer.name = beer_json_object["title"]
+            beer.abv = parse_abv(beer_json_object["abv"])
+            beer.volume = parse_volume(beer_json_object["volume"])
+            
+            print("New beer created: " + beer_json_object["title"])
 
-        beer.price = beer_dict["price"]  # We always update the price
-        if not already_exists:
-            beer.atvr_id = beer_dict["id"]
-            beer.name = beer_dict["name"]
-            beer.abv = beer_dict["abv"]
-            beer.volume = beer_dict["volume"]
+        new_price = parse_price(beer_json_object["price"])
+        beer.price = new_price  # We always update the price
 
         beer.save()
 
 
-def run():
-    file_in = "atvr.csv"
-    file_clean = "atvr_clean.csv"
+def run(reset_new_status=False):
+    file_in = "products-metadata.json"
 
-    clean_csv(file_in, file_clean)
-    beer_dict = parse_csv(file_clean)
-    update_beers(beer_dict)
+    beer_list = read_file(file_in)
+    update_beers(beer_list, reset_new_status)

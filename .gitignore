@@ -5,3 +5,4 @@ staticfiles
 .idea
 *.csv
 updatedb.sh
+*.json
