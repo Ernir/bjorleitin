@@ -1,5 +1,5 @@
 import json
-from beer_search.models import Beer, Country
+from beer_search.models import Beer, Country, Store
 from django.core.exceptions import ObjectDoesNotExist
 
 
@@ -57,6 +57,10 @@ def update_beers(beer_list, reset_new_status):
             beer.new = False
         beer.save()
 
+    for store in Store.objects.all():
+        for beer_assignment in store.beers_available.all():
+            store.beers_available.remove(beer_assignment)
+
     for beer_json_object in beer_list:
         try:  # Checking if we've found the beer previously
             atvr_id = beer_json_object["id"]
@@ -78,6 +82,19 @@ def update_beers(beer_list, reset_new_status):
         beer.price = new_price  # We always update the price
 
         beer.save()
+
+        # Populating the store information. First, we go deep...
+        for region_dict in beer_json_object["availability"]:
+            for store_dict in region_dict["stores"]:
+                store_ref = store_dict["store"]
+                # ... then we attempt to update the store's beer list.
+                try:
+                    store = Store.objects.\
+                        get(reference_name=store_ref)
+                    store.beers_available.add(beer)
+                    store.save()
+                except ObjectDoesNotExist:
+                    print("Store reference " + store_ref + " not found.")
 
 
 def run(reset_new_status=False):

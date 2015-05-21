@@ -169,3 +169,30 @@ class Beer(models.Model):
 
     class Meta:
         ordering = ("name", "container__name")
+
+
+class Region(models.Model):
+
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ("name",)
+
+
+class Store(models.Model):
+
+    location = models.CharField(max_length=200)
+    region = models.ForeignKey(Region)
+
+    reference_name = models.CharField(max_length=100)
+
+    beers_available = models.ManyToManyField(Beer)
+
+    def __str__(self):
+        return self.region.name + ": " + self.location
+
+    class Meta:
+        ordering = ("region__name", "location")
