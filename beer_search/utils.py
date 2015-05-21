@@ -89,4 +89,9 @@ def perform_filtering(beer_q, request_body):
                 if "seasonal" in properties:
                     beer_q = beer_q.filter(seasonal=True)
 
+        # Filter by stores.
+        if "stores" in request_body:
+            stores = request_body.getlist("stores")
+            beer_q = beer_q.filter(store__in=stores)
+
     return beer_q

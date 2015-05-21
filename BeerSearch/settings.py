@@ -160,5 +160,5 @@ if COMPRESS_ENABLED:
 else:
     STATICFILES_STORAGE = 'BeerSearch.s3utils.StaticRootS3BotoStorage'
 
-if not DEBUG and not COMPRESS_ENABLED:
+if not COMPRESS_ENABLED:
     STATIC_URL = '/static/'

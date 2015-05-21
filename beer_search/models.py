@@ -172,6 +172,10 @@ class Beer(models.Model):
 
 
 class Region(models.Model):
+    """
+    Represents one region of Iceland.
+    Used to categorize the stores.
+    """
 
     name = models.CharField(max_length=100)
 
@@ -183,12 +187,16 @@ class Region(models.Model):
 
 
 class Store(models.Model):
+    """
+    Represents a store.
+    """
 
+    # Usually just the location
     location = models.CharField(max_length=200)
     region = models.ForeignKey(Region)
 
+    # The name used in the scraped data itself.
     reference_name = models.CharField(max_length=100)
-
     beers_available = models.ManyToManyField(Beer)
 
     def __str__(self):

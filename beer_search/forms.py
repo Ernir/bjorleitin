@@ -4,12 +4,18 @@ from crispy_forms.layout import Layout, Field, Div, Fieldset
 from crispy_forms.bootstrap import InlineCheckboxes
 from django.db.models import Min, Max
 from django.forms import NumberInput
-from beer_search.models import Beer, Style, ContainerType
+from beer_search.models import Beer, Style, ContainerType, Store
 
 
 def generate_choices(model):
     all_objects = model.objects.all()
-    return tuple([(object.id, object.name) for object in all_objects])
+    return tuple([(obj.id, obj.name) for obj in all_objects])
+
+
+def generate_store_choices():
+    stores = Store.objects.all().prefetch_related("region")
+    return tuple([(store.id, store.region.name + ": " + store.location)
+                  for store in stores])
 
 
 def min_for_attribute(model, attribute_name):
@@ -107,6 +113,13 @@ class SearchForm(forms.Form):
         required=False,
     )
 
+    stores = forms.MultipleChoiceField(
+        label="Vínbúðir",
+        choices=generate_store_choices(),
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
+
     containers = forms.MultipleChoiceField(
         label="Umbúðir",
         # Skipping the "undefined" container. # ToDo make not a hack.
@@ -195,8 +208,12 @@ class SearchForm(forms.Form):
                 css_class="checkbox col-md-12",
             ),
             Div(
+                Field("stores"),
+                css_class="checkbox col-md-6"
+            ),
+            Div(
                 Field("styles"),
-                css_class="checkbox col-md-8"
+                css_class="checkbox col-md-6"
             ),
             Div(
                 InlineCheckboxes(
