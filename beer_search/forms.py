@@ -34,7 +34,6 @@ class SearchForm(forms.Form):
     Convenience class for defining the main search form on the index.
     """
 
-
     beer_name = forms.CharField(
         label="Nafn bjórs",
         required=False
@@ -156,8 +155,11 @@ class SearchForm(forms.Form):
         Fieldset(
             "Leitarskilyrði",
             Div(
-                Field("beer_name", placeholder="Hluti af nafni bjórs"),
-                css_class="col-md-12"
+                Div(
+                    Field("beer_name", placeholder="Hluti af nafni bjórs"),
+                    css_class="col-md-12"
+                ),
+                css_class="row"
             ),
             Div(
                 Div(
@@ -172,7 +174,8 @@ class SearchForm(forms.Form):
                     Field("max_volume", placeholder="ml"),
                     css_class="col-md-3"
                 ),
-                css_id="volume-container"
+                css_id="volume-container",
+                css_class="row"
             ),
             Div(
                 Div(
@@ -187,7 +190,8 @@ class SearchForm(forms.Form):
                     Field("max_price", placeholder="kr."),
                     css_class="col-md-3 "
                 ),
-                css_id="price_container"
+                css_id="price_container",
+                css_class="row"
             ),
             Div(
                 Div(
@@ -202,35 +206,55 @@ class SearchForm(forms.Form):
                     Field("max_abv", placeholder="%"),
                     css_class="col-md-3"
                 ),
+                css_id="abv-container",
+                css_class="row"
             ),
             Div(
-                InlineCheckboxes("containers"),
-                css_class="checkbox col-md-12",
-            ),
-            Div(
-                Field("stores"),
-                css_class="checkbox col-md-6"
-            ),
-            Div(
-                Field("styles"),
-                css_class="checkbox col-md-6"
-            ),
-            Div(
-                InlineCheckboxes(
-                    "noteworthy",
-                    css_class="checkbox"
+                Div(
+                    InlineCheckboxes("containers"),
+                    css_class="checkbox col-md-12",
                 ),
-                css_class="col-md-8"
+                css_class="row"
             ),
+            Div(
+                Div(
+                    Div(
+                        Field("stores"),
+                        css_class="checkbox"
+                    ),
+                    css_class="col-md-6"
+                ),
+                Div(
+                    Div(
+                        Field("styles"),
+                        css_class="checkbox"
+                    ),
+                    css_class="col-md-6"
+                ),
+                css_class="row"
+            ),
+            Div(
+                Div(
+                    InlineCheckboxes(
+                        "noteworthy",
+                        css_class="checkbox"
+                    ),
+                    css_class="col-md-8"
+                ),
+                css_class="row"
+            )
         ),
         Fieldset(
             "Viðbótarupplýsingar",
             Div(
-                InlineCheckboxes(
-                    "column",
-                    css_class="column-control"
+                Div(
+                    InlineCheckboxes(
+                        "column",
+                        css_class="column-control"
+                    ),
+                    css_class="col-md-12"
                 ),
-                css_class="col-md-12"
+                css_class="row"
             )
         ),
     )
