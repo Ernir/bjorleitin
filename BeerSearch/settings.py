@@ -135,13 +135,13 @@ AWS_HEADERS = {
 # Media file configuration
 
 DEFAULT_FILE_STORAGE = 'BeerSearch.s3utils.MediaRootS3BotoStorage'
-MEDIA_URL = '//s3.amazonaws.com/%s/media/' % AWS_STORAGE_BUCKET_NAME
+MEDIA_URL = '//%s.s3.amazonaws.com/media/' % AWS_STORAGE_BUCKET_NAME
 
 # Static file configuration
 
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
-STATIC_URL = '//s3.amazonaws.com/%s/compressor/' % AWS_STORAGE_BUCKET_NAME
+STATIC_URL = '//%s.s3.amazonaws.com/compressor/' % AWS_STORAGE_BUCKET_NAME
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Compressor configuration
