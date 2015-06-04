@@ -145,7 +145,7 @@ STATIC_URL = '//%s.s3.amazonaws.com/compressor/' % AWS_STORAGE_BUCKET_NAME
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Compressor configuration
-COMPRESS_ENABLED = True  # ToDo make this a config var
+COMPRESS_ENABLED = bool(int(os.environ.get("COMPRESS_ENABLED")))
 if COMPRESS_ENABLED:
     STATICFILES_STORAGE = 'BeerSearch.s3utils.CompressorS3BotoStorage'
     COMPRESS_OFFLINE = True
