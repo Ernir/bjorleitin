@@ -71,7 +71,13 @@ def update_beers(beer_list, reset_new_status):
             beer.atvr_id = beer_json_object["id"]
             beer.name = beer_json_object["title"]
             beer.abv = parse_abv(beer_json_object["abv"])
-            beer.volume = parse_volume(beer_json_object["volume"])
+            # Some version mismatches here
+            if "volume" in beer_json_object:
+                beer.volume = parse_volume(beer_json_object["volume"])
+            elif "weight" in beer_json_object:
+                beer.volume = parse_volume(beer_json_object["weight"])
+            else:
+                beer.volume = 0
 
             country_name = beer_json_object["country"]
             beer.country = get_or_create_country(country_name)
