@@ -28,7 +28,7 @@ def index_table(request):
     Called via AJAX on the index page.
     """
     beers = Beer.objects.filter(available=True).all(). \
-        prefetch_related("style", "container")
+        prefetch_related("style", "container", "country")
 
     return render(request, "small_table.html", {
         "beers": beers,

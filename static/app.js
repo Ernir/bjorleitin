@@ -138,10 +138,10 @@ function showMessage(id) {
 }
 
 function updateColumns() {
-    $(".column-control:checked").each(function (k,v){
+    $(".column-control.btn-primary").each(function (k,v){
         $("." + $(this).val()).show();
     });
-    $(".column-control:not(:checked)").each(function (k,v){
+    $(".column-control.btn-default").each(function (k,v){
         $("." + $(this).val()).hide();
     });
 }
@@ -150,7 +150,11 @@ function updateColumns() {
  Listeners
  */
 $("input[type=checkbox]:not(.column-control),input[type=number]").change(getBeers);
-$(".column-control").change(updateColumns);
+$(".column-control").click(function() {
+    $(this).toggleClass("btn-primary");
+    $(this).toggleClass("btn-default");
+    updateColumns();
+});
 
 // Delayed calls for the text box.
 // Source: http://stackoverflow.com/a/23569018/1675015

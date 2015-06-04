@@ -1,18 +1,19 @@
 <table class="table table-hover">
     <thead>
     <tr>
-        <th>Nafn bjórs</th>
+        <th class="beer-name beer-infocolumn">Nafn bjórs</th>
         <th class="beer-style beer-infocolumn">Stíll</th>
         <th class="beer-container beer-infocolumn">Ílát</th>
         <th class="beer-abv beer-infocolumn">Styrkur</th>
         <th class="beer-volume beer-infocolumn">Magn</th>
         <th class="beer-price beer-infocolumn">Verð</th>
+        <th class="beer-country beer-infocolumn">Land</th>
     </tr>
     </thead>
     <tbody>
     {% for beer in beers %}
         <tr id="beer-{{ beer.atvr_id }}" class="beer-row">
-            <td>
+            <td class="beer-name beer-infocolumn">
                 <a href="http://www.vinbudin.is/DesktopDefault.aspx/tabid-54?productID={{ beer.atvr_id }}" target="_blank">{{ beer.name }}</a>
                 {{ beer.suffix }}
             </td>
@@ -38,6 +39,9 @@
             </td>
             <td class="beer-price beer-infocolumn">
                 {{ beer.price }} kr.
+            </td>
+            <td class="beer-country beer-infocolumn">
+                {{ beer.country }}
             </td>
         </tr>
     {% endfor %}

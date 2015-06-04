@@ -6,3 +6,4 @@ staticfiles
 *.csv
 updatedb.sh
 *.json
+prettify_json.py

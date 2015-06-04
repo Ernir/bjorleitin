@@ -1,6 +1,6 @@
 from django import forms
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Field, Div, Fieldset
+from crispy_forms.layout import Layout, Field, Div, Fieldset, Button
 from crispy_forms.bootstrap import InlineCheckboxes
 from django.db.models import Min, Max
 from django.forms import NumberInput
@@ -136,19 +136,6 @@ class SearchForm(forms.Form):
         required=False
     )
 
-    column = forms.MultipleChoiceField(
-        label="Valdir dálkar",
-        choices=(
-            ("beer-style", "Stíll"),
-            ("beer-container", "Ílát"),
-            ("beer-abv", "Styrkur"),
-            ("beer-volume", "Magn"),
-            ("beer-price", "Verð")
-        ),
-        initial="beer-style",
-        required=False
-    )
-
     helper = FormHelper()
     helper.form_id = "main-form"
     helper.layout = Layout(
@@ -218,7 +205,7 @@ class SearchForm(forms.Form):
             ),
             Div(
                 # Div(
-                #     Div(
+                # Div(
                 #         Field("stores"),
                 #         css_class="checkbox"
                 #     ),
@@ -240,19 +227,6 @@ class SearchForm(forms.Form):
                         css_class="checkbox"
                     ),
                     css_class="col-md-8"
-                ),
-                css_class="row"
-            )
-        ),
-        Fieldset(
-            "Viðbótarupplýsingar",
-            Div(
-                Div(
-                    InlineCheckboxes(
-                        "column",
-                        css_class="column-control"
-                    ),
-                    css_class="col-md-12"
                 ),
                 css_class="row"
             )

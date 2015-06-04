@@ -101,8 +101,21 @@ Source: http://www.bootply.com/128062
 
 /* Initial column hiding on the front page.
    Is overridden once the user starts fiddling. */
-.beer-container, .beer-abv, .beer-volume, .beer-price {
+.beer-container, .beer-abv, .beer-volume, .beer-price, .beer-country {
     display: none;
+}
+
+/* Column display button styling. Uses Flexbox. */
+
+#table-column-selector {
+    display: flex;
+    margin-bottom: 5px  ;
+}
+
+.column-control {
+    flex-grow: 1;
+    margin-left: 5px;
+    margin-right: 5px;
 }
 
 /* Fixes for labels not being properly bolded */
