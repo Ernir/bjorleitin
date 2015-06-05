@@ -1,6 +1,7 @@
 from beer_search.forms import SearchForm
 from beer_search.models import Beer, Style, ContainerType
-from beer_search.utils import perform_filtering, get_update_date
+from beer_search.utils import perform_filtering, get_update_date, \
+    num_lagers_and_ales
 from django.db.models import Min, Q
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
@@ -91,6 +92,28 @@ def about(request):
 def api_doc(request):
     title = "API"
     return render(request, "api_doc.html", {"title": title})
+
+
+def statistics(request):
+    """
+
+    Calculates various interesting statistics to show.
+    Don't go here on an empty DB, it will cause zero divisions.
+    """
+
+    all_available = Beer.available_beers.prefetch_related("style")
+
+    lager_ale_counts = num_lagers_and_ales()
+    lager_ratio = int(lager_ale_counts["lagers"]/all_available.count()*100)
+
+    return render(
+        request,
+        "stats.html", {
+            "number": all_available.count(),
+
+            "lager_ratio": lager_ratio
+        }
+    )
 
 
 """
@@ -204,3 +227,19 @@ def get_containers(request):
         return JsonResponse(return_dict)
     else:
         return HttpResponse(status=405)
+
+
+def lager_ale_numbers(request):
+    """
+    Returns the number of available lagers and ales.
+    """
+
+    all_num = Beer.available_beers.count()
+    lager_ale_counts = num_lagers_and_ales()
+
+    return_dict = {
+        "lagers": lager_ale_counts["lagers"],
+        "ales": lager_ale_counts["ales"]
+    }
+
+    return JsonResponse(return_dict)

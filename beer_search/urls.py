@@ -9,6 +9,7 @@ urlpatterns = \
         url(r"^$", views.index, name="index"),
         url(r"^yfirlit/$", views.overview, name="overview"),
         url(r"^spennandi/$", views.exciting, name="exciting"),
+        url(r"^tolfraedi/$", views.statistics, name="statistics"),
         url(r"^um/$", views.about, name="about"),
         url(r"^api/$", views.api_doc, name="api-doc"),
 
@@ -18,6 +19,9 @@ urlpatterns = \
         url(r"^api/distinct-values/(?P<prop>.+)/$",
             views.get_distinct_properties,
             name="get_distinct_properties"),
+
+        url(r"^api/statistics/lagers-ales/$", views.lager_ale_numbers,
+            name="lager_ale_numbers"),
         
         # Public endpoints
         url(r"^api/beers/", views.get_beers, name="all_beers"),

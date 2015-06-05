@@ -1,3 +1,4 @@
+from beer_search.managers import AvailableBeersManager
 from django.db import models
 from datetime import date
 
@@ -132,6 +133,8 @@ class Beer(models.Model):
     has_duplicate_name = property(_has_duplicate_name)
     has_duplicate_container = property(_has_duplicate_container)
     price_per_litre = property(_price_per_litre)
+    objects = models.Manager()
+    available_beers = AvailableBeersManager()
 
     def save(self, *args, **kwargs):
         self.updated_at = date.today()  # Automatic updates
