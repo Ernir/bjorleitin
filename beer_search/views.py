@@ -1,7 +1,7 @@
 from beer_search.forms import SearchForm
 from beer_search.models import Beer, Style, ContainerType
 from beer_search.utils import perform_filtering, get_update_date, \
-    num_lagers_and_ales, num_per_style
+    num_per_style
 from django.db.models import Q
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
@@ -42,7 +42,7 @@ def overview(request):
     A page consisting mostly of a single large table of all beers.
     """
 
-    beer_q = Beer.objects.all().\
+    beer_q = Beer.objects.all(). \
         prefetch_related("style", "container", "country")
     title = "yfirlit allra bjóra"
     debug = settings.DEBUG
@@ -97,22 +97,10 @@ def api_doc(request):
 def statistics(request):
     """
 
-    Calculates various interesting statistics to show.
-    Don't go here on an empty DB, it will cause zero divisions.
+    Displays various interesting statistics to show..
     """
-
-    all_available = Beer.available_beers.prefetch_related("style")
-
-    lager_ale_counts = num_lagers_and_ales()
-    lager_ratio = int(lager_ale_counts["lagers"]/all_available.count()*100)
-
-    return render(
-        request,
-        "stats.html", {
-            "number": all_available.count(),
-
-            "lager_ratio": lager_ratio
-        }
+    title = "Tölfræði"
+    return render(request, "stats.html", {"title": title}
     )
 
 

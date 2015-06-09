@@ -20,8 +20,6 @@ urlpatterns = \
             views.get_distinct_properties,
             name="get_distinct_properties"),
 
-        url(r"^api/statistics/lagers-ales/$", views.lager_ale_numbers,
-            name="lager_ale_numbers"),
         url(r"^api/statistics/style-numbers/$", views.style_numbers,
             name="style_numbers"),
         
