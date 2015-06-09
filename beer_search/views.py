@@ -229,24 +229,10 @@ def get_containers(request):
         return HttpResponse(status=405)
 
 
-def lager_ale_numbers(request):
-    """
-    Returns the number of available lagers and ales.
-    """
-
-    lager_ale_counts = num_lagers_and_ales()
-
-    return_dict = {
-        "lagers": lager_ale_counts["lagers"],
-        "ales": lager_ale_counts["ales"]
-    }
-
-    return JsonResponse(return_dict)
-
-
 def style_numbers(request):
     """
-    Returns the number of beers associated with each individual style.
+    Returns the number of beers associated with each individual style,
+    as a JSON object with the style names as keys and the numbers as vals.
     """
 
     counts = num_per_style()

@@ -10,6 +10,9 @@ function initializeCharts() {
 }
 
 function makeStyleNumberChart(rawData) {
+    // Creates one Highcharts donut chart.
+    // http://www.highcharts.com/demo/pie-donut
+
     var colors = Highcharts.getOptions().colors;
     var categories = ["Lager", "Öl"];
     var totalCount = 0;
@@ -54,23 +57,24 @@ function makeStyleNumberChart(rawData) {
     var j;
     var k;
     var dataLen = data.length;
-    var detailedCategoryData;
+    var detailedCategoryDataLen;
     var brightness;
 
-    // Build the data arrays
+    // Build the data arrays.
+    // ToDo: Combine this loop with the one above.
     for (j = 0; j < dataLen; j += 1) {
 
-        // add browser data
+        // add lager/ale data
         bigCategoryData.push({
             name: categories[j],
             y: data[j].y,
             color: data[j].color
         });
 
-        // add version data
-        detailedCategoryData = data[j].drilldown.data.length;
-        for (k = 0; k < detailedCategoryData; k += 1) {
-            brightness = 0.2 - (k / detailedCategoryData) / 5;
+        // add more detailed category data
+        detailedCategoryDataLen = data[j].drilldown.data.length;
+        for (k = 0; k < detailedCategoryDataLen; k += 1) {
+            brightness = 0.2 - (k / detailedCategoryDataLen) / 5;
             versionsData.push({
                 name: data[j].drilldown.categories[k],
                 y: data[j].drilldown.data[k],
@@ -123,6 +127,7 @@ function makeStyleNumberChart(rawData) {
                 innerSize: '60%',
                 dataLabels: {
                     formatter: function () {
+                        // Strips the "Lager" prefix, if any, and capitalizes.
                         var strippedName = this.point.name.replace("Lager - ", "");
                         var upperCasedName = strippedName[0].toUpperCase() + strippedName.slice(1);
                         return upperCasedName + ": " + this.point.y;

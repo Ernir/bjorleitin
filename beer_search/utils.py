@@ -97,23 +97,12 @@ def perform_filtering(beer_q, request_body):
     return beer_q
 
 
-def num_lagers_and_ales():
-    available = Beer.available_beers.prefetch_related("style")
-    num_lagers = 0
-    num_ales = 0
-    for beer in available.all():
-        if "Lager" in beer.style.name:
-            num_lagers += 1
-        else:
-            num_ales += 1
-
-    return {
-        "lagers": num_lagers,
-        "ales": num_ales
-    }
-
-
 def num_per_style():
+    """
+
+    :return: A dict with style names as keys and the number of beers of
+    that style as values.
+    """
     style_qs = Style.objects.filter(beer__available=True). \
         annotate(num_beers=Count("beer"))
     return_set = {}
