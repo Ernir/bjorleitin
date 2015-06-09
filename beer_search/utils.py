@@ -1,5 +1,5 @@
-from beer_search.models import Beer
-from django.db.models import Max, Min, Q
+from beer_search.models import Beer, Style
+from django.db.models import Max, Min, Q, Count
 
 
 def get_update_date():
@@ -108,6 +108,15 @@ def num_lagers_and_ales():
             num_ales += 1
 
     return {
-        "lagers" : num_lagers,
+        "lagers": num_lagers,
         "ales": num_ales
     }
+
+
+def num_per_style():
+    style_qs = Style.objects.filter(beer__available=True). \
+        annotate(num_beers=Count("beer"))
+    return_set = {}
+    for style in style_qs.all():
+        return_set[style.name] = style.num_beers
+    return return_set

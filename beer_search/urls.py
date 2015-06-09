@@ -22,6 +22,8 @@ urlpatterns = \
 
         url(r"^api/statistics/lagers-ales/$", views.lager_ale_numbers,
             name="lager_ale_numbers"),
+        url(r"^api/statistics/style-numbers/$", views.style_numbers,
+            name="style_numbers"),
         
         # Public endpoints
         url(r"^api/beers/", views.get_beers, name="all_beers"),

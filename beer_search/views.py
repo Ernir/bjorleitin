@@ -1,8 +1,8 @@
 from beer_search.forms import SearchForm
 from beer_search.models import Beer, Style, ContainerType
 from beer_search.utils import perform_filtering, get_update_date, \
-    num_lagers_and_ales
-from django.db.models import Min, Q
+    num_lagers_and_ales, num_per_style
+from django.db.models import Q
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
 from django.conf import settings
@@ -234,7 +234,6 @@ def lager_ale_numbers(request):
     Returns the number of available lagers and ales.
     """
 
-    all_num = Beer.available_beers.count()
     lager_ale_counts = num_lagers_and_ales()
 
     return_dict = {
@@ -243,3 +242,12 @@ def lager_ale_numbers(request):
     }
 
     return JsonResponse(return_dict)
+
+
+def style_numbers(request):
+    """
+    Returns the number of beers associated with each individual style.
+    """
+
+    counts = num_per_style()
+    return JsonResponse(counts)
