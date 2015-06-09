@@ -3,26 +3,12 @@
 
 {% block content %}
     <h2>Tölfræði</h2>
-    <div class="row">
-        <div class="col-md-6">
-            Við síðustu talningu voru {{ number }} bjórar fáanlegir í Vínbúðinni.
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-6">
-            {{ lager_ratio }}% af bjórvörutegundum Vínbúðarinnar eru lagerbjórar.
-        </div>
-        <div class="col-md-6 text-center">
-            <canvas id="lager-ale-chart" width="250" height="250"></canvas>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-6">
-            Hinir mismunandi bjórstílar eru fáanlegir í mjög mismiklu úrvali.
-        </div>
-        <div class="col-md-6 text-center">
-            <canvas width="250" height="250" style="border: 1px solid #000000"></canvas>
-        </div>
+{#    <div class="row">#}
+{#        <div class="col-md-6">#}
+{#            Við síðustu talningu voru {{ number }} bjórar fáanlegir í Vínbúðinni.#}
+{#        </div>#}
+{#    </div>#}
+            <div id="lager-ale-chart" width="250" height="250"></div>
     </div>
 {% endblock %}
 
