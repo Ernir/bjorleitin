@@ -1,7 +1,7 @@
 from beer_search.forms import SearchForm
 from beer_search.models import Beer, Style, ContainerType
 from beer_search.utils import perform_filtering, get_update_date, \
-    num_per_style
+    num_per_style, num_per_store
 from django.db.models import Q
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
@@ -223,4 +223,15 @@ def style_numbers(request):
     """
 
     counts = num_per_style()
+    return JsonResponse(counts)
+
+
+def store_numbers(request):
+    """
+    Returns the number of beers available in each individual store in JSON.
+    The top level object contains region names as keys, and as values
+    an object that has store names as keys and their beer count as a value.
+    """
+
+    counts = num_per_store()
     return JsonResponse(counts)

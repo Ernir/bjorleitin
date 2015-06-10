@@ -1,4 +1,4 @@
-from beer_search.models import Beer, Style
+from beer_search.models import Beer, Style, Region
 from django.db.models import Max, Min, Q, Count
 
 
@@ -108,4 +108,24 @@ def num_per_style():
     return_set = {}
     for style in style_qs.all():
         return_set[style.name] = style.num_beers
+    return return_set
+
+
+def num_per_store():
+    """
+
+    :return: A dict with region names as keys, and as values
+    a dict that has store names as keys and their beer count as a value.
+    """
+
+    regions = Region.objects.all()
+
+    return_set = {}
+
+    for region in regions:
+        stores = {}
+        for store in region.store_set.all():
+            stores[store.location] = store.beers_available.count()
+        return_set[region.name] = stores
+
     return return_set
