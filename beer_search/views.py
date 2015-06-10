@@ -100,8 +100,7 @@ def statistics(request):
     Displays various interesting statistics to show..
     """
     title = "Tölfræði"
-    return render(request, "stats.html", {"title": title}
-    )
+    return render(request, "stats.html", {"title": title})
 
 
 """

@@ -7,6 +7,10 @@ function initializeCharts() {
     $.get("/api/statistics/style-numbers/", function (data) {
         makeStyleNumberChart(data);
     });
+
+    $.get("/api/beers/", function (data) {
+        makeAbvPriceScatterChart(data);
+    })
 }
 
 function makeStyleNumberChart(rawData) {
@@ -106,7 +110,7 @@ function makeStyleNumberChart(rawData) {
                 size: '60%',
                 dataLabels: {
                     formatter: function () {
-                        var percentage = this.point.y/totalCount*100;
+                        var percentage = this.point.y / totalCount * 100;
                         percentage = percentage.toFixed(1);
                         return this.point.name
                             + ": "
@@ -137,6 +141,79 @@ function makeStyleNumberChart(rawData) {
             }
         ],
         credits: false
+    });
+}
+
+function makeAbvPriceScatterChart(rawData) {
+
+    var data = [];
+    for (var i = 0; i < rawData.beers.length; i++) {
+        var currentBeer = rawData.beers[i];
+        if (currentBeer.container !== "Gjafaaskja") {
+            data.push({
+                name: currentBeer.name,
+                x: Math.round((currentBeer.price / currentBeer.volume) * 1000),
+                y: currentBeer.abv
+            });
+        }
+    }
+
+    $("#abv-price-scatter").highcharts({
+        chart: {
+            type: 'scatter',
+            zoomType: 'xy'
+        },
+        title: {
+            text: "Lítraverð bjóra á móti áfengisprósentu"
+        },
+        xAxis: {
+            title: {
+                enabled: true,
+                text: "kr./L"
+            },
+            startOnTick: true,
+            endOnTick: true,
+            showLastLabel: true
+        },
+        yAxis: {
+            title: {
+                text: "Áfengisprósenta"
+            }
+        },
+        plotOptions: {
+            scatter: {
+                marker: {
+                    radius: 5,
+                    states: {
+                        hover: {
+                            enabled: true,
+                            lineColor: 'rgb(100,100,100)'
+                        }
+                    }
+                },
+                states: {
+                    hover: {
+                        marker: {
+                            enabled: false
+                        }
+                    }
+                },
+                tooltip: {
+                    headerFormat: "",
+                    pointFormat: '{point.name}: {point.x} kr/L, {point.y}%'
+                }
+            }
+        },
+        series: [
+            {
+                name: 'Bjórar',
+                color: 'rgba(223, 83, 83, .5)',
+                data: data,
+                animation: false
+            }
+        ],
+        credits: false,
+        animation: false
     });
 }
 
