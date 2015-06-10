@@ -10,7 +10,11 @@ function initializeCharts() {
 
     $.get("/api/beers/", function (data) {
         makeAbvPriceScatterChart(data);
-    })
+    });
+
+    $.get("/api/statistics/store-numbers/", function (data) {
+        makeStoreNumberChart(data);
+    });
 }
 
 function makeStyleNumberChart(rawData) {
@@ -57,7 +61,7 @@ function makeStyleNumberChart(rawData) {
         }
     }
     var bigCategoryData = [];
-    var versionsData = [];
+    var styleData = [];
     var j;
     var k;
     var dataLen = data.length;
@@ -79,7 +83,7 @@ function makeStyleNumberChart(rawData) {
         detailedCategoryDataLen = data[j].drilldown.data.length;
         for (k = 0; k < detailedCategoryDataLen; k += 1) {
             brightness = 0.2 - (k / detailedCategoryDataLen) / 5;
-            versionsData.push({
+            styleData.push({
                 name: data[j].drilldown.categories[k],
                 y: data[j].drilldown.data[k],
                 color: Highcharts.Color(data[j].color).brighten(brightness).get()
@@ -126,7 +130,7 @@ function makeStyleNumberChart(rawData) {
             },
             {
                 name: 'Stíll',
-                data: versionsData,
+                data: styleData,
                 size: '80%',
                 innerSize: '60%',
                 dataLabels: {
@@ -214,6 +218,127 @@ function makeAbvPriceScatterChart(rawData) {
         ],
         credits: false,
         animation: false
+    });
+}
+
+function makeStoreNumberChart(rawData) {
+    // Creates one Highcharts donut chart.
+    // http://www.highcharts.com/demo/pie-donut
+
+    var colors = Highcharts.getOptions().colors;
+    var regions = [];
+    for (var regionName in rawData) {
+        if (rawData.hasOwnProperty(regionName)) {
+            regions.push(regionName);
+        }
+    }
+    var totalCount = 0;
+    var data = [];
+    for (var i = 0; i < regions.length; i++) {
+        var region = regions[i];
+        data[i] = {
+            y: 0,
+            color: colors[i],
+            drilldown: {
+                name: region,
+                data: [],
+                locations: [],
+                color: colors[i]
+            }
+        };
+        for (var storeName in rawData[region]) {
+            if (rawData[region].hasOwnProperty(storeName)) {
+                var currentCount = rawData[region][storeName];
+                data[i].y += currentCount;
+                data[i].drilldown.locations.push(storeName);
+                data[i].drilldown.data.push(currentCount);
+                totalCount += rawData[region];
+            }
+        }
+    }
+
+    var regionData = [];
+    var versionsData = [];
+    var j;
+    var k;
+    var dataLen = data.length;
+    var detailedCategoryDataLen;
+    var brightness;
+
+    // Build the data arrays.
+    // ToDo: Combine this loop with the one above.
+    for (j = 0; j < dataLen; j += 1) {
+
+        // add region data
+        regionData.push({
+            name: regions[j],
+            y: data[j].y,
+            color: data[j].color
+        });
+
+        // add store data
+        detailedCategoryDataLen = data[j].drilldown.data.length;
+        for (k = 0; k < detailedCategoryDataLen; k += 1) {
+            brightness = 0.2 - (k / detailedCategoryDataLen) / 5;
+            versionsData.push({
+                name: data[j].drilldown.locations[k],
+                y: data[j].drilldown.data[k],
+                color: Highcharts.Color(data[j].color).brighten(brightness).get()
+            });
+        }
+    }
+
+    $("#store-number-chart").highcharts({
+        chart: {
+            type: 'pie'
+        },
+        title: {
+            text: 'Fjöldi bjórvörutegunda í hverri vínbúð'
+        },
+        plotOptions: {
+            pie: {
+                shadow: false,
+                center: ['50%', '50%']
+            }
+        },
+        tooltip: {
+            headerFormat: "",
+            pointFormatter: function () {
+                if (regions.indexOf(this.name) !== -1) {
+                    return this.name
+                } else {
+                    return this.name + ": " + this.y + " vörutegundir";
+                }
+            }
+        },
+        series: [
+            {
+                name: 'Landshluti',
+                data: regionData,
+                size: '60%',
+                dataLabels: {
+                    formatter: function () {
+                        return this.point.name;
+                    },
+                    color: 'white',
+                    distance: -30
+                },
+                animation: false
+            },
+            {
+                name: 'Staðsetning',
+                data: versionsData,
+                size: '80%',
+                innerSize: '60%',
+                dataLabels: {
+                    formatter: function () {
+                        return this.point.name + ": " + this.point.y;
+                    }
+                },
+                animation: false
+            }
+        ],
+        credits: false
     });
 }
 
