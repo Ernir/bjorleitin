@@ -10,6 +10,7 @@ function initializeCharts() {
 
     $.get("/api/beers/", function (data) {
         makeAbvPriceScatterChart(data);
+        makeAlcoholPerISKChart(data);
     });
 
     $.get("/api/statistics/store-numbers/", function (data) {
@@ -339,6 +340,79 @@ function makeStoreNumberChart(rawData) {
             }
         ],
         credits: false
+    });
+}
+
+function makeAlcoholPerISKChart(rawData) {
+    var data = rawData.beers;
+    for (var i = 0; i < data.length; i++) {
+        data[i].ppMlAlc =  data[i].price/(data[i].volume * data[i].abv /100)
+    }
+    data.sort(function(a, b) {
+        return a.ppMlAlc - b.ppMlAlc;
+    });
+    var beerNames = [];
+    var ppMlAlc = [];
+    for (var j = 0; j < data.length; j++) {
+        beerNames[j] = data[j].name;
+        ppMlAlc[j] = data[j].ppMlAlc;
+    }
+    $('#price-per-alcohol-ml').highcharts({
+        chart: {
+            type: 'bar'
+        },
+        title: {
+            text: 'Krónur per millilítra alkóhóls í bjór'
+        },
+        subtitle: {
+            text: "verð / (rúmmál * áfengisprósenta)"
+        },
+        xAxis: {
+            categories: beerNames,
+            title: {
+                text: null
+            }
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: 'kr/mL alkóhóls',
+                align: 'high'
+            },
+            labels: {
+                overflow: 'justify'
+            }
+        },
+        tooltip: {
+            headerFormat: "",
+            pointFormatter: function () {
+                return beerNames[this.x]
+                    + ": "
+                    + this.y.toFixed(2)
+                    + " kr/mL alkóhóls";
+            }
+        },
+        plotOptions: {
+            bar: {
+                dataLabels: {
+                    enabled: true
+                }
+            }
+        },
+        legend: {
+            enabled: false
+        },
+        credits: {
+            enabled: false
+        },
+        series: [{
+            name: 'kr/mL alkóhóls',
+            data: ppMlAlc,
+            animation: false,
+            dataLabels: {
+                format: "{point.y:.2f}"
+            }
+        }]
     });
 }
 
