@@ -376,7 +376,7 @@ function makeAlcoholPerISKChart(rawData) {
         yAxis: {
             min: 0,
             title: {
-                text: 'kr/mL alkóhóls',
+                text: 'kr/ml alkóhóls',
                 align: 'high'
             },
             labels: {
@@ -389,7 +389,7 @@ function makeAlcoholPerISKChart(rawData) {
                 return beerNames[this.x]
                     + ": "
                     + this.y.toFixed(2)
-                    + " kr/mL alkóhóls";
+                    + " kr/ml alkóhóls";
             }
         },
         plotOptions: {
@@ -406,7 +406,7 @@ function makeAlcoholPerISKChart(rawData) {
             enabled: false
         },
         series: [{
-            name: 'kr/mL alkóhóls',
+            name: 'kr/ml alkóhóls',
             data: ppMlAlc,
             animation: false,
             dataLabels: {
