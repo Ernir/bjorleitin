@@ -87,7 +87,7 @@ function getBeers(noDisplay) {
 
 function displayResults(jsonData) {
     /*
-    Hides all beer rows not matching the given data.
+     Hides all beer rows not matching the given data.
      */
 
     // Extracting the atvr-IDs of all found beers.
@@ -138,10 +138,10 @@ function showMessage(id) {
 }
 
 function updateColumns() {
-    $(".column-control.btn-primary").each(function (k,v){
+    $(".column-control.btn-primary").each(function (k, v) {
         $("." + $(this).val()).show();
     });
-    $(".column-control.btn-default").each(function (k,v){
+    $(".column-control.btn-default").each(function (k, v) {
         $("." + $(this).val()).hide();
     });
 }
@@ -150,10 +150,14 @@ function updateColumns() {
  Listeners
  */
 $("input[type=checkbox]:not(.column-control),input[type=number]").change(getBeers);
-$(".column-control").click(function() {
+$(".column-control").click(function () {
     $(this).toggleClass("btn-primary");
     $(this).toggleClass("btn-default");
     updateColumns();
+});
+$(".collapsible-form").find(".control-label").click(function() {
+    $(this).next().toggleClass("no-display");
+        $(this).find("span").toggleClass("no-display");
 });
 
 // Delayed calls for the text box.
@@ -246,22 +250,46 @@ function makeAbvSlider() {
 
 function makeBeerTable() {
     /*
-    One initial AJAX call to create the list of beers.
+     One initial AJAX call to create the list of beers.
      */
-    $.get("/small-table/", function(data) {
+    $.get("/small-table/", function (data) {
         var $tableContainer = $("#table-container");
         $tableContainer.html(data);
         $("table").tablesorter();
-        $tableContainer.fadeIn("slow", function() {
+        $tableContainer.fadeIn("slow", function () {
             getBeers(true);
             $(".fb-page").show();
         });
     });
 }
 
+function hideOnMobileInitial() {
+    /*
+    A few form elements are hidden on mobile by default.
+     */
+
+    // ToDo: Make this not quite as disgusting.
+    var $labels = $(".collapsible-form").find(".control-label");
+    var rightGlyph = '<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>';
+    var downGlyph = '<span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>';
+    var rightGlyphHidden = '<span class="glyphicon glyphicon-chevron-right no-display" aria-hidden="true"></span>';
+    var downGlyphHidden = '<span class="glyphicon glyphicon-chevron-down no-display" aria-hidden="true"></span>';
+
+    var mq = window.matchMedia("(max-width: 991px)");
+    if (mq.matches) {
+        $labels.append(rightGlyph);
+        $labels.append(downGlyphHidden);
+        $labels.next().toggleClass("no-display");
+    } else {
+        $labels.append(rightGlyphHidden);
+        $labels.append(downGlyph);
+    }
+}
+
 function initialize() {
     makeSliders();
     makeBeerTable();
+    hideOnMobileInitial();
 }
 
 $(initialize());

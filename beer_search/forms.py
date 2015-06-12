@@ -204,17 +204,17 @@ class SearchForm(forms.Form):
                 css_class="row"
             ),
             Div(
-                # Div(
-                # Div(
-                #         Field("stores"),
-                #         css_class="checkbox"
-                #     ),
-                #     css_class="col-md-6"
-                # ),
+                Div(
+                    Div(
+                        Field("stores"),
+                        css_class="checkbox collapsible-form"
+                    ),
+                    css_class="col-md-6"
+                ),
                 Div(
                     Div(
                         Field("styles"),
-                        css_class="checkbox"
+                        css_class="checkbox collapsible-form"
                     ),
                     css_class="col-md-6"
                 ),

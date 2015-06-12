@@ -127,6 +127,12 @@ Source: http://www.bootply.com/128062
     font-weight: bold;
 }
 
+/* A simple hiding class */
+
+.no-display {
+    display: none;
+}
+
 /* Indicator to show that you'll be clicking something */
 label:hover {
     text-decoration: underline;
