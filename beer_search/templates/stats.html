@@ -1,6 +1,12 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block metatags %}
+    <meta name="description"
+          content="Tölulegar staðreyndir um Vínbúðirnar, á myndrænu formi."/>
+    {% include "open_graph/og_statistics.html" %}
+{% endblock %}
+
 {% block content %}
     <h2>Tölfræði</h2>
     <div id="lager-ale-chart"></div>
