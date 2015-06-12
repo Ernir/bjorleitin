@@ -1,6 +1,9 @@
 venv
 *.pyc
 static/images/
+static/jslibs/
+static/csslibs/
+static/fonts/
 staticfiles
 .idea
 *.csv
