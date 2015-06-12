@@ -95,10 +95,11 @@ def update_beers(beer_list, reset_new_status):
                 store_ref = store_dict["store"]
                 # ... then we attempt to update the store's beer list.
                 try:
-                    store = Store.objects.\
-                        get(reference_name=store_ref)
-                    store.beers_available.add(beer)
-                    store.save()
+                    if store_ref != " ":  # There are odd blanks sometimes
+                        store = Store.objects.\
+                            get(reference_name=store_ref)
+                        store.beers_available.add(beer)
+                        store.save()
                 except ObjectDoesNotExist:
                     print("Store reference " + store_ref + " not found.")
 
