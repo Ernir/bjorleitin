@@ -65,6 +65,26 @@ class Country(models.Model):
         ordering = ("name",)
 
 
+class BeerType(models.Model):
+    # Base fields
+    name = models.CharField(max_length=200, unique=True)
+    abv = models.FloatField()
+
+    # FK fields
+    style = models.ForeignKey(Style, null=True, default=None)
+    country = models.ForeignKey(Country, null=True, default=None)
+
+    # Additional info
+    untappd_id = models.IntegerField(null=True, default=None, blank=True)
+    untappd_rating = models.FloatField(null=True, default=None, blank=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ("name", )
+
+
 class Beer(models.Model):
     """
 
@@ -82,6 +102,7 @@ class Beer(models.Model):
     atvr_id = models.CharField(max_length=5)
 
     # FK fields
+    beer_type = models.ForeignKey(BeerType, null=True, default=None)
     container = models.ForeignKey(ContainerType, null=True, default=None)
     style = models.ForeignKey(Style, null=True, default=None)
     country = models.ForeignKey(Country, null=True, default=None)
