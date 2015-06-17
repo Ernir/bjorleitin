@@ -22,9 +22,10 @@
             <th>Stíll</th>
             <th>Ílát</th>
             <th>Styrkur</th>
-            <th>Magn</th>
-            <th>Verð</th>
+            <th>Magn (ml)</th>
+            <th>Verð (kr)</th>
             <th>Upprunaland</th>
+            <th title="Upplýsingar fengnar með leyfi untappd.com">Untappd stjörnur</th>
         </tr>
         </thead>
         <tbody>
@@ -47,7 +48,8 @@
                         {% endif %}
                     </td>
                     <td>
-                        <a href="http://www.vinbudin.is/DesktopDefault.aspx/tabid-54?productID={{ beer.atvr_id }}" target="_blank">{{ beer.name }}</a>
+                        <a href="http://www.vinbudin.is/DesktopDefault.aspx/tabid-54?productID={{ beer.atvr_id }}"
+                           target="_blank">{{ beer.name }}</a>
                         {{ beer.suffix }}
                         {% if debug %}
                             (
@@ -73,13 +75,22 @@
                         {{ beer.abv }}%
                     </td>
                     <td>
-                        {{ beer.volume }} ml
+                        {{ beer.volume }}
                     </td>
                     <td>
-                        {{ beer.price }} kr.
+                        {{ beer.price }}
                     </td>
                     <td>
                         {{ beer.country.name }}
+                    </td>
+                    <td>
+                        {% if beer.beer_type.untappd_rating %}
+                            <a href="https://untappd.com/beer/{{ beer.beer_type.untappd_id }}">
+                            {{ beer.beer_type.untappd_rating|floatformat:2 }}
+                            </a>
+                        {% else %}
+                            -
+                        {% endif %}
                     </td>
                 </tr>
             {% endif %}

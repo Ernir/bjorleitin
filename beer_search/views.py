@@ -43,7 +43,7 @@ def overview(request):
     """
 
     beer_q = Beer.objects.all(). \
-        prefetch_related("style", "container", "country")
+        prefetch_related("style", "container", "country", "beer_type")
     title = "yfirlit allra bjóra"
     debug = settings.DEBUG
     explanation = "Hér má sjá alla bjóra sem til eru í " \
