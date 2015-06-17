@@ -29,7 +29,7 @@ def index_table(request):
     Called via AJAX on the index page.
     """
     beers = Beer.objects.filter(available=True).all(). \
-        prefetch_related("style", "container", "country")
+        prefetch_related("style", "container", "country", "beer_type")
 
     return render(request, "small_table.html", {
         "beers": beers,
@@ -64,7 +64,8 @@ def exciting(request):
     As overview, above, but only shows new and/or seasonal beers.
     """
     beer_q = Beer.objects.filter(Q(new=True) | Q(seasonal=True)) \
-        .all().prefetch_related("style", "container")
+        .all()\
+        .prefetch_related("style", "container", "country", "beer_type")
     title = "nýir og árstíðabundnir bjórar"
     debug = settings.DEBUG
     explanation = "Hér má sjá þá bjóra sem eru tiltölulega nýir í " \
@@ -117,7 +118,8 @@ def get_beers_main_form(request):
     """
     if request.method == "POST":
         # Beer list
-        bl = Beer.objects.filter(available=True)
+        bl = Beer.objects.filter(available=True).\
+            prefetch_related("style", "container", "country", "beer_type")
         bl = perform_filtering(bl, request.POST)
 
         return_list = []
@@ -167,7 +169,7 @@ def get_beers(request):
 
     if request.method == "GET":
         beer_queryset = Beer.objects.filter(available=True) \
-            .prefetch_related("style", "container")
+            .prefetch_related("style", "container", "country", "beer_type")
 
         beer_queryset = perform_filtering(beer_queryset, request.GET)
 
