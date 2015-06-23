@@ -228,3 +228,12 @@ class Store(models.Model):
 
     class Meta:
         ordering = ("region__name", "location")
+
+
+class ModifiableSettings(models.Model):
+    """
+    Each instance represents one "setting" modifiable in the admin.
+    """
+
+    key = models.CharField(max_length=100)
+    value = models.IntegerField()
