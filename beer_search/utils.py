@@ -23,13 +23,13 @@ def perform_filtering(beer_q, request_body):
         if "beer_name" in request_body:
             name = request_body["beer_name"]
             if len(name) > 0:
-                beer_q = beer_q.filter(beer_type__name__icontains=name)
+                beer_q = beer_q.filter(name__icontains=name)
 
         # Membership check for styles and containers.
         if "styles" in request_body:
             styles = request_body.getlist("styles")
             if len(styles) > 0:
-                beer_q = beer_q.filter(beer_type__style__id__in=styles)
+                beer_q = beer_q.filter(style__id__in=styles)
         if "containers" in request_body:
             containers = request_body.getlist("containers")
             if len(containers) > 0:
@@ -71,12 +71,12 @@ def perform_filtering(beer_q, request_body):
                 # Setting default in case an empty string is sent
                 max_abv = Beer.objects.aggregate(Max("abv"))[
                     "abv__max"]
-            beer_q = beer_q.filter(beer_type__abv__lte=max_abv)
+            beer_q = beer_q.filter(abv__lte=max_abv)
         if "min_abv" in request_body:
             min_abv = request_body["min_abv"]
             if not len(min_abv) > 0:
                 min_abv = 0
-            beer_q = beer_q.filter(beer_type__abv__gte=min_abv)
+            beer_q = beer_q.filter(abv__gte=min_abv)
 
         # Filter for new and seasonal beers.
         if "noteworthy" in request_body:
