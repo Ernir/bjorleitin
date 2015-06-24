@@ -37,14 +37,32 @@
             <p id="results-none" class="alert alert-info">Ekkert fannst. Má bjóða þér að leita aftur?</p>
 
             <p id="results-error" class="alert alert-danger">Leitarvélin náði ekki sambandi. Er nettengingin ekki örugglega í lagi?</p>
+
             <div id="table-column-selector">
-                <button type="button" class="btn btn-primary column-control" value="beer-name">Nafn</button>
-                <button type="button" class="btn btn-primary column-control" value="beer-style">Stíll</button>
-                <button type="button" class="btn btn-default column-control" value="beer-container">Ílát</button>
-                <button type="button" class="btn btn-default column-control" value="beer-abv">Styrkur</button>
-                <button type="button" class="btn btn-default column-control" value="beer-volume">Magn</button>
-                <button type="button" class="btn btn-default column-control" value="beer-price">Verð</button>
-                <button type="button" class="btn btn-default column-control" value="beer-country">Land</button>
+                <div class="column-control-wrapper col-xs-3">
+                    <button type="button" class="btn btn-primary column-control col-xs-12" value="beer-name">Nafn</button>
+                </div>
+                <div class="column-control-wrapper col-xs-3">
+                    <button type="button" class="btn btn-primary column-control col-xs-12" value="beer-style">Stíll</button>
+                </div>
+                <div class="column-control-wrapper col-xs-3">
+                    <button type="button" class="btn btn-default column-control col-xs-12" value="beer-container">Ílát</button>
+                </div>
+                <div class="column-control-wrapper col-xs-3">
+                    <button type="button" class="btn btn-default column-control col-xs-12" value="beer-abv">Styrkur</button>
+                </div>
+                <div class="column-control-wrapper col-xs-3">
+                    <button type="button" class="btn btn-default column-control col-xs-12" value="beer-volume">Magn</button>
+                </div>
+                <div class="column-control-wrapper col-xs-3">
+                    <button type="button" class="btn btn-default column-control col-xs-12" value="beer-price">Verð</button>
+                </div>
+                <div class="column-control-wrapper col-xs-3">
+                    <button type="button" class="btn btn-default column-control col-xs-12" value="beer-country">Land</button>
+                </div>
+                <div class="column-control-wrapper col-xs-3">
+                    <button type="button" class="btn btn-default column-control col-xs-12" value="beer-untappd">Untappd</button>
+                </div>
             </div>
             <div id="table-container"></div>
         </div>

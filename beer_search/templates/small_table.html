@@ -8,13 +8,15 @@
         <th class="beer-volume beer-infocolumn">Magn</th>
         <th class="beer-price beer-infocolumn">Verð</th>
         <th class="beer-country beer-infocolumn">Land</th>
+        <th class="beer-untappd beer-infocolumn">Untappd stjörnur</th>
     </tr>
     </thead>
     <tbody>
     {% for beer in beers %}
         <tr id="beer-{{ beer.atvr_id }}" class="beer-row">
             <td class="beer-name beer-infocolumn">
-                <a href="http://www.vinbudin.is/DesktopDefault.aspx/tabid-54?productID={{ beer.atvr_id }}" target="_blank">{{ beer.name }}</a>
+                <a href="http://www.vinbudin.is/DesktopDefault.aspx/tabid-54?productID={{ beer.atvr_id }}"
+                   target="_blank">{{ beer.name }}</a>
                 {{ beer.suffix }}
             </td>
             <td class="beer-style beer-infocolumn">
@@ -42,6 +44,15 @@
             </td>
             <td class="beer-country beer-infocolumn">
                 {{ beer.country }}
+            </td>
+            <td class="beer-untappd beer-infocolumn">
+                {% if beer.beer_type.untappd_rating %}
+                    <a href="https://untappd.com/beer/{{ beer.beer_type.untappd_id }}">
+                        {{ beer.beer_type.untappd_rating|floatformat:2 }}
+                    </a>
+                {% else %}
+                    -
+                {% endif %}
             </td>
         </tr>
     {% endfor %}

@@ -102,22 +102,14 @@ Source: http://www.bootply.com/128062
 
 /* Initial column hiding on the front page.
    Is overridden once the user starts fiddling. */
-.beer-container, .beer-abv, .beer-volume, .beer-price, .beer-country {
+.beer-container, .beer-abv, .beer-volume,
+.beer-price, .beer-country, .beer-untappd {
     display: none;
 }
 
-/* Column display button styling. Uses Flexbox. */
-
-#table-column-selector {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-}
-
-.column-control {
-    flex-grow: 1;
-    min-width: 50px;
-    margin: 0 5px 10px 5px;
+/* Gaps between column display buttons */
+.column-control-wrapper {
+    padding: 0 5px 5px 5px;
 }
 
 /* Fixes for labels not being properly bolded */
