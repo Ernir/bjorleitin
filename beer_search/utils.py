@@ -39,6 +39,7 @@ def perform_filtering(beer_q, request_body):
         # * minimum and maximum volume
         # * minimum and maximum price
         # * minimum and maximum abv
+        # * minimum and maximum untappd ratings
         if "min_volume" in request_body:
             min_volume = request_body["min_volume"]
             if not len(min_volume) > 0:
@@ -77,6 +78,24 @@ def perform_filtering(beer_q, request_body):
             if not len(min_abv) > 0:
                 min_abv = 0
             beer_q = beer_q.filter(abv__gte=min_abv)
+
+        if "max_untappd" in request_body:
+            max_untappd = request_body["max_untappd"]
+            if not len(max_untappd) > 0:
+                max_untappd = 0
+            beer_q = beer_q.filter(
+                Q(beer_type__isnull=True)
+                | Q(beer_type__untappd_rating__lte=max_untappd)
+            )
+
+        if "min_untappd" in request_body:
+            min_untappd = request_body["min_untappd"]
+            if not len(min_untappd) > 0:
+                min_untappd = 0
+            beer_q = beer_q.filter(
+                Q(beer_type__isnull=True)
+                | Q(beer_type__untappd_rating__gte=min_untappd)
+            )
 
         # Filter for new and seasonal beers.
         if "noteworthy" in request_body:

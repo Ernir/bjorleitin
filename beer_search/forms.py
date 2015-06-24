@@ -1,10 +1,10 @@
 from django import forms
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Field, Div, Fieldset, Button
+from crispy_forms.layout import Layout, Field, Div, Fieldset
 from crispy_forms.bootstrap import InlineCheckboxes
 from django.db.models import Min, Max
 from django.forms import NumberInput
-from beer_search.models import Beer, Style, ContainerType, Store
+from beer_search.models import Beer, Style, ContainerType, Store, BeerType
 
 
 def generate_choices(model):
@@ -19,13 +19,17 @@ def generate_store_choices():
 
 
 def min_for_attribute(model, attribute_name):
-    return model.objects.filter(available=True). \
-        aggregate(Min(attribute_name))[attribute_name + "__min"]
+    qs = model.objects
+    if model == Beer:
+        qs = qs.filter(available=True)
+    return qs.aggregate(Min(attribute_name))[attribute_name + "__min"]
 
 
 def max_for_attribute(model, attribute_name):
-    return model.objects.filter(available=True). \
-        aggregate(Max(attribute_name))[attribute_name + "__max"]
+    qs = model.objects
+    if model == Beer:
+        qs = qs.filter(available=True)
+    return qs.aggregate(Max(attribute_name))[attribute_name + "__max"]
 
 
 class SearchForm(forms.Form):
@@ -136,6 +140,28 @@ class SearchForm(forms.Form):
         required=False
     )
 
+    min_untappd = forms.DecimalField(
+        label="Lágmarks Untappd stjörnur",
+        required=False,
+        widget=NumberInput(attrs={
+            "type": "number",
+            "value": round(min_for_attribute(BeerType, "untappd_rating"), 2) - 0.01,
+            "min": round(min_for_attribute(BeerType, "untappd_rating"), 2) - 0.01,
+            "max": round(max_for_attribute(BeerType, "untappd_rating"), 2) + 0.01,
+        })
+    )
+
+    max_untappd = forms.DecimalField(
+        label="Hámarks Untappd stjörnur",
+        required=False,
+        widget=NumberInput(attrs={
+            "type": "number",
+            "value": round(max_for_attribute(BeerType, "untappd_rating"), 2) + 0.01,
+            "min": round(min_for_attribute(BeerType, "untappd_rating"), 2) - 0.01,
+            "max": round(max_for_attribute(BeerType, "untappd_rating"), 2) + 0.01,
+        })
+    )
+
     helper = FormHelper()
     helper.form_id = "main-form"
     helper.layout = Layout(
@@ -198,6 +224,22 @@ class SearchForm(forms.Form):
             ),
             Div(
                 Div(
+                    Field("min_untappd", placeholder="stjörnur"),
+                    css_class="col-md-3"
+                ),
+                Div(
+                    css_id="untappd-slider",
+                    css_class="col-md-6 form-slider"
+                ),
+                Div(
+                    Field("max_untappd", placeholder="stjörnur"),
+                    css_class="col-md-3"
+                ),
+                css_id="untappd-container",
+                css_class="row"
+            ),
+            Div(
+                Div(
                     InlineCheckboxes("containers"),
                     css_class="checkbox col-md-12",
                 ),
@@ -229,7 +271,7 @@ class SearchForm(forms.Form):
                     css_class="col-md-8"
                 ),
                 css_class="row"
-            )
+            ),
         ),
     )
     helper.form_action = "/search/"

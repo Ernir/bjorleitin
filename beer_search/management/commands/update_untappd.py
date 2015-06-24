@@ -68,4 +68,4 @@ class Command(BaseCommand):
         start_index, end_index = self.get_indices()
         for beer_type in beer_types[start_index:end_index]:
             self.update_item(beer_type)
-        self.update_indices()
+        self.update_indices(end_index)

@@ -91,6 +91,9 @@ Source: http://www.bootply.com/128062
     #abv-slider {
         margin-top: 63px;
     }
+    #untappd-slider {
+        margin-top: 63px;
+    }
 }
 @media (max-width: 991px) {
     .form-slider {

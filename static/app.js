@@ -195,6 +195,7 @@ function makeSliders() {
         makePriceSlider(data.values);
     });
     makeAbvSlider();
+    makeUntappdSlider();
 }
 
 function makeVolumeSlider(volumes) {
@@ -239,6 +240,25 @@ function makeAbvSlider() {
         slide: function (event, ui) {
             $("#id_min_abv").val(ui.values[0]);
             $("#id_max_abv").val(ui.values[1]);
+            requestLater();
+        }
+    });
+}
+
+function makeUntappdSlider() {
+    var ratings = {
+        min: parseFloat($("#id_min_untappd").val()),
+        max: parseFloat($("#id_max_untappd").val())
+    };
+    $("#untappd-slider").slider({
+        range: true,
+        min: ratings.min,
+        max: ratings.max,
+        step: 0.01,
+        values: [ratings.min, ratings.max],
+        slide: function (event, ui) {
+            $("#id_min_untappd").val(ui.values[0]);
+            $("#id_max_untappd").val(ui.values[1]);
             requestLater();
         }
     });
