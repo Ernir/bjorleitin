@@ -95,6 +95,7 @@ class SearchForm(forms.Form):
             "value": min_for_attribute(Beer, "abv"),
             "min": min_for_attribute(Beer, "abv"),
             "max": max_for_attribute(Beer, "abv"),
+            "step": 0.1
         })
     )
 
@@ -106,6 +107,7 @@ class SearchForm(forms.Form):
             "value": max_for_attribute(Beer, "abv"),
             "min": min_for_attribute(Beer, "abv"),
             "max": max_for_attribute(Beer, "abv"),
+            "step": 0.1
         })
     )
 
@@ -148,6 +150,7 @@ class SearchForm(forms.Form):
             "value": round(min_for_attribute(BeerType, "untappd_rating"), 2) - 0.01,
             "min": round(min_for_attribute(BeerType, "untappd_rating"), 2) - 0.01,
             "max": round(max_for_attribute(BeerType, "untappd_rating"), 2) + 0.01,
+            "step": 0.01
         })
     )
 
@@ -159,6 +162,7 @@ class SearchForm(forms.Form):
             "value": round(max_for_attribute(BeerType, "untappd_rating"), 2) + 0.01,
             "min": round(min_for_attribute(BeerType, "untappd_rating"), 2) - 0.01,
             "max": round(max_for_attribute(BeerType, "untappd_rating"), 2) + 0.01,
+            "step": 0.01
         })
     )
 

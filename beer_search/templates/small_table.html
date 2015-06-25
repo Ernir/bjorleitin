@@ -47,7 +47,8 @@
             </td>
             <td class="beer-untappd beer-infocolumn">
                 {% if beer.beer_type.untappd_rating %}
-                    <a href="https://untappd.com/beer/{{ beer.beer_type.untappd_id }}">
+                    <a href="https://untappd.com/beer/{{ beer.beer_type.untappd_id }}"
+                            target="_blank">
                         {{ beer.beer_type.untappd_rating|floatformat:2 }}
                     </a>
                 {% else %}
