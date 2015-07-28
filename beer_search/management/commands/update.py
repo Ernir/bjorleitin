@@ -1,44 +1,89 @@
 import json
-from beer_search.models import Beer, Country, Store, BeerType
+import requests
+from beer_search.models import Beer, Country, Store, BeerType, \
+    ContainerType
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import BaseCommand
 
 
 class Command(BaseCommand):
 
-    @staticmethod
-    def read_file(path):
-        with open(path) as data_file:
-            products = json.load(data_file)
+    @classmethod
+    def get_data(cls):
+        """
+        Steals beer data from the internal API of vinbudin.is.
+        :return: A list of beers, as a JSON array. Format not particularly well defined.
+        """
+        domain = "http://www.vinbudin.is"
+        location = "/addons/origo/module/ajaxwebservices/search.asmx/DoSearch"
+        url = domain + location
 
-        beers = []  # We don't care about other products.
+        # Mandatory headers, as derived from website request info.
+        headers = {
+            "host": "www.vinbudin.is",
+            "connection": "keep-alive",
+            "cache-control": "max-age=0",
+            "accept:": "application/json, text/javascript, */*; q=0.01",
+            "x-requested-with": "XMLHttpRequest",
+            "user-agent": "Bjorleit/0.1 (+http://bjorleit.info/)",
+            "content-type": "application/json; charset=utf-8",
+            "accept-encoding": "gzip, deflate, sdch",
+            "accept-language": "en-GB,en;q=0.8,is;q=0.6,en-US;q=0.4",
+        }
 
-        for product in products:
-            if "category" in product:
-                atvr_beercategories = ["Lagerbjór", "Öl", "Aðrar bjórtegundir"]
-                if product["category"] in atvr_beercategories:
-                    beers.append(product)
+        # High values break the API.
+        items_per_iteration = 100
 
-        return beers
+        request_params = {
+            "category": "beer",
+            "skip": 0,
+            "count": items_per_iteration,
+            "orderBy": "name asc"
+        }
 
-    @staticmethod
-    def parse_price(price_string):
-        price_string = price_string.replace("kr", "").replace(".", "")
-        return int(price_string.strip())
+        accumulated_list = []
+        it_count = 0
+        max_it = 10  # Safeguard, real stop is at bottom of loop.
 
-    @staticmethod
-    def parse_abv(abv_string):
-        return float(abv_string.replace(",", "."))
+        while it_count <= max_it:
+            it_count += 1
 
-    @staticmethod
-    def parse_volume(volume_string):
-        if "L" in volume_string:
-            volume_string = volume_string.replace("L", "").replace(",", ".")
-            volume = int(float(volume_string.strip())*1000)
-        else:
-            volume_string = volume_string.replace("ml", "")
-            volume = int(volume_string.strip())
-        return volume
+            json_response = requests.get(
+                url,
+                headers=headers,
+                params=request_params
+            ).json()
+
+
+            # The whole thing is apparently a string inside a JSONObject.
+            data = json.loads(json_response["d"])
+            data = data["data"]  # Nesting fun
+
+            if len(data) > 0:
+                accumulated_list.extend(data)
+                # Moving on
+                request_params["skip"] += items_per_iteration
+            else:
+                break
+
+        return accumulated_list
+
+    @classmethod
+    def prepare_beers_for_update(cls, reset_new_status):
+        # Marking all existing beers as not available until proven wrong.
+        # If reset_new_status == True, all beers are also set as not_new.
+        for beer in Beer.objects.all():
+            beer.available = False
+            if reset_new_status:
+                beer.new = False
+            beer.save()
+
+    @classmethod
+    def clean_id(cls, atvr_id):
+        stringified_id = str(atvr_id)
+        while len(stringified_id) < 5:
+            stringified_id = "0" + stringified_id
+        return stringified_id
 
     @staticmethod
     def get_or_create_country(country_name):
@@ -51,78 +96,96 @@ class Command(BaseCommand):
         return country
 
     @classmethod
-    def update_beers(cls, beer_list, reset_new_status):
+    def update_beer_type(cls, beer, json_object):
+        try:  # Checking if this beer belongs to a known type
+            beer_type = BeerType.objects.get(name=beer.name)
+            beer.beer_type = beer_type
+        except ObjectDoesNotExist:  # Otherwise, create one
+            if not "ASKJA" in json_object["ProductContainerType"]:  # ... unless it's a box.
+                beer_type = BeerType()
+                beer_type.name = beer.name
+                beer_type.abv = beer.abv
+                beer_type.style = beer.style
+                beer_type.country = beer.country
+                beer_type.save()
 
-        # Marking all preexisting beers as not available until proven wrong.
-        # If reset_new_status == True, all beers are also set as not_new.
-        for beer in Beer.objects.all():
-            beer.available = False
-            if reset_new_status:
-                beer.new = False
-            beer.save()
+                beer.beer_type = beer_type
+                beer.save()
 
-        for store in Store.objects.all():
-            for beer_assignment in store.beers_available.all():
-                store.beers_available.remove(beer_assignment)
+    @classmethod
+    def find_container_type(cls, atvr_name):
+        """
+        The ATVR database contains container info with non-human-friendly
+        names. This function finds the appropriate Bjórleit Container type.
+        """
 
-        for beer_json_object in beer_list:
+        if atvr_name == "FL.":
+            container_type = ContainerType.objects.get(name="Flaska")
+        elif atvr_name == "DS.":
+            container_type = ContainerType.objects.get(name="Dós")
+        elif "ASKJA" in atvr_name:
+            container_type = ContainerType.objects.get(name="Gjafaaskja")
+        elif atvr_name == "KÚT.":
+            container_type = ContainerType.objects.get(name="Kútur")
+        else:
+            container_type = ContainerType.objects.get(name="Ótilgreint")
+
+        return container_type
+
+    @classmethod
+    def update_availability_info(cls):
+        pass  # ToDo: Implement
+
+    @classmethod
+    def update_products(cls, product_list):
+
+        for json_object in product_list:
+            atvr_id = cls.clean_id(json_object["ProductID"])
             try:  # Checking if we've found the beer previously
-                atvr_id = beer_json_object["id"]
                 beer = Beer.objects.get(atvr_id=atvr_id)
                 beer.available = True
             except ObjectDoesNotExist:  # Else, we initialize it
                 beer = Beer()
-                beer.atvr_id = beer_json_object["id"]
-                beer.name = beer_json_object["title"]
-                beer.abv = cls.parse_abv(beer_json_object["abv"])
-                # Some version mismatches here
-                if "volume" in beer_json_object:
-                    beer.volume = cls.parse_volume(beer_json_object["volume"])
-                elif "weight" in beer_json_object:
-                    beer.volume = cls.parse_volume(beer_json_object["weight"])
-                else:
-                    beer.volume = 0
+                beer.atvr_id = atvr_id
+                beer.name = json_object["ProductName"]
+                beer.abv = json_object["ProductAlchoholVolume"]
+                beer.volume = int(json_object["ProductBottledVolume"])
+                beer.container = cls.find_container_type(json_object["ProductContainerType"])
 
-                country_name = beer_json_object["country"]
+                country_name = json_object["ProductCountryOfOrigin"]
                 beer.country = cls.get_or_create_country(country_name)
 
-                print("New beer created: " + beer_json_object["title"])
+                print("New beer created: " + json_object["ProductName"])
 
-            new_price = cls.parse_price(beer_json_object["price"])
+            new_price = json_object["ProductPrice"]
             beer.price = new_price  # We always update the price
 
-            try:  # Checking if this beer belongs to a known type
-                beer_type = BeerType.objects.get(name=beer.name)
-                beer.beer_type = beer_type
-            except ObjectDoesNotExist:  # Otherwise, create one
-                if not "Ýmsir" in beer.style.name:  # ... unless it's a box.
-                    beer_type = BeerType()
-                    beer_type.name = beer.name
-                    beer_type.abv = beer.abv
-                    beer_type.style = beer.style
-                    beer_type.country = beer.country
-                    beer_type.save()
-                    beer.beer_type = beer_type
+            # Significant updates done in their own functions
+            cls.update_beer_type(beer, json_object)
+            cls.update_availability_info()
 
             beer.save()
 
-            # Populating the store information. First, we go deep...
-            for region_dict in beer_json_object["availability"]:
-                for store_dict in region_dict["stores"]:
-                    store_ref = store_dict["store"]
-                    # ... then we attempt to update the store's beer list.
-                    try:
-                        if store_ref != " ":  # There are odd blanks sometimes
-                            store = Store.objects.\
-                                get(reference_name=store_ref)
-                            store.beers_available.add(beer)
-                            store.save()
-                    except ObjectDoesNotExist:
-                        print("Store reference " + store_ref + " not found.")
+    def add_arguments(self, parser):
+
+        # Named (optional) arguments
+        parser.add_argument('--clearall',
+            dest="clearall",
+            default=False,
+            help='Sets all beers as "not new".'
+        )
 
     def handle(self, *args, **options):
-        file_in = "products-metadata.json"
-        reset_new_status=False
+        try:
+            beer_list = self.get_data()
+        except ConnectionError:
+            print("Unable to connect to vinbudin.is")
+            beer_list = []
 
-        beer_list = self.read_file(file_in)
-        self.update_beers(beer_list, reset_new_status)
+        if len(beer_list) > 0:
+            if options["clearall"]:
+                set_as_not_new = False
+            else:
+                set_as_not_new = True
+            self.prepare_beers_for_update(set_as_not_new)
+            self.update_products(beer_list)
