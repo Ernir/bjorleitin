@@ -1,6 +1,7 @@
 from beer_search.managers import AvailableBeersManager
 from django.db import models
-from datetime import date
+from django.utils import timezone
+from datetime import date, timedelta
 
 
 class Style(models.Model):
@@ -108,9 +109,10 @@ class Beer(models.Model):
     country = models.ForeignKey(Country, null=True, default=None)
 
     # Boolean/availability fields
-    new = models.BooleanField(default=True)
+    first_seen_at = models.DateTimeField(null=True)
     available = models.BooleanField(default=True)
     seasonal = models.BooleanField(default=False)
+    new = models.BooleanField(default=False)
 
     # Hidden fields
     updated_at = models.DateField(default=date.today)
@@ -151,9 +153,17 @@ class Beer(models.Model):
     def _price_per_litre(self):
         return int(self.price / self.volume * 1000)
 
+    def _check_if_new(self):
+        if not self.first_seen_at:
+            return False  # If we've never seen it, it's not a new product.
+        two_months_ago = timezone.now() - timedelta(days=60)
+
+        return self.first_seen_at > two_months_ago
+
     has_duplicate_name = property(_has_duplicate_name)
     has_duplicate_container = property(_has_duplicate_container)
     price_per_litre = property(_price_per_litre)
+
     objects = models.Manager()
     available_beers = AvailableBeersManager()
 
@@ -172,6 +182,8 @@ class Beer(models.Model):
             for beer in duplicates.all():
                 beer.style = self.style
                 beer.save()
+
+        self.new = self._check_if_new()
 
         super(Beer, self).save(*args, **kwargs)
 

@@ -68,8 +68,8 @@ def exciting(request):
         .prefetch_related("style", "container", "country", "beer_type")
     title = "nýir og árstíðabundnir bjórar"
     debug = settings.DEBUG
-    explanation = "Hér má sjá þá bjóra sem eru tiltölulega nýir í " \
-                  "Vínbúðinni og/eða árstíðabundnir."
+    explanation = "Hér má sjá þá bjóra sem hafa verið í Vínbúðinni í " \
+                  "innan við 60 daga eða eru í tímabundinni sölu."
 
     return render(request, "overview.html", {
         "beers": beer_q,

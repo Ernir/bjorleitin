@@ -1,5 +1,7 @@
 import json
 import requests
+import pytz
+from datetime import datetime
 from beer_search.models import Beer, Country, Store, BeerType, \
     ContainerType
 from django.core.exceptions import ObjectDoesNotExist
@@ -59,7 +61,10 @@ class Command(BaseCommand):
             data = json.loads(json_response["d"])
             data = data["data"]  # Nesting fun
 
-            if len(data) > 0:
+            num_fetched = len(data)
+            print("Fetched " + str(num_fetched) + " beers")
+
+            if num_fetched > 0:
                 accumulated_list.extend(data)
                 # Moving on
                 request_params["skip"] += items_per_iteration
@@ -150,10 +155,19 @@ class Command(BaseCommand):
                 beer.name = json_object["ProductName"]
                 beer.abv = json_object["ProductAlchoholVolume"]
                 beer.volume = int(json_object["ProductBottledVolume"])
-                beer.container = cls.find_container_type(json_object["ProductContainerType"])
+                beer.container = cls.find_container_type(
+                    json_object["ProductContainerType"]
+                )
 
                 country_name = json_object["ProductCountryOfOrigin"]
                 beer.country = cls.get_or_create_country(country_name)
+
+                first_seen_at = datetime.strptime(
+                    json_object["ProductDateOnMarket"],
+                    "%Y-%m-%dT%H:%M:%S",
+                )
+                first_seen_at = pytz.utc.localize(first_seen_at)
+                beer.first_seen_at = first_seen_at
 
                 print("New beer created: " + json_object["ProductName"])
 
@@ -169,7 +183,8 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
 
         # Named (optional) arguments
-        parser.add_argument('--clearall',
+        parser.add_argument(
+            '--clearall',
             dest="clearall",
             default=False,
             help='Sets all beers as "not new".'
