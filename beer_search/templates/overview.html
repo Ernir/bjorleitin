@@ -33,7 +33,7 @@
             {% if beer.available %}
                 <tr
                         {% if not filtered %}
-                            {% if beer.seasonal %}
+                            {% if beer.temporary %}
                                 class="success"
                             {% elif beer.new %}
                                 class="info"
@@ -41,8 +41,8 @@
                         {% endif %}
                         >
                     <td>
-                        {% if beer.seasonal %}
-                            Árstíðabundinn
+                        {% if beer.temporary %}
+                            Tímabundinn
                         {% elif beer.new %}
                             Nýr!
                         {% endif %}

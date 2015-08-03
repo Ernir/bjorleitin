@@ -168,6 +168,7 @@ class Command(BaseCommand):
                 )
                 first_seen_at = pytz.utc.localize(first_seen_at)
                 beer.first_seen_at = first_seen_at
+                beer.temporary = json_object["ProductIsTemporaryOnSale"]
 
                 print("New beer created: " + json_object["ProductName"])
 

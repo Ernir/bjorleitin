@@ -61,9 +61,9 @@ def overview(request):
 def exciting(request):
     """
 
-    As overview, above, but only shows new and/or seasonal beers.
+    As overview, above, but only shows new and/or temporary beers.
     """
-    beer_q = Beer.objects.filter(Q(new=True) | Q(seasonal=True)) \
+    beer_q = Beer.objects.filter(Q(new=True) | Q(temporary=True)) \
         .all()\
         .prefetch_related("style", "container", "country", "beer_type")
     title = "nýir og árstíðabundnir bjórar"

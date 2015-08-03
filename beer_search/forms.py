@@ -134,10 +134,10 @@ class SearchForm(forms.Form):
     )
 
     noteworthy = forms.MultipleChoiceField(
-        label="Nýir og árstíðabundnir",
+        label="Nýir og tímabundnir bjórar",
         choices=(
             ("new", "Nýr"),
-            ("seasonal", "Árstíðabundinn")
+            ("temporary", "Tímabundinn")
         ),
         required=False
     )

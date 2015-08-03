@@ -111,7 +111,7 @@ class Beer(models.Model):
     # Boolean/availability fields
     first_seen_at = models.DateTimeField(null=True)
     available = models.BooleanField(default=True)
-    seasonal = models.BooleanField(default=False)
+    temporary = models.BooleanField(default=False)
     new = models.BooleanField(default=False)
 
     # Hidden fields

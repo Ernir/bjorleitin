@@ -97,16 +97,16 @@ def perform_filtering(beer_q, request_body):
                 | Q(beer_type__untappd_rating__gte=min_untappd)
             )
 
-        # Filter for new and seasonal beers.
+        # Filter for new and temporary beers.
         if "noteworthy" in request_body:
             properties = request_body.getlist("noteworthy")
-            if "new" in properties and "seasonal" in properties:
-                beer_q = beer_q.filter(Q(new=True) | Q(seasonal=True))
+            if "new" in properties and "temporary" in properties:
+                beer_q = beer_q.filter(Q(new=True) | Q(temporary=True))
             else:
                 if "new" in properties:
                     beer_q = beer_q.filter(new=True)
-                if "seasonal" in properties:
-                    beer_q = beer_q.filter(seasonal=True)
+                if "temporary" in properties:
+                    beer_q = beer_q.filter(temporary=True)
 
         # Filter by stores.
         if "stores" in request_body:
