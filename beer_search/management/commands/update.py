@@ -2,7 +2,7 @@ import json
 import requests
 import pytz
 from datetime import datetime
-from beer_search.models import Beer, Country, Store, BeerType, \
+from beer_search.models import Beer, Country, BeerType, \
     ContainerType
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import BaseCommand
