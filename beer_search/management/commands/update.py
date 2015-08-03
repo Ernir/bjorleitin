@@ -74,13 +74,10 @@ class Command(BaseCommand):
         return accumulated_list
 
     @classmethod
-    def prepare_beers_for_update(cls, reset_new_status):
+    def prepare_beers_for_update(cls):
         # Marking all existing beers as not available until proven wrong.
-        # If reset_new_status == True, all beers are also set as not_new.
         for beer in Beer.objects.all():
             beer.available = False
-            if reset_new_status:
-                beer.new = False
             beer.save()
 
     @classmethod
@@ -181,16 +178,6 @@ class Command(BaseCommand):
 
             beer.save()
 
-    def add_arguments(self, parser):
-
-        # Named (optional) arguments
-        parser.add_argument(
-            '--clearall',
-            dest="clearall",
-            default=False,
-            help='Sets all beers as "not new".'
-        )
-
     def handle(self, *args, **options):
         try:
             beer_list = self.get_data()
@@ -199,9 +186,5 @@ class Command(BaseCommand):
             beer_list = []
 
         if len(beer_list) > 0:
-            if options["clearall"]:
-                set_as_not_new = False
-            else:
-                set_as_not_new = True
-            self.prepare_beers_for_update(set_as_not_new)
+            self.prepare_beers_for_update()
             self.update_products(beer_list)
