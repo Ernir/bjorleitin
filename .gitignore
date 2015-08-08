@@ -7,6 +7,6 @@ static/fonts/
 staticfiles
 .idea
 *.csv
-updatedb.sh
+*.sh
 *.json
 prettify_json.py
