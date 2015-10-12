@@ -29,10 +29,14 @@
                 <li><a href="{% url "beer_search.views.statistics" %}" title="Ýmis tölfræði">Tölfræði</a> </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="{% url "beer_search.views.api_doc" %}" title="Upplýsingar fyrir forritara.">API</a></li>
+                <li>
+                    <div class="facebook-wrapper">
+                        <div class="fb-like" data-href="http://bjorleit.info/" data-layout="button_count" data-action="like" data-show-faces="false" data-share="true"></div>
+                    </div>
+                </li>
             </ul>
-            <ul class="nav navbar-nav navbar-right">
-                <li><a href="{% url "beer_search.views.about" %}" title="Upplýsingar um Bjórleitina.">Um</a></li>
+            <ul class="nav navbar-nav navbar-right" id="about-link">
+                <li><a href="{% url "beer_search.views.about" %}" title="Upplýsingar um Bjórleitina.">Um Bjórleitina</a></li>
             </ul>
         </div>
         <!--/.nav-collapse -->

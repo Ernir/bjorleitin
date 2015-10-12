@@ -30,9 +30,16 @@
 
 /* Facebook button stuff. */
 
-.facebook-wrapper {
-    height: 21px;
-    margin-top: 15px;
+@media (min-width: 992px) {
+    .facebook-wrapper {
+        width: 160px;
+        padding-top: 20px;
+    }
+}
+@media (max-width: 991px) {
+    .facebook-wrapper {
+        padding-left: 15px;
+    }
 }
 
 .fb-page {

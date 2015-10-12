@@ -170,7 +170,7 @@ class SearchForm(forms.Form):
     helper.form_id = "main-form"
     helper.layout = Layout(
         Fieldset(
-            "Leitarskilyrði",
+            "Leitaðu að bjórum í <a href='http://www.vinbudin.is/' target='blank_'>Vínbúðinni!</a>",
             Div(
                 Div(
                     Field("beer_name", placeholder="Hluti af nafni bjórs"),
