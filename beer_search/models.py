@@ -103,7 +103,7 @@ class Beer(models.Model):
     atvr_id = models.CharField(max_length=5)
 
     # FK fields
-    beer_type = models.ForeignKey(BeerType, null=True, default=None)
+    beer_type = models.ForeignKey(BeerType, null=True, default=None, blank=True)
     container = models.ForeignKey(ContainerType, null=True, default=None)
     style = models.ForeignKey(Style, null=True, default=None)
     country = models.ForeignKey(Country, null=True, default=None)
