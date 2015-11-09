@@ -1,5 +1,6 @@
 from beer_search.forms import SearchForm
-from beer_search.models import Beer, Style, ContainerType, GiftBox
+from beer_search.models import Beer, Style, ContainerType, GiftBox, \
+    BeerType
 from beer_search.utils import perform_filtering, get_update_date, \
     num_per_style, num_per_store
 from django.db.models import Q
@@ -29,7 +30,8 @@ def index_table(request):
     Called via AJAX on the index page.
     """
     beers = Beer.objects.filter(available=True).all(). \
-        prefetch_related("style", "container", "country", "beer_type")
+        prefetch_related("container", "beer_type", "beer_type__style",
+                         "beer_type__country")
 
     return render(request, "small_table.html", {
         "beers": beers,
@@ -42,8 +44,8 @@ def overview(request):
     A page consisting mostly of a single large table of all beers.
     """
 
-    beer_q = Beer.available_beers.all(). \
-        prefetch_related("style", "container", "country", "beer_type")
+    beer_q = Beer.available_beers.all().prefetch_related(
+        "container", "beer_type", "beer_type__style", "beer_type__country")
     box_q = GiftBox.available_beers.all().prefetch_related("country")
     title = "yfirlit allra bjóra"
     debug = settings.DEBUG
@@ -67,7 +69,8 @@ def exciting(request):
     """
     beer_q = Beer.available_beers.filter(Q(new=True) | Q(temporary=True)) \
         .all() \
-        .prefetch_related("style", "container", "country", "beer_type")
+        .prefetch_related(
+        "container", "beer_type", "beer_type__style", "beer_type__country")
     box_q = GiftBox.available_beers.filter(
         Q(new=True) | Q(temporary=True)).all().prefetch_related("country")
     title = "nýir og árstíðabundnir bjórar"
@@ -143,8 +146,9 @@ def get_beers_main_form(request):
     """
     if request.method == "POST":
         # Beer list
-        bl = Beer.objects.filter(available=True). \
-            prefetch_related("style", "container", "country", "beer_type")
+        bl = Beer.objects.filter(available=True).prefetch_related(
+            "container", "beer_type", "beer_type__style",
+            "beer_type__country")
         bl = perform_filtering(bl, request.POST)
 
         return_list = []
@@ -164,12 +168,17 @@ def get_distinct_properties(request, prop):
     Accepts a standard Django request object, and the name of
     one property (prop) from the following list:
 
-    ["name", "price", "abv"]
+    ["name", "price", "abv", "volume"]
 
     And returns all unique values stored for that property, in JSON format.
     """
 
-    objects = Beer.objects.filter(available=True).values(prop)
+    assert prop in ["name", "price", "abv", "volume"], "Invalid property"
+
+    if prop == "abv":
+        objects = BeerType.objects.values(prop)
+    else:
+        objects = Beer.available_beers.values(prop)
 
     return_dict = {}
     numbers = []
@@ -193,8 +202,10 @@ def get_beers(request):
     """
 
     if request.method == "GET":
-        beer_queryset = Beer.objects.filter(available=True) \
-            .prefetch_related("style", "container", "country", "beer_type")
+        beer_queryset = Beer.objects.filter(
+            available=True).prefetch_related("container", "beer_type",
+                                             "beer_type__style",
+                                             "beer_type__country")
 
         beer_queryset = perform_filtering(beer_queryset, request.GET)
 

@@ -64,8 +64,8 @@
                         {% endif %}
                     </td>
                     <td>
-                        {% if beer.style %}
-                            {{ beer.style }}
+                        {% if beer.beer_type.style %}
+                            {{ beer.beer_type.style }}
                         {% else %}
                             ?
                         {% endif %}
@@ -78,7 +78,7 @@
                         {% endif %}
                     </td>
                     <td>
-                        {{ beer.abv }}%
+                        {{ beer.beer_type.abv }}%
                     </td>
                     <td>
                         {{ beer.volume }}
@@ -87,7 +87,7 @@
                         {{ beer.price }}
                     </td>
                     <td>
-                        {{ beer.country.name }}
+                        {{ beer.beer_type.country.name }}
                     </td>
                     <td>
                         {% if beer.beer_type.untappd_rating %}

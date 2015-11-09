@@ -97,17 +97,13 @@ class Beer(models.Model):
 
     # Base fields
     name = models.CharField(max_length=200)
-    abv = models.FloatField()
     price = models.IntegerField()
     volume = models.IntegerField()
     atvr_id = models.CharField(max_length=5)
 
     # FK fields
-    beer_type = models.ForeignKey(BeerType, null=True, default=None,
-                                  blank=True)
-    container = models.ForeignKey(ContainerType, null=True, default=None)
-    style = models.ForeignKey(Style, null=True, default=None)
-    country = models.ForeignKey(Country, null=True, default=None)
+    beer_type = models.ForeignKey(BeerType)
+    container = models.ForeignKey(ContainerType)
 
     # Boolean/availability fields
     first_seen_at = models.DateTimeField(null=True)
@@ -173,16 +169,15 @@ class Beer(models.Model):
 
         self.suffix = self._calculate_uniquely_identifying_suffix()
         # Finds beers with the same name, and assigns the same style.
-        if self.style:
-            duplicates = Beer.objects \
-                .filter(name=self.name, style=None) \
-                .exclude(atvr_id=self.atvr_id)
-            if duplicates.count() > 0:
-                # Sometimes superfluous saving, but meh.
-                super(Beer, self).save(*args, **kwargs)
-            for beer in duplicates.all():
-                beer.style = self.style
-                beer.save()
+        duplicates = Beer.objects \
+            .filter(name=self.name, beer_type__style=None) \
+            .exclude(atvr_id=self.atvr_id)
+        if duplicates.count() > 0:
+            # Sometimes superfluous saving, but meh.
+            super(Beer, self).save(*args, **kwargs)
+        for beer in duplicates.all():
+            beer.beer_type.style = self.beer_type.style
+            beer.save()
 
         self.new = self._check_if_new()
 
@@ -196,9 +191,9 @@ class Beer(models.Model):
 
         return {
             "name": self.name,
-            "style": self.style.name,
+            "style": self.beer_type.style.name,
             "container": self.container.name,
-            "abv": self.abv,
+            "abv": self.beer_type.abv,
             "volume": self.volume,
             "price": self.price,
             "atvr_id": self.atvr_id

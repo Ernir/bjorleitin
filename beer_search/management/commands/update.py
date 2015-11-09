@@ -123,9 +123,9 @@ class Command(BaseCommand):
         except ObjectDoesNotExist:  # Otherwise, create one
             beer_type = BeerType()
             beer_type.name = beer.name
-            beer_type.abv = beer.abv
-            beer_type.style = beer.style
-            beer_type.country = beer.country
+            beer_type.abv = json_object["ProductAlchoholVolume"]
+            country_name = json_object["ProductCountryOfOrigin"]
+            beer_type.country = cls.get_or_create_country(country_name)
             beer_type.save()
 
             beer.beer_type = beer_type
@@ -174,10 +174,7 @@ class Command(BaseCommand):
     def initialize_product(cls, product, json_object):
         print("New product created: " + json_object["ProductName"])
         product.name = json_object["ProductName"]
-        product.abv = json_object["ProductAlchoholVolume"]
         product.volume = int(json_object["ProductBottledVolume"])
-        country_name = json_object["ProductCountryOfOrigin"]
-        product.country = cls.get_or_create_country(country_name)
         product.first_seen_at = \
             cls.clean_date(json_object["ProductDateOnMarket"])
         product.temporary = json_object["ProductIsTemporaryOnSale"]
@@ -190,6 +187,9 @@ class Command(BaseCommand):
         except ObjectDoesNotExist:
             box = GiftBox()
             box.atvr_id = atvr_id
+            box.abv = json_object["ProductAlchoholVolume"]
+            country_name = json_object["ProductCountryOfOrigin"]
+            box.country = cls.get_or_create_country(country_name)
             cls.initialize_product(box, json_object)
         return box
 

@@ -20,8 +20,8 @@
                 {{ beer.suffix }}
             </td>
             <td class="beer-style beer-infocolumn">
-                {% if beer.style %}
-                    {{ beer.style }}
+                {% if beer.beer_type.style %}
+                    {{ beer.beer_type.style }}
                 {% else %}
                     ?
                 {% endif %}
@@ -34,7 +34,7 @@
                 {% endif %}
             </td>
             <td class="beer-abv beer-infocolumn">
-                {{ beer.abv }}%
+                {{ beer.beer_type.abv }}%
             </td>
             <td class="beer-volume beer-infocolumn">
                 {{ beer.volume }} ml
@@ -43,7 +43,7 @@
                 {{ beer.price }} kr.
             </td>
             <td class="beer-country beer-infocolumn">
-                {{ beer.country }}
+                {{ beer.beer_type.country }}
             </td>
             <td class="beer-untappd beer-infocolumn">
                 {% if beer.beer_type.untappd_rating %}

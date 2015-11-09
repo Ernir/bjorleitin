@@ -1,4 +1,4 @@
-from beer_search.models import Beer, Style, Region
+from beer_search.models import Beer, Style, Region, BeerType
 from django.db.models import Max, Min, Q, Count
 
 
@@ -29,7 +29,7 @@ def perform_filtering(beer_q, request_body):
         if "styles" in request_body:
             styles = request_body.getlist("styles")
             if len(styles) > 0:
-                beer_q = beer_q.filter(style__id__in=styles)
+                beer_q = beer_q.filter(beer_type__style__id__in=styles)
         if "containers" in request_body:
             containers = request_body.getlist("containers")
             if len(containers) > 0:
@@ -70,19 +70,19 @@ def perform_filtering(beer_q, request_body):
             max_abv = request_body["max_abv"]
             if not len(max_abv) > 0:
                 # Setting default in case an empty string is sent
-                max_abv = Beer.objects.aggregate(Max("abv"))[
+                max_abv = BeerType.objects.aggregate(Max("abv"))[
                     "abv__max"]
-            beer_q = beer_q.filter(abv__lte=max_abv)
+            beer_q = beer_q.filter(beer_type__abv__lte=max_abv)
         if "min_abv" in request_body:
             min_abv = request_body["min_abv"]
             if not len(min_abv) > 0:
                 min_abv = 0
-            beer_q = beer_q.filter(abv__gte=min_abv)
+            beer_q = beer_q.filter(beer_type__abv__gte=min_abv)
 
         if "max_untappd" in request_body:
             max_untappd = request_body["max_untappd"]
             if not len(max_untappd) > 0:
-                max_untappd = 0
+                max_untappd = 5
             beer_q = beer_q.filter(
                 Q(beer_type__isnull=True)
                 | Q(beer_type__untappd_rating__lte=max_untappd)
@@ -122,11 +122,14 @@ def num_per_style():
     :return: A dict with style names as keys and the number of beers of
     that style as values.
     """
-    style_qs = Style.objects.filter(beer__available=True). \
-        annotate(num_beers=Count("beer"))
+
     return_set = {}
-    for style in style_qs.all():
-        return_set[style.name] = style.num_beers
+    for style in Style.objects.all():
+        count = 0
+        for beer_type in style.beertype_set.all():
+            count += len(beer_type.beer_set.filter(available=True).all())
+        if count > 0:
+            return_set[style.name] = count
     return return_set
 
 
