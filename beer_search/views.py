@@ -1,5 +1,5 @@
 from beer_search.forms import SearchForm
-from beer_search.models import Beer, Style, ContainerType
+from beer_search.models import Beer, Style, ContainerType, GiftBox
 from beer_search.utils import perform_filtering, get_update_date, \
     num_per_style, num_per_store
 from django.db.models import Q
@@ -42,8 +42,9 @@ def overview(request):
     A page consisting mostly of a single large table of all beers.
     """
 
-    beer_q = Beer.objects.all(). \
+    beer_q = Beer.available_beers.all(). \
         prefetch_related("style", "container", "country", "beer_type")
+    box_q = GiftBox.available_beers.all().prefetch_related("country")
     title = "yfirlit allra bjóra"
     debug = settings.DEBUG
     explanation = "Hér má sjá alla bjóra sem til eru í " \
@@ -51,6 +52,7 @@ def overview(request):
 
     return render(request, "overview.html", {
         "beers": beer_q,
+        "boxes": box_q,
         "debug": debug,
         "title": title,
         "explanation": explanation,
@@ -63,9 +65,11 @@ def exciting(request):
 
     As overview, above, but only shows new and/or temporary beers.
     """
-    beer_q = Beer.objects.filter(Q(new=True) | Q(temporary=True)) \
-        .all()\
+    beer_q = Beer.available_beers.filter(Q(new=True) | Q(temporary=True)) \
+        .all() \
         .prefetch_related("style", "container", "country", "beer_type")
+    box_q = GiftBox.available_beers.filter(
+        Q(new=True) | Q(temporary=True)).all().prefetch_related("country")
     title = "nýir og árstíðabundnir bjórar"
     debug = settings.DEBUG
     explanation = "Hér má sjá þá bjóra sem hafa verið í Vínbúðinni í " \
@@ -73,6 +77,7 @@ def exciting(request):
 
     return render(request, "overview.html", {
         "beers": beer_q,
+        "boxes": box_q,
         "debug": debug,
         "title": title,
         "explanation": explanation,
@@ -118,7 +123,7 @@ def get_beers_main_form(request):
     """
     if request.method == "POST":
         # Beer list
-        bl = Beer.objects.filter(available=True).\
+        bl = Beer.objects.filter(available=True). \
             prefetch_related("style", "container", "country", "beer_type")
         bl = perform_filtering(bl, request.POST)
 
