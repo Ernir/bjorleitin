@@ -103,7 +103,8 @@ class Beer(models.Model):
     atvr_id = models.CharField(max_length=5)
 
     # FK fields
-    beer_type = models.ForeignKey(BeerType, null=True, default=None, blank=True)
+    beer_type = models.ForeignKey(BeerType, null=True, default=None,
+                                  blank=True)
     container = models.ForeignKey(ContainerType, null=True, default=None)
     style = models.ForeignKey(Style, null=True, default=None)
     country = models.ForeignKey(Country, null=True, default=None)
@@ -205,6 +206,67 @@ class Beer(models.Model):
 
     class Meta:
         ordering = ("name", "container__name")
+
+
+class GiftBox(models.Model):
+    """
+
+    Represents one type of gift box. Giftboxes are similar to beers (see
+    above), but do not have a beer type (usually there are multiple types
+    per box) and similar.
+
+    """
+
+    # Base fields
+    name = models.CharField(max_length=200)
+    abv = models.FloatField()
+    price = models.IntegerField()
+    volume = models.IntegerField()
+    atvr_id = models.CharField(max_length=5)
+
+    # FK fields
+    country = models.ForeignKey(Country, null=True, default=None)
+
+    # Boolean/availability fields
+    first_seen_at = models.DateTimeField(null=True)
+    available = models.BooleanField(default=True)
+    temporary = models.BooleanField(default=False)
+    new = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.name
+
+    def _check_if_new(self):
+        if not self.first_seen_at:
+            return False  # If we've never seen it, it's not a new product.
+        two_months_ago = timezone.now() - timedelta(days=60)
+
+        return self.first_seen_at > two_months_ago
+
+    objects = models.Manager()
+    available_beers = AvailableBeersManager()
+
+    def save(self, *args, **kwargs):
+        self.new = self._check_if_new()
+
+        super(GiftBox, self).save(*args, **kwargs)
+
+    def get_as_dict(self):
+        """
+
+        Returns a human-readable dictionary object representing the box.
+        """
+
+        return {
+            "name": self.name,
+            "abv": self.abv,
+            "volume": self.volume,
+            "price": self.price,
+            "atvr_id": self.atvr_id
+        }
+
+    class Meta:
+        ordering = ("name",)
 
 
 class Region(models.Model):

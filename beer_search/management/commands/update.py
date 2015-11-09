@@ -3,13 +3,12 @@ import requests
 import pytz
 from datetime import datetime
 from beer_search.models import Beer, Country, BeerType, \
-    ContainerType
+    ContainerType, GiftBox
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import BaseCommand
 
 
 class Command(BaseCommand):
-
     @classmethod
     def get_data(cls):
         """
@@ -74,14 +73,21 @@ class Command(BaseCommand):
         return accumulated_list
 
     @classmethod
-    def prepare_beers_for_update(cls):
+    def prepare_products_for_update(cls):
         # Marking all existing beers as not available until proven wrong.
         for beer in Beer.objects.all():
             beer.available = False
             beer.save()
+        for box in GiftBox.objects.all():
+            box.available = False
+            box.save()
 
     @classmethod
     def clean_id(cls, atvr_id):
+        """
+        ATVR ids are strings of length 4, but the API returns an integer.
+        The integers must be zero-padded and converted to strings for urls.
+        """
         stringified_id = str(atvr_id)
         while len(stringified_id) < 5:
             stringified_id = "0" + stringified_id
@@ -98,21 +104,32 @@ class Command(BaseCommand):
         return country
 
     @classmethod
+    def clean_date(cls, raw_date):
+        """
+        Converts the API's date format to a Python-friendly format.
+        """
+        first_seen_at = datetime.strptime(raw_date, "%Y-%m-%dT%H:%M:%S")
+        return pytz.utc.localize(first_seen_at)
+
+    @classmethod
     def update_beer_type(cls, beer, json_object):
+        """
+        Each beer product is just an instance of a particular type of beer,
+        this common info is stored separately.
+        """
         try:  # Checking if this beer belongs to a known type
             beer_type = BeerType.objects.get(name=beer.name)
             beer.beer_type = beer_type
         except ObjectDoesNotExist:  # Otherwise, create one
-            if not "ASKJA" in json_object["ProductContainerType"]:  # ... unless it's a box.
-                beer_type = BeerType()
-                beer_type.name = beer.name
-                beer_type.abv = beer.abv
-                beer_type.style = beer.style
-                beer_type.country = beer.country
-                beer_type.save()
+            beer_type = BeerType()
+            beer_type.name = beer.name
+            beer_type.abv = beer.abv
+            beer_type.style = beer.style
+            beer_type.country = beer.country
+            beer_type.save()
 
-                beer.beer_type = beer_type
-                beer.save()
+            beer.beer_type = beer_type
+            beer.save()
 
     @classmethod
     def find_container_type(cls, atvr_name):
@@ -125,58 +142,66 @@ class Command(BaseCommand):
             container_type = ContainerType.objects.get(name="Flaska")
         elif atvr_name == "DS.":
             container_type = ContainerType.objects.get(name="Dós")
-        elif "ASKJA" in atvr_name:
-            container_type = ContainerType.objects.get(name="Gjafaaskja")
         elif atvr_name == "KÚT.":
             container_type = ContainerType.objects.get(name="Kútur")
+        elif "ASKJA" in atvr_name:
+            raise ValueError("Gift boxes should be GiftBox instances.")
         else:
             container_type = ContainerType.objects.get(name="Ótilgreint")
 
         return container_type
 
     @classmethod
-    def update_availability_info(cls):
-        pass  # ToDo: Implement
-
-    @classmethod
     def update_products(cls, product_list):
 
         for json_object in product_list:
             atvr_id = cls.clean_id(json_object["ProductID"])
-            try:  # Checking if we've found the beer previously
-                beer = Beer.objects.get(atvr_id=atvr_id)
-                beer.available = True
-            except ObjectDoesNotExist:  # Else, we initialize it
-                beer = Beer()
-                beer.atvr_id = atvr_id
-                beer.name = json_object["ProductName"]
-                beer.abv = json_object["ProductAlchoholVolume"]
-                beer.volume = int(json_object["ProductBottledVolume"])
-                beer.container = cls.find_container_type(
-                    json_object["ProductContainerType"]
-                )
+            if not "ASKJA" in json_object["ProductContainerType"]:
+                product = cls.get_beer_instance(json_object, atvr_id)
+                raw_container = json_object["ProductContainerType"]
+                product.container = cls.find_container_type(raw_container)
+                cls.update_beer_type(product, json_object)
+            else:
+                product = cls.get_box_instance(json_object, atvr_id)
 
-                country_name = json_object["ProductCountryOfOrigin"]
-                beer.country = cls.get_or_create_country(country_name)
-
-                first_seen_at = datetime.strptime(
-                    json_object["ProductDateOnMarket"],
-                    "%Y-%m-%dT%H:%M:%S",
-                )
-                first_seen_at = pytz.utc.localize(first_seen_at)
-                beer.first_seen_at = first_seen_at
-                beer.temporary = json_object["ProductIsTemporaryOnSale"]
-
-                print("New beer created: " + json_object["ProductName"])
-
+            product.available = True
             new_price = json_object["ProductPrice"]
-            beer.price = new_price  # We always update the price
+            product.price = new_price  # We always update the price
 
-            # Significant updates done in their own functions
-            cls.update_beer_type(beer, json_object)
-            cls.update_availability_info()
+            product.save()
 
-            beer.save()
+    @classmethod
+    def initialize_product(cls, product, json_object):
+        print("New product created: " + json_object["ProductName"])
+        product.name = json_object["ProductName"]
+        product.abv = json_object["ProductAlchoholVolume"]
+        product.volume = int(json_object["ProductBottledVolume"])
+        country_name = json_object["ProductCountryOfOrigin"]
+        product.country = cls.get_or_create_country(country_name)
+        product.first_seen_at = \
+            cls.clean_date(json_object["ProductDateOnMarket"])
+        product.temporary = json_object["ProductIsTemporaryOnSale"]
+        return product
+
+    @classmethod
+    def get_box_instance(cls, json_object, atvr_id):
+        try:  # Checking if we've found the box previously
+            box = GiftBox.objects.get(atvr_id=atvr_id)
+        except ObjectDoesNotExist:
+            box = GiftBox()
+            box.atvr_id = atvr_id
+            cls.initialize_product(box, json_object)
+        return box
+
+    @classmethod
+    def get_beer_instance(cls, json_object, atvr_id):
+        try:  # Checking if we've found the beer previously
+            beer = Beer.objects.get(atvr_id=atvr_id)
+        except ObjectDoesNotExist:
+            beer = Beer()
+            beer.atvr_id = atvr_id
+            cls.initialize_product(beer, json_object)
+        return beer
 
     def handle(self, *args, **options):
         try:
@@ -186,5 +211,5 @@ class Command(BaseCommand):
             beer_list = []
 
         if len(beer_list) > 0:
-            self.prepare_beers_for_update()
+            self.prepare_products_for_update()
             self.update_products(beer_list)
