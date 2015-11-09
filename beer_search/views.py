@@ -85,6 +85,26 @@ def exciting(request):
     })
 
 
+def gift_boxes(request):
+    """
+
+    As overview, above, but only shows gift boxes rather than all products.
+    """
+    box_q = GiftBox.available_beers.all().prefetch_related("country")
+    title = "gjafaöskjur"
+    debug = settings.DEBUG
+    explanation = "Hér má sjá þá þær gjafaöskjur sem finna má í Vínbúðinni."
+
+    return render(request, "overview.html", {
+        "beers": [],
+        "boxes": box_q,
+        "debug": debug,
+        "title": title,
+        "explanation": explanation,
+        "filtered": True
+    })
+
+
 def about(request):
     title = "um Bjórleitina"
     updated_at = get_update_date()

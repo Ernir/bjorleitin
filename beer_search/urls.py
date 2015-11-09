@@ -9,6 +9,7 @@ urlpatterns = \
         url(r"^$", views.index, name="index"),
         url(r"^yfirlit/$", views.overview, name="overview"),
         url(r"^spennandi/$", views.exciting, name="exciting"),
+        url(r"^gjafir/$", views.gift_boxes, name="gift_boxes"),
         url(r"^tolfraedi/$", views.statistics, name="statistics"),
         url(r"^um/$", views.about, name="about"),
         url(r"^api/$", views.api_doc, name="api-doc"),
