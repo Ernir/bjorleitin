@@ -66,13 +66,35 @@ class Country(models.Model):
         ordering = ("name",)
 
 
+class Brewery(models.Model):
+    name = models.CharField(max_length=500)
+    untappd_id = models.IntegerField(unique=True)
+    alias = models.CharField(max_length=500, null=True, blank=True)
+
+    def __str__(self):
+        if self.alias is not None:
+            return self.alias
+        return self.name
+
+    class Meta:
+        verbose_name_plural = "breweries"
+        ordering = ("name",)
+
+
 class BeerType(models.Model):
+    """
+    Denotes one 'type' of beer. A type of beer can come in different
+    containers. (A 330mL can of Tuborg Grøn is no the same product (Beer)
+    as a 500mL can, but it is the same BeerType.
+    """
+
     # Base fields
     name = models.CharField(max_length=200, unique=True)
     abv = models.FloatField()
 
     # FK fields
     style = models.ForeignKey(Style, null=True, default=None)
+    brewery = models.ForeignKey(Brewery, null=True, default=None)
     country = models.ForeignKey(Country, null=True, default=None)
 
     # Additional info
@@ -90,7 +112,7 @@ class Beer(models.Model):
     """
 
     Represents one type of beer, in one type of container at one particular
-    volume - A.K.A. one ATVR product.
+    volume - A.K.A. one ATVR beer product.
 
     Objects of this type are heavyweight, forming the backbone of the app.
     """
@@ -261,6 +283,7 @@ class GiftBox(models.Model):
         }
 
     class Meta:
+        verbose_name_plural = "gift boxes"
         ordering = ("name",)
 
 
@@ -309,3 +332,6 @@ class ModifiableSettings(models.Model):
 
     def __str__(self):
         return self.key + ": " + str(self.value)
+
+    class Meta:
+        verbose_name_plural = "modifiable settings"
