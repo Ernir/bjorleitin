@@ -7,6 +7,7 @@
         <th class="beer-abv beer-infocolumn">Styrkur</th>
         <th class="beer-volume beer-infocolumn">Magn</th>
         <th class="beer-price beer-infocolumn">Verð</th>
+        <th class="beer-brewery beer-infocolumn">Brugghús</th>
         <th class="beer-country beer-infocolumn">Land</th>
         <th class="beer-untappd beer-infocolumn">Untappd stjörnur</th>
     </tr>
@@ -41,6 +42,13 @@
             </td>
             <td class="beer-price beer-infocolumn">
                 {{ beer.price }} kr.
+            </td>
+            <td class="beer-brewery beer-infocolumn">
+                {% if beer.beer_type.brewery %}
+                    {{ beer.beer_type.brewery }}
+                {% else %}
+                    ?
+                {% endif %}
             </td>
             <td class="beer-country beer-infocolumn">
                 {{ beer.beer_type.country }}

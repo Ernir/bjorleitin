@@ -26,6 +26,7 @@
                 <th>Styrkur</th>
                 <th>Magn (ml)</th>
                 <th>Verð (kr)</th>
+                <th>Brugghús</th>
                 <th>Upprunaland</th>
                 <th title="Upplýsingar fengnar með leyfi untappd.com">
                     Untappd stjörnur
@@ -85,6 +86,13 @@
                     </td>
                     <td>
                         {{ beer.price }}
+                    </td>
+                    <td>
+                        {% if beer.beer_type.brewery %}
+                            {{ beer.beer_type.brewery }}
+                        {% else %}
+                            ?
+                        {% endif %}
                     </td>
                     <td>
                         {{ beer.beer_type.country.name }}
