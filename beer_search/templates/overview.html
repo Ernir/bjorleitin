@@ -14,23 +14,27 @@
     {% if explanation %}
         <p>{{ explanation }}</p>
     {% endif %}
-    <table class="table table-striped table-hover">
-        <thead>
-        <tr>
-            <th>Nýr?</th>
-            <th>Nafn bjórs</th>
-            <th>Stíll</th>
-            <th>Ílát</th>
-            <th>Styrkur</th>
-            <th>Magn (ml)</th>
-            <th>Verð (kr)</th>
-            <th>Upprunaland</th>
-            <th title="Upplýsingar fengnar með leyfi untappd.com">Untappd stjörnur</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for beer in beers %}
-            {% if beer.available %}
+    {% if beers %}
+        <h3 class="text-center">Stakir bjórar</h3>
+        <table class="table table-striped table-hover">
+            <thead>
+            <tr>
+                <th>Nýr?</th>
+                <th>Nafn bjórs</th>
+                <th>Stíll</th>
+                <th>Ílát</th>
+                <th>Styrkur</th>
+                <th>Magn (ml)</th>
+                <th>Verð (kr)</th>
+                <th>Brugghús</th>
+                <th>Upprunaland</th>
+                <th title="Upplýsingar fengnar með leyfi untappd.com">
+                    Untappd stjörnur
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for beer in beers %}
                 <tr
                         {% if not filtered %}
                             {% if beer.temporary %}
@@ -43,6 +47,9 @@
                     <td>
                         {% if beer.temporary %}
                             Tímabundinn
+                        {% endif %}
+                        {% if beer.temporary and beer.new %}
+                            og nýr!
                         {% elif beer.new %}
                             Nýr!
                         {% endif %}
@@ -58,8 +65,8 @@
                         {% endif %}
                     </td>
                     <td>
-                        {% if beer.style %}
-                            {{ beer.style }}
+                        {% if beer.beer_type.style %}
+                            {{ beer.beer_type.style }}
                         {% else %}
                             ?
                         {% endif %}
@@ -72,7 +79,7 @@
                         {% endif %}
                     </td>
                     <td>
-                        {{ beer.abv }}%
+                        {{ beer.beer_type.abv }}%
                     </td>
                     <td>
                         {{ beer.volume }}
@@ -81,20 +88,87 @@
                         {{ beer.price }}
                     </td>
                     <td>
-                        {{ beer.country.name }}
+                        {% if beer.beer_type.brewery %}
+                            {{ beer.beer_type.brewery }}
+                        {% else %}
+                            ?
+                        {% endif %}
+                    </td>
+                    <td>
+                        {{ beer.beer_type.country.name }}
                     </td>
                     <td>
                         {% if beer.beer_type.untappd_rating %}
                             <a href="https://untappd.com/beer/{{ beer.beer_type.untappd_id }}">
-                            {{ beer.beer_type.untappd_rating|floatformat:2 }}
+                                {{ beer.beer_type.untappd_rating|floatformat:2 }}
                             </a>
                         {% else %}
                             -
                         {% endif %}
                     </td>
                 </tr>
-            {% endif %}
-        {% endfor %}
-        </tbody>
-    </table>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+    {% if boxes %}
+        <h3 class="text-center">Gjafaöskjur</h3>
+        <table class="table table-striped table-hover">
+            <thead>
+            <tr>
+                <th>Nýr?</th>
+                <th>Nafn gjafaöskju</th>
+                <th>Meðalstyrkur</th>
+                <th>Magn (ml)</th>
+                <th>Verð (kr)</th>
+                <th>Upprunaland</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for box in boxes %}
+                <tr
+                        {% if not filtered %}
+                            {% if box.temporary %}
+                                class="success"
+                            {% elif box.new %}
+                                class="info"
+                            {% endif %}
+                        {% endif %}
+                        >
+                    <td>
+                        {% if box.temporary %}
+                            Tímabundinn
+                        {% endif %}
+                        {% if box.temporary and beer.new %}
+                            og nýr!
+                        {% elif box.new %}
+                            Nýr!
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="http://www.vinbudin.is/DesktopDefault.aspx/tabid-54?productID={{ box.atvr_id }}"
+                           target="_blank">{{ box.name }}</a>
+                        {% if debug %}
+                            (
+                            <a href="http://127.0.0.1:8000/admin/beer_search/beer/{{ box.id }}/">breyta</a>
+                            )
+                        {% endif %}
+                    </td>
+                    <td>
+                        {{ box.abv }}%
+                    </td>
+                    <td>
+                        {{ box.volume }}
+                    </td>
+                    <td>
+                        {{ box.price }}
+                    </td>
+                    <td>
+                        {{ box.country.name }}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
 {% endblock %}

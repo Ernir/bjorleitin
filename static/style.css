@@ -113,7 +113,7 @@ Source: http://www.bootply.com/128062
 /* Initial column hiding on the front page.
    Is overridden once the user starts fiddling. */
 .beer-container, .beer-abv, .beer-volume,
-.beer-price, .beer-country, .beer-untappd {
+.beer-price, .beer-brewery, .beer-country, .beer-untappd {
     display: none;
 }
 

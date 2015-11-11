@@ -66,13 +66,35 @@ class Country(models.Model):
         ordering = ("name",)
 
 
+class Brewery(models.Model):
+    name = models.CharField(max_length=500)
+    untappd_id = models.IntegerField(unique=True)
+    alias = models.CharField(max_length=500, null=True, blank=True)
+
+    def __str__(self):
+        if self.alias is not None:
+            return self.alias
+        return self.name
+
+    class Meta:
+        verbose_name_plural = "breweries"
+        ordering = ("name",)
+
+
 class BeerType(models.Model):
+    """
+    Denotes one 'type' of beer. A type of beer can come in different
+    containers. (A 330mL can of Tuborg Grøn is no the same product (Beer)
+    as a 500mL can, but it is the same BeerType.
+    """
+
     # Base fields
     name = models.CharField(max_length=200, unique=True)
     abv = models.FloatField()
 
     # FK fields
     style = models.ForeignKey(Style, null=True, default=None)
+    brewery = models.ForeignKey(Brewery, null=True, default=None)
     country = models.ForeignKey(Country, null=True, default=None)
 
     # Additional info
@@ -90,23 +112,20 @@ class Beer(models.Model):
     """
 
     Represents one type of beer, in one type of container at one particular
-    volume - A.K.A. one ATVR product.
+    volume - A.K.A. one ATVR beer product.
 
     Objects of this type are heavyweight, forming the backbone of the app.
     """
 
     # Base fields
     name = models.CharField(max_length=200)
-    abv = models.FloatField()
     price = models.IntegerField()
     volume = models.IntegerField()
     atvr_id = models.CharField(max_length=5)
 
     # FK fields
-    beer_type = models.ForeignKey(BeerType, null=True, default=None)
-    container = models.ForeignKey(ContainerType, null=True, default=None)
-    style = models.ForeignKey(Style, null=True, default=None)
-    country = models.ForeignKey(Country, null=True, default=None)
+    beer_type = models.ForeignKey(BeerType)
+    container = models.ForeignKey(ContainerType)
 
     # Boolean/availability fields
     first_seen_at = models.DateTimeField(null=True)
@@ -172,16 +191,15 @@ class Beer(models.Model):
 
         self.suffix = self._calculate_uniquely_identifying_suffix()
         # Finds beers with the same name, and assigns the same style.
-        if self.style:
-            duplicates = Beer.objects \
-                .filter(name=self.name, style=None) \
-                .exclude(atvr_id=self.atvr_id)
-            if duplicates.count() > 0:
-                # Sometimes superfluous saving, but meh.
-                super(Beer, self).save(*args, **kwargs)
-            for beer in duplicates.all():
-                beer.style = self.style
-                beer.save()
+        duplicates = Beer.objects \
+            .filter(name=self.name, beer_type__style=None) \
+            .exclude(atvr_id=self.atvr_id)
+        if duplicates.count() > 0:
+            # Sometimes superfluous saving, but meh.
+            super(Beer, self).save(*args, **kwargs)
+        for beer in duplicates.all():
+            beer.beer_type.style = self.beer_type.style
+            beer.save()
 
         self.new = self._check_if_new()
 
@@ -195,9 +213,9 @@ class Beer(models.Model):
 
         return {
             "name": self.name,
-            "style": self.style.name,
+            "style": self.beer_type.style.name,
             "container": self.container.name,
-            "abv": self.abv,
+            "abv": self.beer_type.abv,
             "volume": self.volume,
             "price": self.price,
             "atvr_id": self.atvr_id
@@ -205,6 +223,68 @@ class Beer(models.Model):
 
     class Meta:
         ordering = ("name", "container__name")
+
+
+class GiftBox(models.Model):
+    """
+
+    Represents one type of gift box. Giftboxes are similar to beers (see
+    above), but do not have a beer type (usually there are multiple types
+    per box) and similar.
+
+    """
+
+    # Base fields
+    name = models.CharField(max_length=200)
+    abv = models.FloatField()
+    price = models.IntegerField()
+    volume = models.IntegerField()
+    atvr_id = models.CharField(max_length=5)
+
+    # FK fields
+    country = models.ForeignKey(Country, null=True, default=None)
+
+    # Boolean/availability fields
+    first_seen_at = models.DateTimeField(null=True)
+    available = models.BooleanField(default=True)
+    temporary = models.BooleanField(default=False)
+    new = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.name
+
+    def _check_if_new(self):
+        if not self.first_seen_at:
+            return False  # If we've never seen it, it's not a new product.
+        two_months_ago = timezone.now() - timedelta(days=60)
+
+        return self.first_seen_at > two_months_ago
+
+    objects = models.Manager()
+    available_beers = AvailableBeersManager()
+
+    def save(self, *args, **kwargs):
+        self.new = self._check_if_new()
+
+        super(GiftBox, self).save(*args, **kwargs)
+
+    def get_as_dict(self):
+        """
+
+        Returns a human-readable dictionary object representing the box.
+        """
+
+        return {
+            "name": self.name,
+            "abv": self.abv,
+            "volume": self.volume,
+            "price": self.price,
+            "atvr_id": self.atvr_id
+        }
+
+    class Meta:
+        verbose_name_plural = "gift boxes"
+        ordering = ("name",)
 
 
 class Region(models.Model):
@@ -252,3 +332,6 @@ class ModifiableSettings(models.Model):
 
     def __str__(self):
         return self.key + ": " + str(self.value)
+
+    class Meta:
+        verbose_name_plural = "modifiable settings"

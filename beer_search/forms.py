@@ -92,9 +92,9 @@ class SearchForm(forms.Form):
         required=False,
         widget=NumberInput(attrs={
             "type": "number",
-            "value": min_for_attribute(Beer, "abv"),
-            "min": min_for_attribute(Beer, "abv"),
-            "max": max_for_attribute(Beer, "abv"),
+            "value": min_for_attribute(BeerType, "abv"),
+            "min": min_for_attribute(BeerType, "abv"),
+            "max": max_for_attribute(BeerType, "abv"),
             "step": 0.1
         })
     )
@@ -104,9 +104,9 @@ class SearchForm(forms.Form):
         required=False,
         widget=NumberInput(attrs={
             "type": "number",
-            "value": max_for_attribute(Beer, "abv"),
-            "min": min_for_attribute(Beer, "abv"),
-            "max": max_for_attribute(Beer, "abv"),
+            "value": max_for_attribute(BeerType, "abv"),
+            "min": min_for_attribute(BeerType, "abv"),
+            "max": max_for_attribute(BeerType, "abv"),
             "step": 0.1
         })
     )

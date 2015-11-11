@@ -1,8 +1,13 @@
+from django.core.exceptions import ObjectDoesNotExist
 import requests
 import os
-from beer_search.models import BeerType, ModifiableSettings
+from beer_search.models import BeerType, Brewery, ModifiableSettings
 from django.core.management.base import BaseCommand
+from pprint import PrettyPrinter
 
+def pprint(input_var):
+    pp = PrettyPrinter(indent=4)
+    pp.pprint(input_var)
 
 class Command(BaseCommand):
 
@@ -24,6 +29,17 @@ class Command(BaseCommand):
             old_rating = beer_type.untappd_rating
             new_rating = json_data["response"]["beer"]["rating_score"]
             beer_type.untappd_rating = new_rating
+
+            if beer_type.brewery is None:
+                untappd_id = json_data["response"]["beer"]["brewery"]["brewery_id"]
+                untappd_name = json_data["response"]["beer"]["brewery"]["brewery_name"]
+                brewery = self.get_brewery_instance(untappd_id, untappd_name)
+                beer_type.brewery = brewery
+                print("Added brewery {0} to {1}.".format(
+                    untappd_name,
+                    beer_type.name
+                ))
+
             beer_type.save()
 
             print(
@@ -34,6 +50,16 @@ class Command(BaseCommand):
                 + " to "
                 + str(new_rating)
             )
+
+    def get_brewery_instance(self, untappd_id, name):
+        try:
+            brewery = Brewery.objects.get(untappd_id=untappd_id)
+        except ObjectDoesNotExist:
+            brewery = Brewery()
+            brewery.untappd_id = untappd_id
+            brewery.name = name
+            brewery.save()
+        return brewery
 
     def get_indices(self):
         """
