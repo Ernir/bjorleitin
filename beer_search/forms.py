@@ -22,14 +22,20 @@ def min_for_attribute(model, attribute_name):
     qs = model.objects
     if model == Beer:
         qs = qs.filter(available=True)
-    return qs.aggregate(Min(attribute_name))[attribute_name + "__min"]
+    minimum = qs.aggregate(Min(attribute_name))[attribute_name + "__min"]
+    if minimum is None:
+        minimum = 0
+    return minimum
 
 
 def max_for_attribute(model, attribute_name):
     qs = model.objects
     if model == Beer:
         qs = qs.filter(available=True)
-    return qs.aggregate(Max(attribute_name))[attribute_name + "__max"]
+    maximum = qs.aggregate(Max(attribute_name))[attribute_name + "__max"]
+    if maximum is None:
+        maximum = 5
+    return maximum
 
 
 class SearchForm(forms.Form):
@@ -147,9 +153,12 @@ class SearchForm(forms.Form):
         required=False,
         widget=NumberInput(attrs={
             "type": "number",
-            "value": round(min_for_attribute(BeerType, "untappd_rating"), 2) - 0.01,
-            "min": round(min_for_attribute(BeerType, "untappd_rating"), 2) - 0.01,
-            "max": round(max_for_attribute(BeerType, "untappd_rating"), 2) + 0.01,
+            "value": round(min_for_attribute(BeerType, "untappd_rating"),
+                           2) - 0.01,
+            "min": round(min_for_attribute(BeerType, "untappd_rating"),
+                         2) - 0.01,
+            "max": round(max_for_attribute(BeerType, "untappd_rating"),
+                         2) + 0.01,
             "step": 0.01
         })
     )
@@ -159,9 +168,12 @@ class SearchForm(forms.Form):
         required=False,
         widget=NumberInput(attrs={
             "type": "number",
-            "value": round(max_for_attribute(BeerType, "untappd_rating"), 2) + 0.01,
-            "min": round(min_for_attribute(BeerType, "untappd_rating"), 2) - 0.01,
-            "max": round(max_for_attribute(BeerType, "untappd_rating"), 2) + 0.01,
+            "value": round(max_for_attribute(BeerType, "untappd_rating"),
+                           2) + 0.01,
+            "min": round(min_for_attribute(BeerType, "untappd_rating"),
+                         2) - 0.01,
+            "max": round(max_for_attribute(BeerType, "untappd_rating"),
+                         2) + 0.01,
             "step": 0.01
         })
     )
@@ -244,8 +256,18 @@ class SearchForm(forms.Form):
             ),
             Div(
                 Div(
-                    InlineCheckboxes("containers"),
-                    css_class="checkbox col-md-12",
+                    InlineCheckboxes(
+                        "containers",
+                        css_class="checkbox"
+                    ),
+                    css_class="col-md-6"
+                ),
+                Div(
+                    InlineCheckboxes(
+                        "noteworthy",
+                        css_class="checkbox"
+                    ),
+                    css_class="col-md-6"
                 ),
                 css_class="row"
             ),
@@ -263,16 +285,6 @@ class SearchForm(forms.Form):
                         css_class="checkbox collapsible-form"
                     ),
                     css_class="col-md-6"
-                ),
-                css_class="row"
-            ),
-            Div(
-                Div(
-                    InlineCheckboxes(
-                        "noteworthy",
-                        css_class="checkbox"
-                    ),
-                    css_class="col-md-8"
                 ),
                 css_class="row"
             ),
