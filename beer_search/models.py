@@ -84,7 +84,7 @@ class Brewery(models.Model):
 class BeerType(models.Model):
     """
     Denotes one 'type' of beer. A type of beer can come in different
-    containers. (A 330mL can of Tuborg Grøn is no the same product (Beer)
+    containers. (A 330mL can of Tuborg Grøn is not the same product (Beer)
     as a 500mL can, but it is the same BeerType.
     """
 
@@ -94,8 +94,8 @@ class BeerType(models.Model):
 
     # FK fields
     style = models.ForeignKey(Style, null=True, default=None)
-    brewery = models.ForeignKey(Brewery, null=True, default=None)
-    country = models.ForeignKey(Country, null=True, default=None)
+    brewery = models.ForeignKey(Brewery, null=True, default=None, blank=True)
+    country = models.ForeignKey(Country, null=True, default=None, blank=True)
 
     # Additional info
     untappd_id = models.IntegerField(null=True, default=None, blank=True)

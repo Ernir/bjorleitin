@@ -174,6 +174,7 @@ class Command(BaseCommand):
     def initialize_product(cls, product, json_object):
         print("New product created: " + json_object["ProductName"])
         product.name = json_object["ProductName"]
+        product.price = json_object["ProductPrice"]
         product.volume = int(json_object["ProductBottledVolume"])
         product.first_seen_at = \
             cls.clean_date(json_object["ProductDateOnMarket"])
