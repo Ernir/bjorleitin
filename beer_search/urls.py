@@ -13,6 +13,8 @@ urlpatterns = \
         url(r"^tolfraedi/$", views.statistics, name="statistics"),
         url(r"^um/$", views.about, name="about"),
         url(r"^api/$", views.api_doc, name="api-doc"),
+        url(r"^flokkur/(?P<category_slug>.+)/$", views.beers_in_category,
+            name="category"),
 
         # API endpoints used internally
         url(r"^api/beers-minimal/$", views.get_beers_main_form,

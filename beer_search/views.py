@@ -1,6 +1,6 @@
 from beer_search.forms import SearchForm
 from beer_search.models import Beer, Style, ContainerType, GiftBox, \
-    BeerType
+    BeerType, BeerCategory
 from beer_search.utils import perform_filtering, get_update_date, \
     num_per_style, num_per_store
 from django.db.models import Q
@@ -101,6 +101,38 @@ def gift_boxes(request):
     return render(request, "overview.html", {
         "beers": [],
         "boxes": box_q,
+        "debug": debug,
+        "title": title,
+        "explanation": explanation,
+        "filtered": True
+    })
+
+
+def beers_in_category(request, category_slug):
+    """
+
+    As overview, above, but only shows beers belonging to the given cat.
+    """
+
+    category = BeerCategory.objects.get(url=category_slug)
+
+    beer_types = category.beers.values("id")
+
+    beers = Beer.objects.filter(
+        beer_type_id__in=beer_types).prefetch_related("container",
+                                                      "beer_type",
+                                                      "beer_type__style",
+                                                      "beer_type__country")
+
+    boxes = category.boxes.all().prefetch_related("country")
+
+    title = category.name
+    debug = settings.DEBUG
+    explanation = category.description
+
+    return render(request, "overview.html", {
+        "beers": beers,
+        "boxes": boxes,
         "debug": debug,
         "title": title,
         "explanation": explanation,

@@ -322,6 +322,25 @@ class Store(models.Model):
         ordering = ("region__name", "location")
 
 
+class BeerCategory(models.Model):
+    """
+    A simple class to arbitrarily categorize beers (BeerTypes).
+    """
+    name = models.CharField(max_length=200)
+    url = models.SlugField()
+    active = models.BooleanField()
+    description = models.TextField(blank=True, default="")
+    beers = models.ManyToManyField(BeerType, related_name="categories")
+    boxes = models.ManyToManyField(GiftBox, related_name="categories")
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ("name", )
+        verbose_name_plural = "beer categories"
+
+
 class ModifiableSettings(models.Model):
     """
     Each instance represents one "setting" modifiable in the admin.

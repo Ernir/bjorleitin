@@ -1,5 +1,5 @@
 from beer_search.models import Style, Beer, ContainerType, Country, Region, \
-    Store, BeerType, ModifiableSettings, GiftBox, Brewery
+    Store, BeerType, ModifiableSettings, GiftBox, Brewery, BeerCategory
 from django.contrib import admin
 
 admin.site.register(Style)
@@ -15,6 +15,7 @@ admin.site.register(Beer, BeerAdmin)
 admin.site.register(Brewery)
 admin.site.register(GiftBox)
 admin.site.register(BeerType)
+admin.site.register(BeerCategory)
 
 admin.site.register(Region)
 admin.site.register(Store)

@@ -39,3 +39,5 @@ class BeerViewsTestCase(TestCase):
     def test_api_doc(self):
         response = self.client.get(reverse("api-doc"))
         self.assertEqual(response.status_code, 200)
+
+    # ToDo test the category views
