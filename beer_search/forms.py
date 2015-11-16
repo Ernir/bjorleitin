@@ -153,12 +153,9 @@ class SearchForm(forms.Form):
         required=False,
         widget=NumberInput(attrs={
             "type": "number",
-            "value": round(min_for_attribute(BeerType, "untappd_rating"),
-                           2) - 0.01,
-            "min": round(min_for_attribute(BeerType, "untappd_rating"),
-                         2) - 0.01,
-            "max": round(max_for_attribute(BeerType, "untappd_rating"),
-                         2) + 0.01,
+            "value": 0,
+            "min": 0,
+            "max": 5,
             "step": 0.01
         })
     )
@@ -168,12 +165,9 @@ class SearchForm(forms.Form):
         required=False,
         widget=NumberInput(attrs={
             "type": "number",
-            "value": round(max_for_attribute(BeerType, "untappd_rating"),
-                           2) + 0.01,
-            "min": round(min_for_attribute(BeerType, "untappd_rating"),
-                         2) - 0.01,
-            "max": round(max_for_attribute(BeerType, "untappd_rating"),
-                         2) + 0.01,
+            "value": 5,
+            "min": 0,
+            "max": 5,
             "step": 0.01
         })
     )
