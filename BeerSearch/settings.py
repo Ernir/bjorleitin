@@ -24,7 +24,6 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(int(os.environ.get("DEBUG_MODE")))
-TEMPLATE_DEBUG = DEBUG
 
 # Application definition
 
@@ -35,7 +34,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # "debug_toolbar", # I comment this in and out, sue me.
+    "debug_toolbar",
     "beer_search",
     "crispy_forms",
     "storages",
@@ -46,6 +45,7 @@ CRISPY_TEMPLATE_PACK = "bootstrap3"
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.gzip.GZipMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
