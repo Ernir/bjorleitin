@@ -18,6 +18,7 @@ class DefaultBeerManager(models.Manager):
         return super(DefaultBeerManager, self). \
             get_queryset()
 
+
 class DefaultGiftBoxManager(models.Manager):
     def get_common_related(self):
         return self.filter(available=True).select_related(

@@ -140,7 +140,7 @@ class Beer(models.Model):
     def __str__(self):
         return self.name + self.suffix
 
-    def _calculate_uniquely_identifying_suffix(self):
+    def calculate_uniquely_identifying_suffix(self):
         """
 
         Many beers have non-unique names, due to different volumes and
@@ -161,7 +161,7 @@ class Beer(models.Model):
         return suffix
 
     def _has_duplicate_name(self):
-        n = Beer.objects.filter(name=self.name).count()
+        n = Beer.objects.filter(name=self.name, available=True).count()
         return n > 1
 
     def _has_duplicate_container(self):
@@ -185,21 +185,23 @@ class Beer(models.Model):
 
     objects = DefaultBeerManager()
 
-    def save(self, *args, **kwargs):
-        self.updated_at = date.today()  # Automatic updates
-
-        self.suffix = self._calculate_uniquely_identifying_suffix()
-        # Finds beers with the same name, and assigns the same style.
+    def update_duplicates(self):
+        new_suffix = self.calculate_uniquely_identifying_suffix()
+        if new_suffix != self.suffix:
+            self.suffix = new_suffix
+            print("Updating duplicates for {0}".format(self.name))
+            self.save()
         duplicates = Beer.objects \
             .filter(name=self.name, beer_type__style=None) \
             .exclude(atvr_id=self.atvr_id)
-        if duplicates.count() > 0:
-            # Sometimes superfluous saving, but meh.
-            super(Beer, self).save(*args, **kwargs)
-        for beer in duplicates.all():
-            beer.beer_type.style = self.beer_type.style
-            beer.save()
+        for duplicate in duplicates:
+            new_suffix = duplicate.calculate_uniquely_identifying_suffix()
+            if new_suffix != duplicate.suffix:
+                self.suffix = new_suffix
+                duplicate.save()
 
+    def save(self, *args, **kwargs):
+        self.updated_at = date.today()  # Automatic updates
         self.new = self._check_if_new()
 
         super(Beer, self).save(*args, **kwargs)

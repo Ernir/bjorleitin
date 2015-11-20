@@ -214,3 +214,7 @@ class Command(BaseCommand):
         if len(beer_list) > 0:
             self.prepare_products_for_update()
             self.update_products(beer_list)
+
+        # See if the update caused any duplicate product names
+        for beer in Beer.objects.available_beers():
+            beer.update_duplicates()
