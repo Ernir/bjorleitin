@@ -26,16 +26,11 @@ def index(request):
 
 def index_table(request):
     """
+
     Returns a rather raw HTML table of all available beers.
     Called via AJAX on the index page.
     """
-    beers = Beer.objects.filter(available=True).all().select_related(
-        "container",
-        "beer_type",
-        "beer_type__style",
-        "beer_type__country",
-        "beer_type__brewery"
-    )
+    beers = Beer.objects.get_common_related()
 
     return render(request, "small_table.html", {
         "beers": beers,
@@ -48,22 +43,16 @@ def overview(request):
     A page consisting mostly of a single large table of all beers.
     """
 
-    beer_q = Beer.available_beers.all().select_related(
-        "container",
-        "beer_type",
-        "beer_type__style",
-        "beer_type__country",
-        "beer_type__brewery"
-    )
-    box_q = GiftBox.available_beers.all().select_related("country")
+    beers = Beer.objects.get_common_related()
+    boxes = GiftBox.objects.get_common_related()
     title = "yfirlit allra bjóra"
     debug = settings.DEBUG
     explanation = "Hér má sjá alla bjóra sem til eru í " \
                   "Vínbúðinni á einni síðu."
 
     return render(request, "overview.html", {
-        "beers": beer_q,
-        "boxes": box_q,
+        "beers": beers,
+        "boxes": boxes,
         "debug": debug,
         "title": title,
         "explanation": explanation,
@@ -76,17 +65,11 @@ def exciting(request):
 
     As overview, above, but only shows new and/or temporary beers.
     """
-    beer_q = Beer.available_beers.select_related(
-        "container",
-        "beer_type",
-        "beer_type__style",
-        "beer_type__country",
-        "beer_type__brewery"
-    ).filter(Q(new=True) | Q(temporary=True)).all()
+    beers = Beer.objects.get_common_related().\
+        filter(Q(new=True) | Q(temporary=True))
 
-    box_q = GiftBox.available_beers.select_related(
-        "country"
-    ).filter(Q(new=True) | Q(temporary=True)).all()
+    boxes = GiftBox.objects.get_common_related().\
+        filter(Q(new=True) | Q(temporary=True))
 
     title = "nýir og árstíðabundnir bjórar"
     debug = settings.DEBUG
@@ -94,8 +77,8 @@ def exciting(request):
                   "innan við 60 daga eða eru í tímabundinni sölu."
 
     return render(request, "overview.html", {
-        "beers": beer_q,
-        "boxes": box_q,
+        "beers": beers,
+        "boxes": boxes,
         "debug": debug,
         "title": title,
         "explanation": explanation,
@@ -108,14 +91,14 @@ def gift_boxes(request):
 
     As overview, above, but only shows gift boxes rather than all products.
     """
-    box_q = GiftBox.available_beers.all().select_related("country")
+    boxes = GiftBox.objects.get_common_related()
     title = "gjafaöskjur"
     debug = settings.DEBUG
     explanation = "Hér má sjá þá þær gjafaöskjur sem finna má í Vínbúðinni."
 
     return render(request, "overview.html", {
         "beers": [],
-        "boxes": box_q,
+        "boxes": boxes,
         "debug": debug,
         "title": title,
         "explanation": explanation,
@@ -133,14 +116,8 @@ def beers_in_category(request, category_slug):
 
     beer_types = category.beers.values("id")
 
-    beers = Beer.objects.filter(
+    beers = Beer.objects.get_common_related().filter(
         beer_type_id__in=beer_types
-    ).select_related(
-        "container",
-        "beer_type",
-        "beer_type__style",
-        "beer_type__country",
-        "beer_type__brewery"
     )
 
     boxes = category.boxes.select_related("country").all()
@@ -229,7 +206,7 @@ def get_distinct_properties(request, prop):
     if prop == "abv":
         objects = BeerType.objects.values(prop)
     else:
-        objects = Beer.available_beers.values(prop)
+        objects = Beer.objects.available_beers().values(prop)
 
     return_dict = {}
     numbers = []

@@ -1,4 +1,4 @@
-from beer_search.managers import AvailableBeersManager
+from beer_search.managers import DefaultBeerManager, DefaultGiftBoxManager
 from django.db import models
 from django.utils import timezone
 from datetime import date, timedelta
@@ -183,8 +183,7 @@ class Beer(models.Model):
     has_duplicate_container = property(_has_duplicate_container)
     price_per_litre = property(_price_per_litre)
 
-    objects = models.Manager()
-    available_beers = AvailableBeersManager()
+    objects = DefaultBeerManager()
 
     def save(self, *args, **kwargs):
         self.updated_at = date.today()  # Automatic updates
@@ -260,8 +259,7 @@ class GiftBox(models.Model):
 
         return self.first_seen_at > two_months_ago
 
-    objects = models.Manager()
-    available_beers = AvailableBeersManager()
+    objects = DefaultGiftBoxManager()
 
     def save(self, *args, **kwargs):
         self.new = self._check_if_new()
