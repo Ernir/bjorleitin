@@ -1,7 +1,8 @@
 from django.core.exceptions import ObjectDoesNotExist
 import os
 import requests
-from beer_search.models import Beer, Style, Region, BeerType, Brewery
+from beer_search.models import Beer, Style, Region, BeerType, Brewery, \
+    UntappdStyle
 from django.db.models import Max, Min, Q
 
 
@@ -175,6 +176,15 @@ def update_untappd_item(beer_type):
             new_rating = json_data["response"]["beer"]["rating_score"]
             beer_type.untappd_rating = new_rating
 
+            if beer_type.untappd_style is None:
+                style_name = json_data["response"]["beer"]["beer_style"]
+                style = get_untappd_style_instance(style_name)
+                beer_type.untappd_style = style
+                print("Added style {0} to {1}.".format(
+                    style_name,
+                    beer_type.name
+                ))
+
             if beer_type.brewery is None:
                 untappd_id = json_data["response"]["beer"]["brewery"]["brewery_id"]
                 untappd_name = json_data["response"]["beer"]["brewery"]["brewery_name"]
@@ -195,6 +205,16 @@ def update_untappd_item(beer_type):
                 + " to "
                 + str(new_rating)
             )
+
+
+def get_untappd_style_instance(style_name):
+    try:
+        style = UntappdStyle.objects.get(name=style_name)
+    except ObjectDoesNotExist:
+        style = UntappdStyle()
+        style.name = style_name
+        style.save()
+    return style
 
 
 def get_brewery_instance(untappd_id, name):

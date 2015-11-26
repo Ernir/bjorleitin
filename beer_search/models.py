@@ -31,6 +31,45 @@ class Style(models.Model):
         ordering = ("name",)
 
 
+class SimplifiedStyle(models.Model):
+    """
+
+    The styles as defined by the Untappd database are rather too numerous
+    to allow for easy filtering. Each instance of UntappdStyle maps to one
+    instance of this class, for easier filtering.
+    """
+
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True, default="")
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ("name",)
+
+
+class UntappdStyle(models.Model):
+    """
+
+    Represents one style, or "category" of beer (bjórstíll) as defined
+    by the Untappd rating database.
+    Examples include "Common Pale Lager" and "Dubbel".
+    """
+
+    name = models.CharField(max_length=100)
+    simplifies_to = models.ForeignKey(SimplifiedStyle, null=True)
+
+    def __str__(self):
+        suffix = ""
+        if self.simplifies_to:
+            suffix = " ({0})".format(self.simplifies_to.name)
+        return self.name + suffix
+
+    class Meta:
+        ordering = ("name",)
+
+
 class ContainerType(models.Model):
     """
 
@@ -94,8 +133,13 @@ class BeerType(models.Model):
 
     # FK fields
     style = models.ForeignKey(Style, null=True, default=None)
-    brewery = models.ForeignKey(Brewery, null=True, default=None, blank=True)
-    country = models.ForeignKey(Country, null=True, default=None, blank=True)
+    untappd_style = models.ForeignKey(
+        UntappdStyle, null=True, default=None, blank=True
+    )
+    brewery = models.ForeignKey(Brewery, null=True, default=None,
+                                blank=True)
+    country = models.ForeignKey(Country, null=True, default=None,
+                                blank=True)
 
     # Additional info
     untappd_id = models.IntegerField(null=True, default=None, blank=True)
