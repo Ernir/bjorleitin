@@ -14,8 +14,10 @@ def generate_choices(model):
 
 def generate_store_choices():
     stores = Store.objects.all().prefetch_related("region")
-    return tuple([(store.id, store.region.name + ": " + store.location)
-                  for store in stores])
+    store_list = [(store.id, store.region.name + ": " + store.location) for
+                  store in stores]
+    store_list.insert(0, (None, "Allar búðir"))  # The default option
+    return tuple(store_list)
 
 
 def min_for_attribute(model, attribute_name):
@@ -124,10 +126,10 @@ class SearchForm(forms.Form):
         required=False,
     )
 
-    stores = forms.MultipleChoiceField(
+    stores = forms.ChoiceField(
         label="Vínbúðir",
         choices=generate_store_choices(),
-        widget=forms.CheckboxSelectMultiple,
+        widget=forms.Select,
         required=False
     )
 
@@ -269,14 +271,12 @@ class SearchForm(forms.Form):
                 Div(
                     Div(
                         Field("stores"),
-                        css_class="checkbox collapsible-form"
                     ),
                     css_class="col-md-6"
                 ),
                 Div(
                     Div(
                         Field("styles"),
-                        css_class="checkbox collapsible-form"
                     ),
                     css_class="col-md-6"
                 ),

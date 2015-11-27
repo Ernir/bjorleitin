@@ -168,26 +168,31 @@ Views used to deliver private or public API endpoints
 def get_beers_main_form(request):
     """
 
-    Generates a list of beers to display based on POST parameters.
+    Generates a list of beers to display based on request parameters.
     Returns their names and slugs in JSON format.
     As the name indicates, used to filter beers on the index page.
     """
+
+    filtering_dict = {}
     if request.method == "POST":
-        # Beer list
-        bl = Beer.objects.filter(available=True).prefetch_related(
-            "container", "beer_type", "beer_type__style",
-            "beer_type__country")
-        bl = perform_filtering(bl, request.POST)
+        filtering_dict = request.POST
+    elif request.method == "GET":
+        filtering_dict = request.GET
+    # Beer list
+    bl = Beer.objects.filter(available=True).prefetch_related(
+        "container", "beer_type", "beer_type__style",
+        "beer_type__country")
+    bl = perform_filtering(bl, filtering_dict)
 
-        return_list = []
-        for beer in bl.all():
-            return_list.append({
-                "name": beer.name,
-                "suffix": beer.suffix,
-                "atvr_id": beer.atvr_id
-            })
+    return_list = []
+    for beer in bl.all():
+        return_list.append({
+            "name": beer.name,
+            "suffix": beer.suffix,
+            "atvr_id": beer.atvr_id
+        })
 
-        return JsonResponse(return_list, safe=False)
+    return JsonResponse(return_list, safe=False)
 
 
 def get_distinct_properties(request, prop):
