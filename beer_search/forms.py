@@ -4,7 +4,8 @@ from crispy_forms.layout import Layout, Field, Div, Fieldset
 from crispy_forms.bootstrap import InlineCheckboxes
 from django.db.models import Min, Max
 from django.forms import NumberInput
-from beer_search.models import Beer, Style, ContainerType, Store, BeerType
+from beer_search.models import Beer, Style, ContainerType, Store, BeerType, \
+    Brewery, Country
 
 
 def generate_choices(model):
@@ -18,6 +19,20 @@ def generate_store_choices():
                   store in stores]
     store_list.insert(0, (None, "Allar búðir"))  # The default option
     return tuple(store_list)
+
+
+def generate_brewery_choices():
+    breweries = Brewery.objects.all()
+    brewery_list = [(b.id, b.name) for b in breweries]
+    brewery_list.insert(0, (None, "Öll brugghús"))  # The default
+    return tuple(brewery_list)
+
+
+def generate_country_choices():
+    countries = Country.objects.all()
+    country_list = [(c.id, c.name) for c in countries]
+    country_list.insert(0, (None, "Öll lönd"))  # The default
+    return tuple(country_list)
 
 
 def min_for_attribute(model, attribute_name):
@@ -130,7 +145,21 @@ class SearchForm(forms.Form):
         label="Vínbúðir",
         choices=generate_store_choices(),
         widget=forms.Select,
-        required=False
+        required=False,
+    )
+
+    breweries = forms.ChoiceField(
+        label="Brugghús",
+        choices=generate_brewery_choices(),
+        widget=forms.Select,
+        required=False,
+    )
+
+    countries = forms.ChoiceField(
+        label="Lönd",
+        choices=generate_country_choices(),
+        widget=forms.Select,
+        required=False,
     )
 
     containers = forms.MultipleChoiceField(
@@ -277,6 +306,21 @@ class SearchForm(forms.Form):
                 Div(
                     Div(
                         Field("styles"),
+                    ),
+                    css_class="col-md-6"
+                ),
+                css_class="row"
+            ),
+            Div(
+                Div(
+                    Div(
+                        Field("breweries"),
+                    ),
+                    css_class="col-md-6"
+                ),
+                Div(
+                    Div(
+                        Field("countries"),
                     ),
                     css_class="col-md-6"
                 ),

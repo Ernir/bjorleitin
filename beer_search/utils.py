@@ -118,6 +118,18 @@ def perform_filtering(beer_q, request_body):
             if len(store) > 0:
                 beer_q = beer_q.filter(store=store)
 
+        # Filter by breweries.
+        if "breweries" in request_body:
+            brewery = request_body["breweries"]
+            if len(brewery) > 0:
+                beer_q = beer_q.filter(beer_type__brewery_id=brewery)
+
+        # Filter by countries.
+        if "countries" in request_body:
+            country = request_body["countries"]
+            if len(country) > 0:
+                beer_q = beer_q.filter(beer_type__country_id=country)
+
     return beer_q
 
 
