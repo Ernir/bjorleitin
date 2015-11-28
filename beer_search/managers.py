@@ -6,9 +6,10 @@ class DefaultBeerManager(models.Manager):
         return self.filter(available=True).select_related(
             "container",
             "beer_type",
-            "beer_type__style",
             "beer_type__country",
-            "beer_type__brewery"
+            "beer_type__brewery",
+            "beer_type__style",
+            "beer_type__untappd_style__simplifies_to"
         )
 
     def available_beers(self):

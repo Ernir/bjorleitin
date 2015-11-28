@@ -5,7 +5,7 @@ from crispy_forms.bootstrap import InlineCheckboxes
 from django.db.models import Min, Max
 from django.forms import NumberInput
 from beer_search.models import Beer, Style, ContainerType, Store, BeerType, \
-    Brewery, Country
+    Brewery, Country, SimplifiedStyle
 
 
 def generate_choices(model):
@@ -19,6 +19,13 @@ def generate_store_choices():
                   store in stores]
     store_list.insert(0, (None, "Allar búðir"))  # The default option
     return tuple(store_list)
+
+
+def generate_style_choices():
+    styles = SimplifiedStyle.objects.all()
+    style_list = [(s.id, s.name) for s in styles]
+    style_list.insert(0, (None, "Allir stílar"))  # The default option
+    return tuple(style_list)
 
 
 def generate_brewery_choices():
@@ -134,10 +141,10 @@ class SearchForm(forms.Form):
         })
     )
 
-    styles = forms.MultipleChoiceField(
+    styles = forms.ChoiceField(
         label="Bjórstílar",
-        choices=generate_choices(Style),
-        widget=forms.CheckboxSelectMultiple,
+        choices=generate_style_choices(),
+        widget=forms.Select,
         required=False,
     )
 

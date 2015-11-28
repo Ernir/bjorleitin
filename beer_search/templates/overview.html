@@ -65,7 +65,9 @@
                         {% endif %}
                     </td>
                     <td>
-                        {% if beer.beer_type.style %}
+                        {% if beer.beer_type.untappd_style.simplifies_to %}
+                            {{ beer.beer_type.untappd_style.simplifies_to.name }}
+                        {% elif beer.beer_type.style %}
                             {{ beer.beer_type.style }}
                         {% else %}
                             ?

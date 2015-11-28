@@ -22,7 +22,6 @@ def perform_filtering(beer_q, request_body):
     # Filtering is performed in succession, on defined parameters only.
     # If the parameter count is zero, no filtering is performed.
     if len(request_body) > 0:
-
         # Case-insensitive substring check.
         if "beer_name" in request_body:
             name = request_body["beer_name"]
@@ -31,9 +30,11 @@ def perform_filtering(beer_q, request_body):
 
         # Membership check for styles and containers.
         if "styles" in request_body:
-            styles = request_body.getlist("styles")
-            if len(styles) > 0:
-                beer_q = beer_q.filter(beer_type__style__id__in=styles)
+            style = request_body["styles"]
+            if len(style) > 0:
+                beer_q = beer_q.filter(
+                    beer_type__untappd_style__simplifies_to_id=style
+                )
         if "containers" in request_body:
             containers = request_body.getlist("containers")
             if len(containers) > 0:
