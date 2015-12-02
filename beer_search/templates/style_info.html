@@ -14,7 +14,9 @@
                 <h3 id="{{ style.slug }}">{{ style.name }}</h3>
 
                 <div class="text-justify">
-                    {{ style.description }}
+                    {% autoescape off %}
+                        {{ style.html_description }}
+                    {% endautoescape %}
                 </div>
             </div>
         </div>
