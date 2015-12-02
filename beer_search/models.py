@@ -2,6 +2,7 @@ from beer_search.managers import DefaultBeerManager, DefaultGiftBoxManager
 from django.db import models
 from django.utils import timezone
 from datetime import date, timedelta
+from django.utils.text import slugify
 
 
 class Style(models.Model):
@@ -40,10 +41,15 @@ class SimplifiedStyle(models.Model):
     """
 
     name = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=100)
     description = models.TextField(blank=True, default="")
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        super(SimplifiedStyle, self).save(*args, **kwargs)
 
     class Meta:
         ordering = ("name",)

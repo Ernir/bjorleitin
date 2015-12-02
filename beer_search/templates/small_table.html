@@ -23,7 +23,9 @@
             </td>
             <td class="beer-style beer-infocolumn">
                 {% if beer.beer_type.untappd_style.simplifies_to %}
-                    {{ beer.beer_type.untappd_style.simplifies_to.name }}
+                    <a href="{% url "beer_search.views.style_information" %}#{{ beer.beer_type.untappd_style.simplifies_to.slug }}">
+                        {{ beer.beer_type.untappd_style.simplifies_to.name }}
+                    </a>
                 {% elif beer.beer_type.style %}
                     {{ beer.beer_type.style }}
                 {% else %}
