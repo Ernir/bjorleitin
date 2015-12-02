@@ -11,6 +11,7 @@ urlpatterns = \
         url(r"^spennandi/$", views.exciting, name="exciting"),
         url(r"^gjafir/$", views.gift_boxes, name="gift_boxes"),
         url(r"^tolfraedi/$", views.statistics, name="statistics"),
+        url(r"^bjorstilar/$", views.style_information, name="styles"),
         url(r"^um/$", views.about, name="about"),
         url(r"^api/$", views.api_doc, name="api-doc"),
         url(r"^flokkur/(?P<category_slug>.+)/$", views.beers_in_category,

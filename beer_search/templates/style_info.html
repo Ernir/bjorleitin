@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block metatags %}
+    {% include "open_graph/og_overview.html" %}
+{% endblock %}
+
+{% block content %}
+    <p>Bjórleitin safnar upplýsingum um bjórstíla sjálfkrafa í gegnum <a href="https://untappd.com/">Untappd</a>. Til einföldunar fellir Bjórleitin í mörgum tilvikum svipaða eða skylda bjórstíla saman í einn.</p>
+    <p>Stílarnir sem leitin notar eru eftirfarandi, með lýsingum:</p>
+    {% for style in styles %}
+        <div class="row">
+            <div class="col-md-offset-3 col-md-6">
+                <hr/>
+                <h3>{{ style.name }}</h3>
+
+                <div class="text-justify">
+                    {{ style.description }}
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-offset-3 col-md-3">
+                <h4>Bjórar í stílnum</h4>
+                <ul>
+                    {% for beer in style.beers %}
+                        <li>{{ beer.name }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="col-md-3">
+                <h4>Undirstílar</h4>
+                <ul>
+                    {% for untappd_style in style.untappdstyle_set.all %}
+                        <li>{{ untappd_style.name }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    {% endfor %}
+
+{% endblock %}

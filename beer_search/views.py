@@ -1,6 +1,6 @@
 from beer_search.forms import SearchForm
 from beer_search.models import Beer, Style, ContainerType, GiftBox, \
-    BeerType, BeerCategory
+    BeerType, BeerCategory, SimplifiedStyle
 from beer_search.utils import perform_filtering, get_update_date, \
     num_per_style, num_per_store
 from django.db.models import Q
@@ -133,6 +133,24 @@ def beers_in_category(request, category_slug):
         "title": title,
         "explanation": explanation,
         "filtered": True
+    })
+
+
+def style_information(request):
+    title = "Upplýsingar um bjórstíla"
+    styles = SimplifiedStyle.objects.prefetch_related(
+        "untappdstyle_set",
+        "untappdstyle_set__simplifies_to"
+    ).all()
+
+    for style in styles:
+        # ToDo filter out unavailable types
+        beers = BeerType.objects.filter(untappd_style__simplifies_to=style)
+        style.beers = beers
+
+    return render(request, "style_info.html", {
+        "title": title,
+        "styles": styles
     })
 
 
