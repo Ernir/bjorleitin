@@ -39,7 +39,6 @@ class Command(BaseCommand):
         the function get_beer_data().
         """
 
-
         beer = Beer.objects.get(atvr_id=atvr_id)
         # An empty stock is OK, an undefined one isn't.
         if stock_info is None:
@@ -54,7 +53,7 @@ class Command(BaseCommand):
             store.save()
 
     def handle(self, *args, **options):
-        queryset = Beer.available_beers.values_list("atvr_id", flat=True)
-        for atvr_id in queryset:
-            stock_info = self.get_beer_data(atvr_id)
-            self.update_beer_by_id(atvr_id, stock_info)
+        beers = Beer.objects.available_beers()
+        for beer in beers:
+            stock_info = self.get_beer_data(beer.atvr_id)
+            self.update_beer_by_id(beer.atvr_id, stock_info)
