@@ -218,3 +218,6 @@ class Command(BaseCommand):
         # See if the update caused any duplicate product names
         for beer in Beer.objects.available_beers():
             beer.update_duplicates()
+
+        for beer_type in BeerType.objects.all():
+            beer_type.update_availability()

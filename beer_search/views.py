@@ -7,7 +7,7 @@ from django.db.models import Q
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
 from django.conf import settings
-
+from random import shuffle
 
 """
 Views defining individual pages
@@ -144,9 +144,11 @@ def style_information(request):
     ).all()
 
     for style in styles:
-        # ToDo filter out unavailable types
-        beers = BeerType.objects.filter(untappd_style__simplifies_to=style)
-        style.beers = beers
+        beers = BeerType.objects.filter(
+            untappd_style__simplifies_to=style,
+            available=True
+        )
+        style.beers = beers[:5]
 
     return render(request, "style_info.html", {
         "title": title,
