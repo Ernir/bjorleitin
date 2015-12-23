@@ -24,7 +24,7 @@ class Command(BaseCommand):
             "host": "www.vinbudin.is",
             "connection": "keep-alive",
             "cache-control": "max-age=0",
-            "accept:": "application/json, text/javascript, */*; q=0.01",
+            "accept": "application/json, text/javascript, */*; q=0.01",
             "x-requested-with": "XMLHttpRequest",
             "user-agent": "Bjorleit/0.1 (+http://bjorleit.info/)",
             "content-type": "application/json; charset=utf-8",

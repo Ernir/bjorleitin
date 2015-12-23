@@ -17,7 +17,7 @@ gunicorn==19.3.0
 html5lib==0.99999
 psycopg2==2.6
 pytz==2015.4
-requests==2.7.0
+requests==2.9.1
 six==1.9.0
 sqlparse==0.1.18
 static3==0.5.1
