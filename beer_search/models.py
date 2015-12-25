@@ -154,6 +154,7 @@ class BeerType(models.Model):
     untappd_id = models.IntegerField(null=True, default=None, blank=True)
     untappd_rating = models.FloatField(null=True, default=None, blank=True)
     available = models.BooleanField(default=False)
+    needs_announcement = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
@@ -163,8 +164,9 @@ class BeerType(models.Model):
         for beer in self.beer_set.all():
             if beer.available:
                 any_available_product = True
-        # If there's a change, update and log it
+        # If there's a change, update, announce and log it
         if self.available != any_available_product:
+            self.needs_announcement = True
             if any_available_product:
                 print("{0} is now available".format(self.name))
             else:
