@@ -13,21 +13,17 @@
         <p>Bjórleitin er hobbýverkefni eins bjóráhugamanns, Eiríks Ernis Þorsteinssonar, sem þyrsti í gott yfirlit yfir hið íslenska bjórúrval.</p>
 
         <h3>Hvaðan koma gögnin?</h3>
-        <p>Grunngögnunum er safnað af <a href="http://www.vinbudin.is/">síðu vínbúðarinnar</a> með sjálfvirku tóli. Upplýsingum sem ekki finnast á síðu vínbúðarinnar (bjórstílar, umbúðir og hvort að viðkomandi bjór sé árstíðabundinn) er bætt við handvirkt.</p>
+        <p>Grunngögnunum er safnað af <a href="http://www.vinbudin.is/">síðu vínbúðarinnar</a> með sjálfvirku tóli. Hver bjórtegund er síðan tengd handvirkt við gagnagrunn <a href="https://untappd.com/">Untappd</a> og frekari upplýsingar eru sóttar þaðan.</p>
 
         <h4>Hvernig er bjórunum raðað í stíla?</h4>
-        <p>Að mestu leyti eru stílsupplýsingarnar fengnar frá <a href="http://www.beeradvocate.com/beer/style/">Beeradvocate</a>, en um þó nokkra einföldun er að ræða. Við einföldun voru fyrst og fremst eftirfarandi atriði höfð í huga:</p>
-            <ul>
-                <li>Íslensk orðræða. Hér á landi er t.d. oftast talað um einfaldlega "IPA" frekar en bandaríska IPA og breska IPA, svo IPA er talinn fram sem einn flokkur.</li>
-                <li>Stærð hvers flokks fyrir sig. Bjórúrvalið hér á landi er takmarkað, það að skilgreina mjög nákvæma flokka myndi skilja eftir fáa bjóra eftir í hverjum flokki fyrir sig. Slík leit væri hvorki skilvirk né gagnleg.</li>
-            </ul>
+        <p>Stílsupplýsingarnar fást frá Untappd (sjá að ofan), en leitin sjálf notar einfaldaða stíla. Við einföldun var fyrst og fremst tekið tillit til íslenskrar orðræðu og fjölda vörutegunda í hverjum stíl fyrir sig.</p>
 
         <h3>Hversu oft eru bjórarnir uppfærðir?</h3>
-        <p>Núverandi stefna er að það sé gert um hver mánaðamót.</p>
-        <p>Gagnagrunnurinn var síðast uppfærður {{ updated_at }}.</p>
+        <p>Birgðastaða og Untappd-einkunnir eru uppfærðar á hverri nóttu. Nýir bjórar eru settir inn ekki sjaldnar en mánaðarlega.</p>
+        <p>Nýir bjórar voru síðast settir inn {{ updated_at }}.</p>
 
         <h3>Kemst ég í gögnin?</h3>
-        <p>Já, síðan er með <a href="{% url "beer_search.views.api_doc" %}">API</a> sem gerir öll áhugaverð gögn opinber.</p>
+        <p>Já, síðan er með <a href="{% url "beer_search.views.api_doc" %}">API</a> sem gerir ýmis áhugaverð gögn opinber.</p>
 
         <h3>Kemst ég í kóðann?</h3>
         <p>Já, kóði síðunnar er á <a href="https://github.com/Ernir/bjorleitin">Github</a>.</p>
@@ -36,7 +32,7 @@
         <p>Þessi síða tengist Vínbúðinni ekki á neinn hátt annan en að nota frá henni opinber gögn.</p>
         </div>
         <div class="col-md-6 text-center">
-            <h4>Bjórleitin er á Facebook!</h4>
+            <h4>Bjórleitin á Facebook</h4>
             <div class="fb-page" data-href="https://www.facebook.com/bjorleit" data-hide-cover="true" data-show-facepile="true" data-show-posts="true">
                 <div class="fb-xfbml-parse-ignore">
                     <blockquote cite="https://www.facebook.com/bjorleit">
@@ -44,6 +40,9 @@
                     </blockquote>
                 </div>
             </div>
+            <h4>Bjórleitin á Twitter</h4>
+            <a class="twitter-timeline" href="https://twitter.com/bjorleitin" data-widget-id="682979569939386368">Tweets by @bjorleitin</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
         </div>
     </div>
 {% endblock %}
