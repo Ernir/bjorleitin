@@ -17,7 +17,7 @@
     {% for beer in beers %}
         <tr id="beer-{{ beer.atvr_id }}" class="beer-row">
             <td class="beer-name beer-infocolumn">
-                <a href="http://www.vinbudin.is/DesktopDefault.aspx/tabid-54?productID={{ beer.atvr_id }}"
+                <a href="http://www.vinbudin.is/Heim/v%C3%B6rur/stoek-vara.aspx/?productid={{ beer.atvr_id }}/"
                    target="_blank">{{ beer.name }}</a>
                 {{ beer.suffix }}
             </td>
