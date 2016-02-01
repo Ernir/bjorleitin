@@ -282,9 +282,13 @@ class Beer(models.Model):
         Returns a human-readable dictionary object representing the beer.
         """
 
+        if self.beer_type.untappd_id:
+            style = self.beer_type.untappd_style.name
+        else:
+            style = "Óþekktur"
         return {
             "name": self.name,
-            "style": self.beer_type.style.name,
+            "style": style,
             "container": self.container.name,
             "abv": self.beer_type.abv,
             "volume": self.volume,
