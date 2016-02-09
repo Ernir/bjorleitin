@@ -404,8 +404,8 @@ class BeerCategory(models.Model):
     url = models.SlugField()
     active = models.BooleanField()
     description = models.TextField(blank=True, default="")
-    beers = models.ManyToManyField(BeerType, related_name="categories")
-    boxes = models.ManyToManyField(GiftBox, related_name="categories")
+    beers = models.ManyToManyField(BeerType, related_name="categories", blank=True)
+    boxes = models.ManyToManyField(GiftBox, related_name="categories", blank=True)
 
     def __str__(self):
         return self.name
