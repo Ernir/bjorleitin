@@ -96,7 +96,7 @@ class Command(BaseCommand):
     @staticmethod
     def get_or_create_country(country_name):
         try:
-            country = Country.objects.get(name=country_name)
+            country = Country.objects.get(name__iexact=country_name)
         except ObjectDoesNotExist:
             country = Country()
             country.name = country_name

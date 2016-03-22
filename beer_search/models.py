@@ -109,6 +109,11 @@ class Country(models.Model):
     def __str__(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        first = self.name[0].upper()  # Enforce uppercase
+        self.name = first + self.name[1:]
+        super(Country, self).save(*args, **kwargs)
+
     class Meta:
         verbose_name_plural = "countries"
         ordering = ("name",)
