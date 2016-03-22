@@ -1,7 +1,8 @@
 import requests
 from bs4 import BeautifulSoup
-from beer_search.models import Beer, Store
+from beer_search_v2.models import Product
 from django.core.management.base import BaseCommand
+from pprint import PrettyPrinter
 
 
 class Command(BaseCommand):
@@ -54,8 +55,9 @@ class Command(BaseCommand):
             store.save()
 
     def handle(self, *args, **options):
-        beers = Beer.objects.available_beers()
+        beers = Beer.objects.available_beers().filter(name="Amstel")
+        pp = PrettyPrinter()
         for beer in beers:
-            print("Updated " + beer.name)
             stock_info = self.get_beer_data(beer.atvr_id)
-            self.update_beer_by_id(beer.atvr_id, stock_info)
+            pp.pprint(stock_info)
+            #self.update_beer_by_id(beer.atvr_id, stock_info)
