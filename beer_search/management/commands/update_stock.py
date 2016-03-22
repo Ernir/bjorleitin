@@ -12,7 +12,8 @@ class Command(BaseCommand):
         :return: A dictionary consisting of store names as keys, and the
         stock status of the beer with the given ID as values.
         """
-        base_url = "http://www.vinbudin.is/DesktopDefault.aspx/tabid-54"
+
+        base_url = "http://www.vinbudin.is/Heim/v%C3%B6rur/stoek-vara.aspx/"
         params = {"productID": atvr_id}
         try:
             html_doc = requests.get(base_url, params=params).text
