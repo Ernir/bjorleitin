@@ -21,7 +21,6 @@ class ContainerType(models.Model):
 
 class Brewery(models.Model):
     name = models.CharField(max_length=500)
-    untappd_id = models.IntegerField(unique=True)
     alias = models.CharField(max_length=500, null=True, blank=True)
 
     def __str__(self):
@@ -77,7 +76,6 @@ class SimplifiedStyle(models.Model):
 
 class UntappdStyle(models.Model):
     """
-
     Represents one style, or "category" of beer (bjórstíll) as defined
     by the Untappd rating database.
     Examples include "Common Pale Lager" and "Dubbel".
@@ -96,11 +94,18 @@ class UntappdStyle(models.Model):
         ordering = ("name",)
 
 
+class UntappdEntity(models.Model):
+
+    untappd_id = models.IntegerField(unique=True)
+    brewery = models.ForeignKey(Brewery, null=True, default=None, blank=True)
+    style = models.ForeignKey(UntappdStyle, null=True, default=None, blank=True)
+    rating = models.FloatField(null=True, default=None, blank=True)
+
+
 class ProductType(models.Model):
     """
-    Denotes one 'type' of alcohol. A type can come in different
-    containers. (A 330mL can of Tuborg Grøn is not the same product
-    as a 500mL can, but it is the same ProductType).
+    Denotes one 'type' of alcohol. A type can come in different containers. (A 330mL can of Tuborg Grøn is not the same
+    product as a 500mL can, but it is the same ProductType).
     """
 
     # Base fields
@@ -108,44 +113,41 @@ class ProductType(models.Model):
     abv = models.FloatField()
 
     # FK fields
-    country = models.ForeignKey(Country, null=True, default=None,
-                                blank=True)
+    country = models.ForeignKey(Country, null=True, default=None, blank=True)
+    untappd_info = models.ForeignKey(UntappdEntity)
 
     # Additional info
-    untappd_id = models.IntegerField(null=True, default=None, blank=True)
-    untappd_rating = models.FloatField(null=True, default=None, blank=True)
     available = models.BooleanField(default=False)
     needs_announcement = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
 
-    def update_availability(self):
+    def update_availability(self, verbose=True):
         any_available_product = False
-        for beer in self.beer_set.all():
-            if beer.available:
+        for product in self.product_set.all():
+            if product.available:
                 any_available_product = True
-        # If there's a change, update, announce and log it
+        # If there's a change, update
         if self.available != any_available_product:
             self.needs_announcement = True
-            if any_available_product:
-                print("{0} is now available".format(self.name))
-            else:
-                print("{0} is no longer available".format(self.name))
+            if verbose:
+                if any_available_product:
+                    print("{0} is now available".format(self.name))
+                else:
+                    print("{0} is no longer available".format(self.name))
             self.available = any_available_product
             self.save()
 
     class Meta:
-        ordering = ("name", )
+        ordering = ("name",)
 
 
 class Product(models.Model):
     """
 
-    Represents one product, in one type of container at one particular
-    volume - A.K.A. one ATVR beer product.
+    Represents one product, in one type of container at one particular volume.
 
-    Objects of this type are heavyweight, forming the backbone of the app.
     """
 
     # Core fields
@@ -154,54 +156,37 @@ class Product(models.Model):
     volume = models.IntegerField()
     container = models.ForeignKey(ContainerType)
     product_id = models.CharField(max_length=100, unique=True)
-
-    # Categorization field
     product_type = models.ForeignKey(ProductType)
 
     # Boolean/availability fields
     first_seen_at = models.DateTimeField(null=True)
     available = models.BooleanField(default=True)
     temporary = models.BooleanField(default=False)
-    new = models.BooleanField(default=False)
 
     # Hidden fields
     updated_at = models.DateField(default=date.today)
 
+    # Methods
     def __str__(self):
-        name = "{0}, ({1} {2})".format(
-                self.name, self.volume, self.container.name
-        )
+        name = "{0}, ({1} {2})".format(self.name, self.volume, self.container.name)
         return name
 
     def _price_per_litre(self):
         return int(self.price / self.volume * 1000)
 
     def _check_if_new(self):
-        if not self.first_seen_at:
-            return False  # If we've never seen it, it's not a new product.
+        assert self.first_seen_at is not None
+
         two_months_ago = timezone.now() - timedelta(days=60)
-
         return self.first_seen_at > two_months_ago
-
-    price_per_litre = property(_price_per_litre)
 
     def save(self, *args, **kwargs):
         self.updated_at = date.today()  # Automatic updates
-        self.new = self._check_if_new()
-
         super(Product, self).save(*args, **kwargs)
 
+    # Properties
+    price_per_litre = property(_price_per_litre)
+    new = property(_check_if_new)
+
     class Meta:
-        ordering = ("name", "container__name")
-
-
-class UntappdEntity(models.Model):
-
-    product_type = models.ForeignKey(ProductType)
-
-    brewery = models.ForeignKey(
-            Brewery, null=True, default=None, blank=True
-    )
-    untappd_style = models.ForeignKey(
-        UntappdStyle, null=True, default=None, blank=True
-    )
+        ordering = ("name", "container__name", "volume")

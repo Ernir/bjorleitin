@@ -7,11 +7,11 @@ from pprint import PrettyPrinter
 
 class Command(BaseCommand):
 
-    def get_beer_data(self, atvr_id):
+    def get_product_stock(self, atvr_id):
         """
-        :param atvr_id: The ID of one of ATVR's beers.
+        :param atvr_id: The ID of one of ATVR's products.
         :return: A dictionary consisting of store names as keys, and the
-        stock status of the beer with the given ID as values.
+        stock status of the given product as values.
         """
 
         base_url = "http://www.vinbudin.is/Heim/v%C3%B6rur/stoek-vara.aspx/"
@@ -33,7 +33,7 @@ class Command(BaseCommand):
 
         return info
 
-    def update_beer_by_id(self, atvr_id, stock_info):
+    def update_product_by_id(self, atvr_id, stock_info):
         """
 
         Updates the stock status of the beer with the given id with the
@@ -41,23 +41,23 @@ class Command(BaseCommand):
         the function get_beer_data().
         """
 
-        beer = Beer.objects.get(atvr_id=atvr_id)
+        product = Product.objects.get(atvr_id=atvr_id)
         # An empty stock is OK, an undefined one isn't.
         if stock_info is None:
-            print("No data received for " + beer.name + ", no update.")
+            print("No data received for " + product.name + ", no update.")
             return
-        beer.store_set.clear()
-        beer.save()
+        product.store_set.clear()
+        product.save()
 
         for store_reference in stock_info:
             store = Store.objects.get(reference_name=store_reference)
-            store.beers_available.add(beer)
+            store.beers_available.add(product)
             store.save()
 
     def handle(self, *args, **options):
         beers = Beer.objects.available_beers().filter(name="Amstel")
         pp = PrettyPrinter()
         for beer in beers:
-            stock_info = self.get_beer_data(beer.atvr_id)
+            stock_info = self.get_product_stock(beer.atvr_id)
             pp.pprint(stock_info)
             #self.update_beer_by_id(beer.atvr_id, stock_info)
