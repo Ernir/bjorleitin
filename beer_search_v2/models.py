@@ -40,8 +40,11 @@ class Country(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        first = self.name[0].upper()  # Enforce uppercase
-        self.name = first + self.name[1:]
+        if self.name:
+            first = self.name[0].upper()  # Enforce uppercase
+            self.name = first + self.name[1:]
+        else:
+            self.name = "Óþekkt"
         super(Country, self).save(*args, **kwargs)
 
     class Meta:
@@ -114,7 +117,7 @@ class ProductType(models.Model):
 
     # FK fields
     country = models.ForeignKey(Country, null=True, default=None, blank=True)
-    untappd_info = models.ForeignKey(UntappdEntity)
+    untappd_info = models.ForeignKey(UntappdEntity, null=True, default=None, blank=True)
 
     # Additional info
     available = models.BooleanField(default=False)
