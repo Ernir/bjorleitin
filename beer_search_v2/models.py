@@ -24,7 +24,7 @@ class Brewery(models.Model):
     alias = models.CharField(max_length=500, null=True, blank=True)
 
     def __str__(self):
-        if self.alias is not None:
+        if self.alias:
             return self.alias
         return self.name
 
@@ -98,32 +98,48 @@ class UntappdStyle(models.Model):
 
 
 class UntappdEntity(models.Model):
-
     untappd_id = models.IntegerField(unique=True)
     brewery = models.ForeignKey(Brewery, null=True, default=None, blank=True)
     style = models.ForeignKey(UntappdStyle, null=True, default=None, blank=True)
     rating = models.FloatField(null=True, default=None, blank=True)
 
 
+class AlcoholCategory(models.Model):
+    """
+    Denotes one category of alcohols, e.g. "red wine".
+    """
+    name = models.CharField(max_length=200, unique=True)
+    alias = models.CharField(max_length=200, null=True, blank=True)
+
+    def __str__(self):
+        if self.alias:
+            return self.alias
+        return self.name
+
+
 class ProductType(models.Model):
     """
-    Denotes one 'type' of alcohol. A type can come in different containers. (A 330mL can of Tuborg Grøn is not the same
-    product as a 500mL can, but it is the same ProductType).
+    Denotes one 'type' of product. A type of the same alcohol can come in different containers.
+    (A 330mL can of Tuborg Grøn is not the same product as a 500mL can, but it is the same ProductType).
     """
 
     # Base fields
     name = models.CharField(max_length=200, unique=True)
+    alias = models.CharField(max_length=200, null=True, blank=True)
     abv = models.FloatField()
 
     # FK fields
     country = models.ForeignKey(Country, null=True, default=None, blank=True)
     untappd_info = models.ForeignKey(UntappdEntity, null=True, default=None, blank=True)
+    alcohol_category = models.ForeignKey(AlcoholCategory)
 
     # Additional info
     available = models.BooleanField(default=False)
     needs_announcement = models.BooleanField(default=False)
 
     def __str__(self):
+        if self.alias:
+            return self.alias
         return self.name
 
     def update_availability(self, verbose=True):
@@ -166,7 +182,7 @@ class Product(models.Model):
     available = models.BooleanField(default=True)
     temporary = models.BooleanField(default=False)
 
-    # Hidden fields
+    # Read-only fields
     updated_at = models.DateField(default=date.today)
 
     # Methods

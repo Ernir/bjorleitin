@@ -5,12 +5,12 @@ from datetime import datetime
 from beer_search_v2.models import Product, ProductType, ContainerType
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import BaseCommand
-from beer_search_v2.utils import get_country_instance
+from beer_search_v2.utils import get_country_instance, get_alcohol_category_instance
 
 
 class Command(BaseCommand):
     @classmethod
-    def get_data(cls):
+    def get_data(cls, verbose=True):
         """
         Steals product data from the internal API of vinbudin.is.
         :return: A list of products, as a JSON array. Format not particularly well defined.
@@ -59,7 +59,8 @@ class Command(BaseCommand):
             data = data["data"]  # Nesting fun
 
             num_fetched = len(data)
-            print("Fetched " + str(num_fetched) + " products")
+            if verbose:
+                print("Fetched " + str(num_fetched) + " products")
 
             if num_fetched > 0:
                 accumulated_list.extend(data)
@@ -109,11 +110,16 @@ class Command(BaseCommand):
             product_type.name = product.name
             product_type.abv = json_object["ProductAlchoholVolume"]
             product_type.country = get_country_instance(json_object["ProductCountryOfOrigin"])
+            alcohol_category_name = json_object["ProductCategory"]["name"]
+            product_type.alcohol_category = get_alcohol_category_instance(alcohol_category_name)
             product_type.save()
 
             product.product_type = product_type
 
             print("Creating new product type: {0}".format(product_type.name))
+        alcohol_category_name = json_object["ProductCategory"]["name"]
+        product_type.alcohol_category = get_alcohol_category_instance(alcohol_category_name)
+        product_type.save()
         product.save()
 
     @classmethod
@@ -145,7 +151,6 @@ class Command(BaseCommand):
             raw_container_name = json_object["ProductContainerType"]
             product.container = cls.find_container_type(raw_container_name)
             cls.update_product_type(product, json_object)
-
             product.available = True
             new_price = json_object["ProductPrice"]
             product.price = new_price  # We always update the price
@@ -174,7 +179,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         try:
-            product_list = self.get_data()
+            product_list = self.get_data(verbose=False)
         except ConnectionError:
             print("Unable to connect to vinbudin.is")
             product_list = []
@@ -184,4 +189,4 @@ class Command(BaseCommand):
             self.update_products(product_list)
 
         for product_type in ProductType.objects.all():
-            product_type.update_availability()
+            product_type.update_availability(verbose=False)

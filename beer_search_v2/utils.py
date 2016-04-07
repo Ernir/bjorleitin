@@ -1,7 +1,7 @@
 from django.core.exceptions import ObjectDoesNotExist
 import os
 import requests
-from beer_search_v2.models import Brewery, UntappdStyle, Product, Country
+from beer_search_v2.models import Brewery, UntappdStyle, Product, Country, AlcoholCategory
 
 
 def update_untappd_item(untappd_entity, verbose=True):
@@ -68,10 +68,20 @@ def get_brewery_instance(untappd_id, brewery_name, verbose=True):
 
 
 def get_country_instance(country_name):
-        try:
-            country = Country.objects.get(name__iexact=country_name)
-        except ObjectDoesNotExist:
-            country = Country()
-            country.name = country_name
-            country.save()
-        return country
+    try:
+        country = Country.objects.get(name__iexact=country_name)
+    except ObjectDoesNotExist:
+        country = Country()
+        country.name = country_name
+        country.save()
+    return country
+
+
+def get_alcohol_category_instance(cat_name):
+    try:
+        category = AlcoholCategory.objects.get(name=cat_name)
+    except ObjectDoesNotExist:
+        category = AlcoholCategory()
+        category.name = cat_name
+        category.save()
+    return category
