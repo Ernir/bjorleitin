@@ -39,10 +39,17 @@ INSTALLED_APPS = (
     "beer_search_v2",
     "crispy_forms",
     "storages",
-    "compressor"
+    "compressor",
+    "rest_framework"
 )
 
 CRISPY_TEMPLATE_PACK = "bootstrap3"
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ]
+}
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.cache.UpdateCacheMiddleware',
@@ -85,7 +92,6 @@ STATICFILES_FINDERS = (
 
 WSGI_APPLICATION = 'BeerSearch.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
@@ -97,7 +103,6 @@ DATABASES["default"]["ENGINE"] = "django_postgrespool"
 
 # Parse database configuration from $DATABASE_URL
 DATABASES['default'] = dj_database_url.config("BEER_DB_URL")
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
@@ -119,7 +124,7 @@ CACHES = {
     }
 }
 CACHE_MIDDLEWARE_ALIAS = "default"
-CACHE_MIDDLEWARE_SECONDS = 60*5
+CACHE_MIDDLEWARE_SECONDS = 60 * 5
 CACHE_MIDDLEWARE_KEY_PREFIX = ""
 
 # Static files (CSS, JavaScript, Images)
@@ -131,7 +136,7 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 # Allow all host headers
 ALLOWED_HOSTS = ['*']
 
-#Twitter setup
+# Twitter setup
 
 TWITTER_CONSUMER_KEY = os.environ.get("BEER_TWITTER_CONSUMER_KEY")
 TWITTER_CONSUMER_SECRET = os.environ.get("BEER_TWITTER_CONSUMER_SECRET")

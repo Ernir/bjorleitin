@@ -13,6 +13,7 @@ django-debug-toolbar==1.4
 django-htmlmin==0.7.0
 django-storages-redux==1.2.3
 django-toolbelt==0.0.1
+djangorestframework==3.3.3
 gunicorn==19.3.0
 html5lib==0.99999
 oauthlib==1.0.3
