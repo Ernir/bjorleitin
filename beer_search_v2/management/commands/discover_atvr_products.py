@@ -73,8 +73,8 @@ class Command(BaseCommand):
 
     @classmethod
     def prepare_products_for_update(cls):
-        # Marking all existing products as not available until proven wrong.
-        for product in Product.objects.all():
+        # Marking all existing products from ÁTVR as not available until proven wrong.
+        for product in Product.objects.filter(source=Product.ATVR).all():
             product.available = False
             product.save()
 
@@ -117,9 +117,6 @@ class Command(BaseCommand):
             product.product_type = product_type
 
             print("Creating new product type: {0}".format(product_type.name))
-        alcohol_category_name = json_object["ProductCategory"]["name"]
-        product_type.alcohol_category = get_alcohol_category_instance(alcohol_category_name)
-        product_type.save()
         product.save()
 
     @classmethod
@@ -188,5 +185,5 @@ class Command(BaseCommand):
             self.prepare_products_for_update()
             self.update_products(product_list)
 
-        for product_type in ProductType.objects.all():
+        for product_type in ProductType.objects.filter().all():
             product_type.update_availability(verbose=False)

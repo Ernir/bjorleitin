@@ -171,13 +171,20 @@ class Product(models.Model):
 
     # Core fields
     name = models.CharField(max_length=200)
-    price = models.IntegerField()
-    volume = models.IntegerField()
+    price = models.IntegerField(null=True)
+    volume = models.IntegerField(null=True)
     container = models.ForeignKey(ContainerType)
     product_id = models.CharField(max_length=100, unique=True)
     product_type = models.ForeignKey(ProductType)
 
+    ATVR, JoG = 0, 1
+    SOURCE_CHOICES = (
+        (ATVR, "ÁTVR"),
+        (JoG, "Járn og Gler")
+    )
+
     # Boolean/availability fields
+    source = models.IntegerField(choices=SOURCE_CHOICES, default=ATVR)
     first_seen_at = models.DateTimeField(null=True)
     available = models.BooleanField(default=True)
     temporary = models.BooleanField(default=False)
@@ -187,7 +194,7 @@ class Product(models.Model):
 
     # Methods
     def __str__(self):
-        name = "{0}, ({1} {2})".format(self.name, self.volume, self.container.name)
+        name = "{0}, ({1}ml {2})".format(self.name, self.volume, self.container.name)
         return name
 
     def _price_per_litre(self):
