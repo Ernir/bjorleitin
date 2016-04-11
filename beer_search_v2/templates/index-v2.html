@@ -1,0 +1,15 @@
+{% extends "base-v2.html" %}
+{% load staticfiles %}
+
+{% block metatags %}
+    <meta name="description"
+          content="Leitarsíða fyrir bjóra Vínbúðarinnar. Leitaðu eftir bjórstílum, verði og fleiru."/>
+    {% include "open_graph/og_index.html" %}
+{% endblock %}
+
+{% block content %}
+    <div class="col-sm-8 col-sm-offset-4 col-md-9 col-md-offset-3 main">
+        <div id="table-container" class="table-responsive">
+        </div>
+    </div>
+{% endblock %}

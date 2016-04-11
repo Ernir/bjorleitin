@@ -1,0 +1,101 @@
+{% load static %}
+{% load compress %}
+
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta name="keywords" content="bjór, bjórar, leita að bjór, vínbúðin, bjórstílar, bjórflokkar"/>
+    {% block metatags %}
+    {% endblock %}
+
+    <!-- minified bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
+    <!-- theme -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootswatch/3.3.2/flatly/bootstrap.min.css"/>
+
+    <!-- library -->
+    {% compress css %}
+        <link rel="stylesheet" href="{% static "dashboard.css" %}"/>
+        <link rel="stylesheet" href="{% static "style-v2.css" %}"/>
+    {% endcompress %}
+
+    <link rel="shortcut icon" type="image/png" sizes="16x16 24x24 32x32 48x48" href="{% static "beer.ico" %}"/>
+
+    <title>Bjórleitin
+        {% if title %}
+            - {{ title }}
+        {% endif %}
+    </title>
+</head>
+<body>
+<div id="fb-root"></div>
+<script>
+    window.fbAsyncInit = function () {
+        FB.init({
+            appId: '453162018180328',
+            xfbml: true,
+            version: 'v2.3'
+        });
+    };
+
+    (function (d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) {
+            return;
+        }
+        js = d.createElement(s);
+        js.id = id;
+        js.src = "//connect.facebook.net/is_IS/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+</script>
+
+{% include "navbar-v2.html" %}
+<div id="content" class="container-fluid">
+    <div class="row">
+        {% block sidebar %}
+            {% include "search-sidebar.html" %}
+        {% endblock %}
+        {% block content %}
+            This should be overridden.
+        {% endblock %}
+    </div>
+</div>
+
+<!-- minified jQuery -->
+<script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
+
+<!-- minified bootstrap -->
+<script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.21.5/js/jquery.tablesorter.min.js"></script>
+<!-- common JS -->
+{% compress js %}
+    <script src="{% static "app-v2.js" %}"></script>
+
+    {% block scripts %}
+    {% endblock %}
+{% endcompress %}
+
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r;
+        i[r] = i[r] || function () {
+                    (i[r].q = i[r].q || []).push(arguments)
+                }, i[r].l = 1 * new Date();
+        a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+        a.async = 1;
+        a.src = g;
+        m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-23333818-3', 'auto');
+    ga('send', 'pageview');
+
+</script>
+
+</body>
+</html>

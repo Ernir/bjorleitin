@@ -23,5 +23,13 @@ class IndexView(BaseView):
     """
 
     def get(self, request):
-        # return render(request, "index.html", self.params)
-        return HttpResponse("<body>Nothing to see here yet</body>")
+        return render(request, "index-v2.html", self.params)
+
+
+class MainTableView(BaseView):
+    """
+    A view to render a complete table of all beer types
+    """
+
+    def get(self, request):
+        return render(request, "main-table.html", self.params)

@@ -4,5 +4,6 @@ from django.conf.urls import url, include
 
 urlpatterns = [
     url(r"^$", views.IndexView.as_view(), name="index"),
+    url(r"main-table/$", views.MainTableView.as_view(), name="main_table"),
     url(r"^api/", include(router.urls))
 ]
