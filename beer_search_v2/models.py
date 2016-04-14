@@ -98,10 +98,27 @@ class UntappdStyle(models.Model):
 
 
 class UntappdEntity(models.Model):
+    """
+    Maintains information coming from the Untappd rating database.
+    """
     untappd_id = models.IntegerField(unique=True)
     brewery = models.ForeignKey(Brewery, null=True, default=None, blank=True)
     style = models.ForeignKey(UntappdStyle, null=True, default=None, blank=True)
     rating = models.FloatField(null=True, default=None, blank=True)
+
+    product_name = models.CharField(max_length=200, default="UNKNOWN")
+
+    def save(self, *args, **kwargs):
+        if self.producttype_set.count() > 0:
+            self.product_name = self.producttype_set.first().name
+        super(UntappdEntity, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return str("{0} ({1})".format(self.product_name, self.untappd_id))
+
+    class Meta:
+        ordering = ("untappd_id",)
+        verbose_name_plural = "Untappd entities"
 
 
 class AlcoholCategory(models.Model):
@@ -115,6 +132,9 @@ class AlcoholCategory(models.Model):
         if self.alias:
             return self.alias
         return self.name
+
+    class Meta:
+        verbose_name_plural = "Alcohol categories"
 
 
 class ProductType(models.Model):

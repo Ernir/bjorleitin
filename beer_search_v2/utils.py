@@ -1,7 +1,7 @@
 from django.core.exceptions import ObjectDoesNotExist
 import os
 import requests
-from beer_search_v2.models import Brewery, UntappdStyle, Product, Country, AlcoholCategory
+from beer_search_v2.models import Brewery, UntappdStyle, Product, Country, AlcoholCategory, ContainerType
 
 
 def update_untappd_item(untappd_entity, verbose=True):
@@ -85,3 +85,13 @@ def get_alcohol_category_instance(cat_name):
         category.name = cat_name
         category.save()
     return category
+
+
+def get_container_instance(container_name):
+    try:
+        container = ContainerType.objects.get(name=container_name)
+    except ObjectDoesNotExist:
+        container = ContainerType()
+        container.name = container_name
+        container.save()
+    return container
