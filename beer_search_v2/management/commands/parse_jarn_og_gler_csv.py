@@ -31,10 +31,10 @@ class Command(BaseCommand):
     def get_product_instance(cls, data_row):
         product_id = data_row[0]
         try:  # Checking if we've found the product previously
-            product = Product.objects.get(product_id=product_id)
+            product = Product.objects.get(jog_id=product_id)
         except ObjectDoesNotExist:
             product = Product()
-            product.product_id = product_id
+            product.jog_id = product_id
             cls.initialize_product(product, data_row)
         return product
 

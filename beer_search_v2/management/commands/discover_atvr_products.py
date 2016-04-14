@@ -170,7 +170,7 @@ class Command(BaseCommand):
             product = Product.objects.get(product_id=product_id)
         except ObjectDoesNotExist:
             product = Product()
-            product.product_id = product_id
+            product.atvr_id = product_id
             cls.initialize_product(product, json_object)
         return product
 

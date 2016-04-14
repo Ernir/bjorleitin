@@ -110,7 +110,7 @@ class UntappdEntity(models.Model):
 
     def save(self, *args, **kwargs):
         if self.producttype_set.count() > 0:
-            self.product_name = self.producttype_set.first().name
+            self.product_name = str(self.producttype_set.first())
         super(UntappdEntity, self).save(*args, **kwargs)
 
     def __str__(self):
@@ -194,8 +194,11 @@ class Product(models.Model):
     price = models.IntegerField(null=True)
     volume = models.IntegerField(null=True)
     container = models.ForeignKey(ContainerType)
-    product_id = models.CharField(max_length=100, unique=True)
     product_type = models.ForeignKey(ProductType)
+
+    # The two current product sources use different identification systems
+    atvr_id = models.CharField(max_length=100, unique=True, null=True)
+    jog_id = models.CharField(max_length=100, unique=True, null=True)
 
     ATVR, JoG = 0, 1
     SOURCE_CHOICES = (
