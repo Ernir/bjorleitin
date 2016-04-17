@@ -1,7 +1,21 @@
 from django.core.exceptions import ObjectDoesNotExist
 import os
 import requests
-from beer_search_v2.models import Brewery, UntappdStyle, Product, Country, AlcoholCategory, ContainerType
+from beer_search_v2.models import Brewery, UntappdStyle, ProductType, Country, AlcoholCategory, ContainerType
+from django.db.models import Max, Min
+
+
+def get_product_type_display():
+    beer = AlcoholCategory.objects.get(name="beer")
+    product_types = ProductType.objects.prefetch_related(
+            "alcohol_category", "untappd_info"
+    ).filter(
+            available=True, alcohol_category=beer
+    ).annotate(
+            max_price=Max("product__price"), min_price=Min("product__price"),
+            max_volume=Max("product__volume"), min_volume=Min("product__volume")
+    )
+    return product_types
 
 
 def update_untappd_item(untappd_entity, verbose=True):

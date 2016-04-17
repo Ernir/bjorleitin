@@ -197,8 +197,8 @@ class Product(models.Model):
     product_type = models.ForeignKey(ProductType)
 
     # The two current product sources use different identification systems
-    atvr_id = models.CharField(max_length=100, unique=True, null=True)
-    jog_id = models.CharField(max_length=100, unique=True, null=True)
+    atvr_id = models.CharField(max_length=100, unique=True, null=True, blank=True)
+    jog_id = models.CharField(max_length=100, unique=True, null=True, blank=True)
 
     ATVR, JoG = 0, 1
     SOURCE_CHOICES = (
