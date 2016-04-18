@@ -103,7 +103,7 @@ class Command(BaseCommand):
         Each product is an instance of a particular product type, this common info is stored separately.
         """
         try:  # Checking if this product belongs to type with the same name
-            product_type = ProductType.objects.get(name=product.name)
+            product_type = ProductType.objects.get(name=product.name.strip())
             product.product_type = product_type
         except ObjectDoesNotExist:  # Otherwise, create one
             product_type = ProductType()
@@ -165,12 +165,12 @@ class Command(BaseCommand):
         return product
 
     @classmethod
-    def get_product_instance(cls, json_object, product_id):
+    def get_product_instance(cls, json_object, atvr_id):
         try:  # Checking if we've found the product previously
-            product = Product.objects.get(product_id=product_id)
+            product = Product.objects.get(atvr_id=atvr_id)
         except ObjectDoesNotExist:
             product = Product()
-            product.atvr_id = product_id
+            product.atvr_id = atvr_id
             cls.initialize_product(product, json_object)
         return product
 

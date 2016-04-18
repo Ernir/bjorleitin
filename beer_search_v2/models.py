@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import models, IntegrityError
 from datetime import date, timedelta
 from django.utils import timezone
 from django.utils.text import slugify
@@ -197,8 +197,8 @@ class Product(models.Model):
     product_type = models.ForeignKey(ProductType)
 
     # The two current product sources use different identification systems
-    atvr_id = models.CharField(max_length=100, unique=True, null=True, blank=True)
-    jog_id = models.CharField(max_length=100, unique=True, null=True, blank=True)
+    atvr_id = models.CharField(max_length=100, null=True, blank=True)
+    jog_id = models.CharField(max_length=100, null=True, blank=True)
 
     ATVR, JoG = 0, 1
     SOURCE_CHOICES = (
@@ -231,6 +231,16 @@ class Product(models.Model):
 
     def save(self, *args, **kwargs):
         self.updated_at = date.today()  # Automatic updates
+
+        # Products should not share non-falsey identifiers
+        # ToDo validate creation and saving differently. Currently assumes saving
+        if self.atvr_id:
+            if Product.objects.filter(atvr_id=self.atvr_id).count() > 1:
+                raise IntegrityError("Product with given ÁTVR ID already exists")
+        if self.jog_id:
+            if Product.objects.filter(jog_id=self.jog_id).count() > 1:
+                raise IntegrityError("Product with given Járn og Gler ID already exists")
+
         super(Product, self).save(*args, **kwargs)
 
     # Properties
