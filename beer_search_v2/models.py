@@ -19,20 +19,6 @@ class ContainerType(models.Model):
         ordering = ("name",)
 
 
-class Brewery(models.Model):
-    name = models.CharField(max_length=500)
-    alias = models.CharField(max_length=500, null=True, blank=True)
-
-    def __str__(self):
-        if self.alias:
-            return self.alias
-        return self.name
-
-    class Meta:
-        verbose_name_plural = "breweries"
-        ordering = ("name",)
-
-
 class Country(models.Model):
     name = models.CharField(max_length=100)
 
@@ -49,6 +35,23 @@ class Country(models.Model):
 
     class Meta:
         verbose_name_plural = "countries"
+        ordering = ("name",)
+
+
+class Brewery(models.Model):
+    name = models.CharField(max_length=500)
+    untappd_id = models.IntegerField(unique=True)
+    alias = models.CharField(max_length=500, null=True, blank=True)
+    country = models.ForeignKey(Country, null=True, blank=True)
+    country_name = models.CharField(max_length=200, null=True, blank=True)  # Redundancy, used as a fallback
+
+    def __str__(self):
+        if self.alias:
+            return self.alias
+        return self.name
+
+    class Meta:
+        verbose_name_plural = "breweries"
         ordering = ("name",)
 
 

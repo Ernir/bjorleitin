@@ -1,5 +1,5 @@
 from beer_search_v2.models import Product, ProductType, AlcoholCategory, SimplifiedStyle, UntappdStyle, UntappdEntity, \
-    ContainerType
+    ContainerType, Brewery
 from django.contrib import admin
 
 
@@ -29,3 +29,4 @@ class UntappdEntityAdmin(admin.ModelAdmin):
 admin.site.register(AlcoholCategory)
 admin.site.register(UntappdStyle)
 admin.site.register(ContainerType)
+admin.site.register(Brewery)

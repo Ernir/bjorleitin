@@ -45,11 +45,19 @@
             {% endif %}
             {% if beer.country %}
                 <td>{{ beer.country.name }}</td>
+            {% elif beer.untappd_info %}
+                {% if beer.untappd_info.brewery %}
+                    {% if beer.untappd_info.brewery.country %}
+                        <td>{{ beer.untappd_info.brewery.country.name }}</td>
+                    {% else %}
+                        <td>{{ beer.untappd_info.brewery.country_name }}</td>
+                    {% endif %}
+                {% endif %}
             {% else %}
                 <td>?</td>
             {% endif %}
             {% if beer.untappd_info %}
-                <td>{{ beer.untappd_info.rating }}</td>
+                <td>{{ beer.untappd_info.rating|floatformat:2 }}</td>
             {% else %}
                 <td>?</td>
             {% endif %}
