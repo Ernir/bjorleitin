@@ -7,13 +7,18 @@ from django.db.models import Max, Min
 
 def get_product_type_display():
     beer = AlcoholCategory.objects.get(name="beer")
-    product_types = ProductType.objects.prefetch_related(
+    gift_box = get_container_instance("Gjafaaskja")
+    product_types = ProductType.objects.select_related(
             "alcohol_category", "untappd_info"
+    ).prefetch_related(
+            "product_set__container"
     ).filter(
             available=True, alcohol_category=beer
+    ).exclude(
+            product__container=gift_box
     ).annotate(
             max_price=Max("product__price"), min_price=Min("product__price"),
-            max_volume=Max("product__volume"), min_volume=Min("product__volume")
+            max_volume=Max("product__volume"), min_volume=Min("product__volume"),
     )
     return product_types
 

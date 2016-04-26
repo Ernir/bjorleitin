@@ -15,34 +15,53 @@
     <tbody>
     {% for beer in product_list %}
         <tr>
+            <!-- Product name -->
             {% if beer.alias %}
                 <td> {{ beer.alias }}</td>
             {% else %}
                 <td>{{ beer.name }}</td>
             {% endif %}
 
+            <!-- Style -->
             {% if beer.untappd_info %}
                 <td>{{ beer.untappd_info.style.simplifies_to.name }}</td>
             {% else %}
                 <td>?</td>
             {% endif %}
-            <td>ipsum</td>
+
+            <!-- Containers -->
+            {% regroup beer.product_set.all by container.name as container_list %}
+            <td>
+                {% for container in container_list %}
+                    {{ container.grouper }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            </td>
+
+            <!-- ABV-->
             <td>{{ beer.abv }}%</td>
+
+            <!-- Volumes -->
             {% if beer.min_volume == beer.max_volume %}
                 <td>{{ beer.min_volume }} ml.</td>
             {% else %}
                 <td>{{ beer.min_volume }} - {{ beer.max_volume }} ml.</td>
             {% endif %}
+
+            <!-- Prices -->
             {% if beer.min_price == beer.max_price %}
                 <td>{{ beer.min_price }} kr.</td>
             {% else %}
                 <td>{{ beer.min_price }} - {{ beer.max_price }} kr.</td>
             {% endif %}
+
+            <!-- Brewery -->
             {% if beer.untappd_info %}
                 <td>{{ beer.untappd_info.brewery.name }}</td>
             {% else %}
                 <td>?</td>
             {% endif %}
+
+            <!-- Country -->
             {% if beer.country %}
                 <td>{{ beer.country.name }}</td>
             {% elif beer.untappd_info %}
@@ -56,6 +75,8 @@
             {% else %}
                 <td>?</td>
             {% endif %}
+
+            <!-- Untappd rating -->
             {% if beer.untappd_info %}
                 <td>{{ beer.untappd_info.rating|floatformat:2 }}</td>
             {% else %}
