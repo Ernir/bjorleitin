@@ -1,8 +1,9 @@
 from django.http import HttpResponse
+
 from django.shortcuts import render
 from django.views.generic import View
-from beer_search_v2.utils import get_product_type_display
-
+from beer_search_v2.utils import get_main_display
+from django.conf import settings
 
 class BaseView(View):
     """
@@ -14,7 +15,8 @@ class BaseView(View):
         super().__init__()
         self.params = {
             "title": "Bjórleitin",  # Default value
-            "sub_title": ""
+            "sub_title": "",
+            "debug": settings.DEBUG
         }
 
 
@@ -33,5 +35,5 @@ class MainTableView(BaseView):
     """
 
     def get(self, request):
-        self.params["product_list"] = get_product_type_display
+        self.params["product_list"] = get_main_display()
         return render(request, "main-table.html", self.params)

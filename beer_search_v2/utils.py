@@ -1,26 +1,83 @@
 from django.core.exceptions import ObjectDoesNotExist
 import os
 import requests
-from beer_search_v2.models import Brewery, UntappdStyle, ProductType, Country, AlcoholCategory, ContainerType
-from django.db.models import Max, Min
+from beer_search_v2.models import Brewery, UntappdStyle, Country, AlcoholCategory, ContainerType, Product
+from collections import OrderedDict
 
 
-def get_product_type_display():
+def get_main_display():
+    """
+
+    Returns a list of dictionaries containing the information needed to display and filter
+    the main table on the index page.
+    """
+
+    # First we gather the requisite information
     beer = AlcoholCategory.objects.get(name="beer")
     gift_box = get_container_instance("Gjafaaskja")
-    product_types = ProductType.objects.select_related(
-            "alcohol_category", "untappd_info"
-    ).prefetch_related(
-            "product_set__container"
+    products = Product.objects.select_related(
+            "container",
+            "product_type",
+            "product_type__country",
+            "product_type__alcohol_category",
+            "product_type__untappd_info",
+            "product_type__untappd_info__brewery",
+            "product_type__untappd_info__style__simplifies_to"
     ).filter(
-            available=True, alcohol_category=beer
+        product_type__alcohol_category=beer,
+        available=True
     ).exclude(
-            product__container=gift_box
-    ).annotate(
-            max_price=Max("product__price"), min_price=Min("product__price"),
-            max_volume=Max("product__volume"), min_volume=Min("product__volume"),
-    )
-    return product_types
+        container=gift_box
+    ).order_by("product_type__alias")
+
+    # Then we curate it
+    type_dict = OrderedDict()
+    for product in products.all():
+        pid = product.product_type_id
+        if pid not in type_dict:  # Initialize with all data common among all products of the same type
+            type_dict[pid] = {
+                "name": str(product.product_type),
+                "productId": pid,
+                "containers": [product.container.name],
+                "abv": product.product_type.abv,
+                "minVolume": product.volume,
+                "maxVolume": product.volume,
+                "minPrice": product.price,
+                "maxPrice": product.price
+            }
+
+            if product.product_type.country:
+                type_dict[pid]["country"] = product.product_type.country.name
+
+            if product.product_type.untappd_info:
+                u_info = product.product_type.untappd_info
+                if u_info.style and u_info.style.simplifies_to:
+                    type_dict[pid]["style"] = u_info.style.simplifies_to.name
+                if u_info.brewery:
+                    type_dict[pid]["brewery"] = str(u_info.brewery)
+                    if "country" not in type_dict[pid]:  # Country info is shaky, stored with great redundancy
+                        if u_info.brewery.country:
+                            type_dict[pid]["country"] = u_info.brewery.country.name
+                        elif u_info.brewery.country_name:
+                            type_dict[pid]["country"] = u_info.brewery.country_name
+                if u_info.rating:
+                    type_dict[pid]["untappdRating"] = u_info.rating
+            # Fillers for those entries with no known information
+            if "country" not in type_dict[pid]:
+                type_dict[pid]["country"] = "?"
+            if "brewery" not in type_dict[pid]:
+                type_dict[pid]["brewery"] = "?"
+            if "style" not in type_dict[pid]:
+                type_dict[pid]["style"] = "?"
+        else:
+            type_dict[pid]["maxVolume"] = max(type_dict[pid]["maxVolume"], product.volume)
+            type_dict[pid]["minVolume"] = min(type_dict[pid]["minVolume"], product.volume)
+            type_dict[pid]["maxPrice"] = max(type_dict[pid]["maxPrice"], product.price)
+            type_dict[pid]["minPrice"] = min(type_dict[pid]["minPrice"], product.price)
+            if product.container.name not in type_dict[pid]["containers"]:
+                type_dict[pid]["containers"].append(product.container.name)
+
+    return [item for item in type_dict.values()]
 
 
 def update_untappd_item(untappd_entity, verbose=True):

@@ -1,3 +1,6 @@
+{% if debug %}
+    <body>
+{% endif %}
 <table class="table table-striped">
     <thead>
     <tr>
@@ -5,8 +8,8 @@
         <th>Stíll</th>
         <th>Ílát</th>
         <th>Styrkur</th>
-        <th>Magn</th>
-        <th>Verð</th>
+        <th>Magn (ml)</th>
+        <th>Verð (kr.)</th>
         <th>Brugghús</th>
         <th>Land</th>
         <th>Untappd</th>
@@ -15,70 +18,32 @@
     <tbody>
     {% for beer in product_list %}
         <tr>
-            <!-- Product name -->
-            {% if beer.alias %}
-                <td> {{ beer.alias }}</td>
-            {% else %}
-                <td>{{ beer.name }}</td>
-            {% endif %}
+            <td> {{ beer.name }}</td>
 
-            <!-- Style -->
-            {% if beer.untappd_info %}
-                <td>{{ beer.untappd_info.style.simplifies_to.name }}</td>
-            {% else %}
-                <td>?</td>
-            {% endif %}
+            <td>{{ beer.style }}</td>
 
-            <!-- Containers -->
-            {% regroup beer.product_set.all by container.name as container_list %}
-            <td>
-                {% for container in container_list %}
-                    {{ container.grouper }}{% if not forloop.last %}, {% endif %}
-                {% endfor %}
-            </td>
+            <td>{{ beer.containers|join:", " }}</td>
 
-            <!-- ABV-->
             <td>{{ beer.abv }}%</td>
 
-            <!-- Volumes -->
-            {% if beer.min_volume == beer.max_volume %}
-                <td>{{ beer.min_volume }} ml.</td>
+            {% if beer.minVolume == beer.maxVolume %}
+                <td>{{ beer.minVolume }}</td>
             {% else %}
-                <td>{{ beer.min_volume }} - {{ beer.max_volume }} ml.</td>
+                <td>{{ beer.minVolume }} - {{ beer.maxVolume }}</td>
             {% endif %}
 
-            <!-- Prices -->
-            {% if beer.min_price == beer.max_price %}
-                <td>{{ beer.min_price }} kr.</td>
+            {% if beer.minPrice == beer.maxPrice %}
+                <td>{{ beer.minPrice }}</td>
             {% else %}
-                <td>{{ beer.min_price }} - {{ beer.max_price }} kr.</td>
+                <td>{{ beer.minPrice }} - {{ beer.maxPrice }}</td>
             {% endif %}
 
-            <!-- Brewery -->
-            {% if beer.untappd_info %}
-                <td>{{ beer.untappd_info.brewery.name }}</td>
-            {% else %}
-                <td>?</td>
-            {% endif %}
+            <td>{{ beer.brewery }}</td>
 
-            <!-- Country -->
-            {% if beer.country %}
-                <td>{{ beer.country.name }}</td>
-            {% elif beer.untappd_info %}
-                {% if beer.untappd_info.brewery %}
-                    {% if beer.untappd_info.brewery.country %}
-                        <td>{{ beer.untappd_info.brewery.country.name }}</td>
-                    {% else %}
-                        <td>{{ beer.untappd_info.brewery.country_name }}</td>
-                    {% endif %}
-                {% endif %}
-            {% else %}
-                <td>?</td>
-            {% endif %}
+            <td>{{ beer.country }}</td>
 
-            <!-- Untappd rating -->
-            {% if beer.untappd_info %}
-                <td>{{ beer.untappd_info.rating|floatformat:2 }}</td>
+            {% if beer.untappdRating %}
+                <td>{{ beer.untappdRating|floatformat:2 }}</td>
             {% else %}
                 <td>?</td>
             {% endif %}
@@ -86,3 +51,6 @@
     {% endfor %}
     </tbody>
 </table>
+{% if debug %}
+    </body>
+{% endif %}

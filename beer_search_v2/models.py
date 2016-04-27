@@ -148,7 +148,7 @@ class ProductType(models.Model):
 
     # Base fields
     name = models.CharField(max_length=200, unique=True)
-    alias = models.CharField(max_length=200, null=True, blank=True)
+    alias = models.CharField(max_length=200, blank=True)
     abv = models.FloatField()
 
     # FK fields
@@ -159,6 +159,11 @@ class ProductType(models.Model):
     # Additional info
     available = models.BooleanField(default=False)
     needs_announcement = models.BooleanField(default=False)
+
+    def save(self, *args, **kwargs):
+        if not self.alias:  # Aliases are used for sorting
+            self.alias = self.name
+        super(ProductType, self).save(*args, **kwargs)
 
     def __str__(self):
         if self.alias:
@@ -182,7 +187,7 @@ class ProductType(models.Model):
             self.save()
 
     class Meta:
-        ordering = ("name",)
+        ordering = ("alias",)
 
 
 class Product(models.Model):
