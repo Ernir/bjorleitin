@@ -1,7 +1,9 @@
+from django.contrib.postgres.fields import JSONField
 from django.db import models, IntegrityError
 from datetime import date, timedelta
 from django.utils import timezone
 from django.utils.text import slugify
+from django.utils.timezone import now
 from markdown import markdown
 
 
@@ -257,3 +259,19 @@ class Product(models.Model):
 
     class Meta:
         ordering = ("name", "container__name", "volume")
+
+
+class MainQueryResult(models.Model):
+    """
+    Does not represent an actual entity.
+    Used for queryset caching, storing results in JSON format.
+    """
+
+    json_contents = JSONField()
+    created_at = models.DateTimeField(default=now)
+
+    def __str__(self):
+        return str(self.created_at)
+
+    class Meta:
+        ordering = ("-created_at",)

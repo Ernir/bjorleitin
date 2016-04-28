@@ -1,12 +1,17 @@
-from beer_search_v2.utils import update_untappd_item
-from beer_search_v2.models import UntappdEntity
+from beer_search_v2.utils import update_untappd_item, get_main_display
+from beer_search_v2.models import UntappdEntity, MainQueryResult
 from django.core.management.base import BaseCommand
 
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
+        verbose = True
         entities = UntappdEntity.objects.filter(
             rating__isnull=True
         ).all()[0:100]
         for entity in entities:
-            update_untappd_item(entity)
+            update_untappd_item(entity, verbose)
+        if verbose:
+            print("Entities updated, caching result")
+        data = get_main_display()
+        MainQueryResult.objects.create(json_contents=data)

@@ -22,6 +22,7 @@ def get_main_display():
             "product_type__alcohol_category",
             "product_type__untappd_info",
             "product_type__untappd_info__brewery",
+            "product_type__untappd_info__brewery__country",
             "product_type__untappd_info__style__simplifies_to"
     ).filter(
         product_type__alcohol_category=beer,

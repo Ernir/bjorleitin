@@ -2,7 +2,7 @@ from django.http import HttpResponse
 
 from django.shortcuts import render
 from django.views.generic import View
-from beer_search_v2.utils import get_main_display
+from beer_search_v2.models import MainQueryResult
 from django.conf import settings
 
 class BaseView(View):
@@ -35,5 +35,5 @@ class MainTableView(BaseView):
     """
 
     def get(self, request):
-        self.params["product_list"] = get_main_display()
+        self.params["product_list"] = MainQueryResult.objects.first().json_contents
         return render(request, "main-table.html", self.params)
