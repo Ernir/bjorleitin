@@ -1,5 +1,5 @@
 from beer_search_v2.models import Product, ProductType, AlcoholCategory, SimplifiedStyle, UntappdStyle, UntappdEntity, \
-    ContainerType, Brewery, MainQueryResult
+    ContainerType, Brewery, MainQueryResult, Country
 from django.contrib import admin
 
 
@@ -50,7 +50,7 @@ class UntappdDefined(admin.SimpleListFilter):
 
 @admin.register(ProductType)
 class ProductTypeAdmin(admin.ModelAdmin):
-    search_fields = ["name"]
+    search_fields = ["alias"]
     list_filter = (UntappdDefined, IsBeer)
 
 
@@ -65,8 +65,13 @@ class UntappdEntityAdmin(admin.ModelAdmin):
     readonly_fields = ["product_name"]
 
 
+@admin.register(Brewery)
+class BreweryAdmin(admin.ModelAdmin):
+    search_fields = ["name"]
+
+
 admin.site.register(AlcoholCategory)
+admin.site.register(Country)
 admin.site.register(UntappdStyle)
 admin.site.register(ContainerType)
-admin.site.register(Brewery)
 admin.site.register(MainQueryResult)

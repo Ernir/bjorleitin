@@ -102,10 +102,17 @@ class Command(BaseCommand):
         """
         Each product is an instance of a particular product type, this common info is stored separately.
         """
-        try:  # Checking if this product belongs to type with the same name
+        product_type = None
+        # Checking if this product belongs to an existing type
+        matching_names = ProductType.objects.filter(name=product.name.strip()).exists()
+        matching_alternates = ProductType.objects.filter(alternate_names__contains=[product.name.strip()])
+        if matching_names:
             product_type = ProductType.objects.get(name=product.name.strip())
-            product.product_type = product_type
-        except ObjectDoesNotExist:  # Otherwise, create one
+        elif matching_alternates:
+            product_type = matching_alternates[0]
+        product.product_type = product_type
+
+        if not product.product_type:  # Otherwise, we create one
             product_type = ProductType()
             product_type.name = product.name
             product_type.abv = json_object["ProductAlchoholVolume"]
@@ -115,7 +122,6 @@ class Command(BaseCommand):
             product_type.save()
 
             product.product_type = product_type
-
             print("Creating new product type: {0}".format(product_type.name))
         product.save()
 

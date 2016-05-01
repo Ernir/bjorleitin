@@ -18,7 +18,9 @@
     <tbody>
     {% for beer in product_list %}
         <tr>
-            <td> {{ beer.name }}</td>
+            <td> {{ beer.name }} {% if debug %}
+                ( <a href="http://127.0.0.1:8000/admin/beer_search_v2/producttype/{{ beer.productId }}/">breyta</a> )
+            {% endif %}</td>
 
             <td>{{ beer.style }}</td>
 

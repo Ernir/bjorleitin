@@ -1,4 +1,4 @@
-from django.contrib.postgres.fields import JSONField
+from django.contrib.postgres.fields import JSONField, ArrayField
 from django.db import models, IntegrityError
 from datetime import date, timedelta
 from django.utils import timezone
@@ -159,6 +159,7 @@ class ProductType(models.Model):
     alcohol_category = models.ForeignKey(AlcoholCategory)
 
     # Additional info
+    alternate_names = ArrayField(models.CharField(max_length=200), blank=True)
     available = models.BooleanField(default=False)
     needs_announcement = models.BooleanField(default=False)
 
