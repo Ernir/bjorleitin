@@ -1,10 +1,10 @@
-from django.http import HttpResponse
-
+from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.generic import View
 from beer_search_v2.models import MainQueryResult
 from beer_search_v2.utils import get_main_display
 from django.conf import settings
+
 
 class BaseView(View):
     """
@@ -35,9 +35,13 @@ class MainTableView(BaseView):
     A view to render a complete table of all beer types
     """
 
-    def get(self, request):
+    def get(self, request, format="html"):
         if settings.DEBUG:
             self.params["product_list"] = get_main_display()
         else:
             self.params["product_list"] = MainQueryResult.objects.first().json_contents
-        return render(request, "main-table.html", self.params)
+
+        if format == "html":
+            return render(request, "main-table.html", self.params)
+        elif format == "json":
+            return JsonResponse({"beers": self.params["product_list"]})

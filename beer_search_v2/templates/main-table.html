@@ -1,7 +1,7 @@
 {% if debug %}
     <body>
 {% endif %}
-<table class="table table-striped">
+<table class="table table-striped" id="main-table">
     <thead>
     <tr>
         <th>Bjórtegund</th>
@@ -17,7 +17,7 @@
     </thead>
     <tbody>
     {% for beer in product_list %}
-        <tr>
+        <tr id="row-{{ beer.productId }}">
             <td> {{ beer.name }} {% if debug %}
                 ( <a href="http://127.0.0.1:8000/admin/beer_search_v2/producttype/{{ beer.productId }}/">breyta</a> )
             {% endif %}</td>
