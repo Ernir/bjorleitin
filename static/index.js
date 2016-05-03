@@ -4,19 +4,25 @@
 
 var filterVals = {
     name: "",
-    brewery: ""
+    brewery: "",
+    minPrice: -Infinity,
+    maxPrice: Infinity
 };
 
 function updateFilters() {
     filterVals.name = $("#beer-name-filter").val();
     filterVals.brewery = $("#brewery-name-filter").val();
+    filterVals.minPrice = parseInt($("#price-min-filter").text());
+    filterVals.maxPrice = parseInt($("#price-max-filter").text());
 }
 
 function performFiltering() {
     $.each(allBeerData, function (i, beer) {
         var $row = $("#row-" + beer.productId);
 
-        var display = nameFilter(beer.name) && breweryFilter(beer.brewery);
+        var display = nameFilter(beer.name)
+            && breweryFilter(beer.brewery)
+            && priceFilter(beer.minPrice, beer.maxPrice);
 
         if (display) {
             $row.show();
@@ -26,11 +32,14 @@ function performFiltering() {
     });
 }
 
-function nameFilter(text) {
-    return text.toLowerCase().indexOf(filterVals.name.toLowerCase()) !== -1
+function nameFilter(beerName) {
+    return beerName.toLowerCase().indexOf(filterVals.name.toLowerCase()) !== -1
 }
-function breweryFilter(text) {
-    return text.toLowerCase().indexOf(filterVals.brewery.toLowerCase()) !== -1
+function breweryFilter(breweryName) {
+    return breweryName.toLowerCase().indexOf(filterVals.brewery.toLowerCase()) !== -1
+}
+function priceFilter(beerMinimumPrice, beerMaximumPrice) {
+    return beerMinimumPrice < filterVals.maxPrice && filterVals.minPrice < beerMaximumPrice;
 }
 
 /*
@@ -75,6 +84,9 @@ function getDataSet() {
                 breweryNames.push(beer.brewery);
             }
         });
+        beerPrices.sort(function (a, b) {
+            return a - b;
+        });
         prepareSearchForm();
     })
 }
@@ -88,14 +100,28 @@ function initialize() {
 function prepareSearchForm() {
     $("#beer-name-filter").typeahead({source: beerNames});
     $("#brewery-name-filter").typeahead({source: breweryNames});
+    makePriceSlider(beerPrices);
+}
+
+function makePriceSlider(prices) {
+    $("#price-slider").slider({
+        range: true,
+        min: 0,
+        max: prices.length - 1,
+        values: [0, prices.length - 1],
+        slide: function (event, ui) {
+            var minPrice = prices[ui.values[0]];
+            var maxPrice = prices[ui.values[1]];
+            $("#price-min-filter").text(minPrice);
+            $("#price-max-filter").text(maxPrice);
+            updateFilters();
+            performFiltering();
+        }
+    });
 }
 
 function applyListeners() {
-    $("#beer-name-filter").keyup(function () {
-        updateFilters();
-        performFiltering();
-    });
-    $("#brewery-name-filter").keyup(function () {
+    $("#beer-name-filter, #brewery-name-filter").keyup(function () {
         updateFilters();
         performFiltering();
     });

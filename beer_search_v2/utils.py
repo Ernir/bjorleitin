@@ -14,7 +14,8 @@ def get_main_display():
 
     # First we gather the requisite information
     beer = AlcoholCategory.objects.get(name="beer")
-    gift_box = get_container_instance("Gjafaaskja")
+    gift_box = ContainerType.objects.get(name="Gjafaaskja")
+    keg = ContainerType.objects.get(name="Kútur")
     products = Product.objects.select_related(
             "container",
             "product_type",
@@ -25,10 +26,12 @@ def get_main_display():
             "product_type__untappd_info__brewery__country",
             "product_type__untappd_info__style__simplifies_to"
     ).filter(
-        product_type__alcohol_category=beer,
-        available=True
+            product_type__alcohol_category=beer,
+            available=True
     ).exclude(
-        container=gift_box
+            container=gift_box
+    ).exclude(
+            container=keg
     ).order_by("product_type__alias")
 
     # Then we curate it

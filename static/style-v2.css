@@ -1,3 +1,8 @@
 .navbar-brand {
     padding-top: 10px;
 }
+
+/* Hacking the sliders into place: */
+#price-slider {
+    margin-top: 4px;
+}

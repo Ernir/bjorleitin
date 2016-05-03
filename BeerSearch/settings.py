@@ -117,15 +117,16 @@ USE_L10N = True
 
 USE_TZ = True
 
-# Local memory cache setup
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+if not DEBUG:
+    # Local memory cache setup
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        }
     }
-}
-CACHE_MIDDLEWARE_ALIAS = "default"
-CACHE_MIDDLEWARE_SECONDS = 60 * 5
-CACHE_MIDDLEWARE_KEY_PREFIX = ""
+    CACHE_MIDDLEWARE_ALIAS = "default"
+    CACHE_MIDDLEWARE_SECONDS = 60 * 5
+    CACHE_MIDDLEWARE_KEY_PREFIX = ""
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
@@ -162,7 +163,9 @@ MEDIA_URL = '//%s.s3.amazonaws.com/media/' % AWS_STORAGE_BUCKET_NAME
 
 # Static file configuration
 
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static')
+]
 
 STATIC_URL = '//%s.s3.amazonaws.com/compressor/' % AWS_STORAGE_BUCKET_NAME
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
