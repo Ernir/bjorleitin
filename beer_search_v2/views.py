@@ -1,7 +1,8 @@
+from django.db.models import Max, Min
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.generic import View
-from beer_search_v2.models import MainQueryResult
+from beer_search_v2.models import MainQueryResult, Product, AlcoholCategory, ContainerType
 from beer_search_v2.utils import get_main_display
 from django.conf import settings
 
@@ -27,6 +28,23 @@ class IndexView(BaseView):
     """
 
     def get(self, request):
+        base_query = Product.objects.select_related(
+                "product_type"
+        ).filter(
+                product_type__alcohol_category=AlcoholCategory.objects.get(name="beer"),
+                available=True
+        ).exclude(
+                container=ContainerType.objects.get(name="Gjafaaskja")
+        ).exclude(
+                container=ContainerType.objects.get(name="Kútur")
+        )
+
+        self.params["extremes"] = base_query.aggregate(
+                min_abv=Min("product_type__abv"),
+                max_abv=Max("product_type__abv"),
+                min_price=Min("price"),
+                max_price=Max("price")
+        )
         return render(request, "index-v2.html", self.params)
 
 

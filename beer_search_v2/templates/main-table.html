@@ -5,12 +5,12 @@
     <thead>
     <tr>
         <th>Bjórtegund</th>
+        <th>Brugghús</th>
+        <th>Verð (kr.)</th>
+        <th>Magn (ml)</th>
+        <th>Styrkur</th>
         <th>Stíll</th>
         <th>Ílát</th>
-        <th>Styrkur</th>
-        <th>Magn (ml)</th>
-        <th>Verð (kr.)</th>
-        <th>Brugghús</th>
         <th>Land</th>
         <th>Untappd</th>
     </tr>
@@ -22,17 +22,7 @@
                 ( <a href="http://127.0.0.1:8000/admin/beer_search_v2/producttype/{{ beer.productId }}/">breyta</a> )
             {% endif %}</td>
 
-            <td>{{ beer.style }}</td>
-
-            <td>{{ beer.containers|join:", " }}</td>
-
-            <td>{{ beer.abv }}%</td>
-
-            {% if beer.minVolume == beer.maxVolume %}
-                <td>{{ beer.minVolume }}</td>
-            {% else %}
-                <td>{{ beer.minVolume }} - {{ beer.maxVolume }}</td>
-            {% endif %}
+            <td>{{ beer.brewery }}</td>
 
             {% if beer.minPrice == beer.maxPrice %}
                 <td>{{ beer.minPrice }}</td>
@@ -40,7 +30,17 @@
                 <td>{{ beer.minPrice }} - {{ beer.maxPrice }}</td>
             {% endif %}
 
-            <td>{{ beer.brewery }}</td>
+            {% if beer.minVolume == beer.maxVolume %}
+                <td>{{ beer.minVolume }}</td>
+            {% else %}
+                <td>{{ beer.minVolume }} - {{ beer.maxVolume }}</td>
+            {% endif %}
+
+            <td>{{ beer.abv }}%</td>
+
+            <td>{{ beer.style }}</td>
+
+            <td>{{ beer.containers|join:", " }}</td>
 
             <td>{{ beer.country }}</td>
 
