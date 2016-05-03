@@ -43,7 +43,9 @@ class IndexView(BaseView):
                 min_abv=Min("product_type__abv"),
                 max_abv=Max("product_type__abv"),
                 min_price=Min("price"),
-                max_price=Max("price")
+                max_price=Max("price"),
+                min_volume=Min("volume"),
+                max_volume=Max("volume")
         )
         return render(request, "index-v2.html", self.params)
 

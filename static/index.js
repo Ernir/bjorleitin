@@ -8,7 +8,9 @@ var filterVals = {
     minPrice: -Infinity,
     maxPrice: Infinity,
     minAbv: -Infinity,
-    maxAbv: Infinity
+    maxAbv: Infinity,
+    minVol: -Infinity,
+    maxVol: Infinity
 };
 
 function updateFilters() {
@@ -18,6 +20,8 @@ function updateFilters() {
     filterVals.maxAbv = parseInt($("#abv-max-filter").text());
     filterVals.minPrice = parseInt($("#price-min-filter").text());
     filterVals.maxPrice = parseInt($("#price-max-filter").text());
+    filterVals.minVol = parseInt($("#volume-min-filter").text());
+    filterVals.maxVol = parseInt($("#volume-max-filter").text());
 }
 
 function performFiltering() {
@@ -27,7 +31,8 @@ function performFiltering() {
         var display = nameFilter(beer.name)
             && breweryFilter(beer.brewery)
             && priceFilter(beer.minPrice, beer.maxPrice)
-            && abvFilter(beer.abv);
+            && abvFilter(beer.abv)
+            && volumeFilter(beer.minVolume, beer.maxVolume);
 
         if (display) {
             $row.show();
@@ -49,6 +54,9 @@ function priceFilter(beerMinimumPrice, beerMaximumPrice) {
 function abvFilter(beerAbv) {
     return beerAbv <= filterVals.maxAbv && filterVals.minAbv <= beerAbv;
 }
+function volumeFilter(beerMinimumVolume, beerMaximumVolume) {
+    return beerMinimumVolume <= filterVals.maxVol && filterVals.minVol <= beerMaximumVolume;
+}
 /*
  Functions and objects to initialize the page
  */
@@ -59,6 +67,7 @@ var beerNames = [];
 var beerAbvs = [];
 var beerPrices = [];
 var breweryNames = [];
+var beerVolumes = [];
 
 function makeBeerTable() {
     /*
@@ -95,11 +104,18 @@ function getDataSet() {
             if (breweryNames.indexOf(beer.brewery) === -1) {
                 breweryNames.push(beer.brewery);
             }
+            if (beerVolumes.indexOf(beer.maxVolume) === -1) {
+                beerVolumes.push(beer.maxVolume);
+            }
+            if (beerVolumes.indexOf(beer.minVolume) === -1) {
+                beerVolumes.push(beer.minVolume);
+            }
         });
         beerPrices.sort(saneSort);
         beerAbvs.sort(saneSort);
+        beerVolumes.sort(saneSort);
         prepareSearchForm();
-    })
+    });
 
     function saneSort(a, b) {
         return a - b;
@@ -117,6 +133,7 @@ function prepareSearchForm() {
     $("#brewery-name-filter").typeahead({source: breweryNames});
     makePriceSlider(beerPrices);
     makeAbvSlider(beerAbvs);
+    makeVolumeSlider(beerVolumes);
 }
 
 function makePriceSlider(prices) {
@@ -147,6 +164,23 @@ function makeAbvSlider(abvs) {
             var maxAbv = abvs[ui.values[1]];
             $("#abv-min-filter").text(minAbv);
             $("#abv-max-filter").text(maxAbv);
+            updateFilters();
+            performFiltering();
+        }
+    });
+}
+
+function makeVolumeSlider(volumes) {
+    $("#volume-slider").slider({
+        range: true,
+        min: 0,
+        max: volumes.length - 1,
+        values: [0, volumes.length - 1],
+        slide: function (event, ui) {
+            var minVolume = volumes[ui.values[0]];
+            var maxVolume = volumes[ui.values[1]];
+            $("#volume-min-filter").text(minVolume);
+            $("#volume-max-filter").text(maxVolume);
             updateFilters();
             performFiltering();
         }
