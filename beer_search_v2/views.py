@@ -2,7 +2,7 @@ from django.db.models import Max, Min
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.generic import View
-from beer_search_v2.models import MainQueryResult, Product, AlcoholCategory, ContainerType
+from beer_search_v2.models import MainQueryResult, Product, AlcoholCategory, ContainerType, SimplifiedStyle
 from beer_search_v2.utils import get_main_display
 from django.conf import settings
 
@@ -47,6 +47,7 @@ class IndexView(BaseView):
                 min_volume=Min("volume"),
                 max_volume=Max("volume")
         )
+        self.params["styles"] = SimplifiedStyle.objects.all()
         return render(request, "index-v2.html", self.params)
 
 

@@ -10,7 +10,8 @@ var filterVals = {
     minAbv: -Infinity,
     maxAbv: Infinity,
     minVol: -Infinity,
-    maxVol: Infinity
+    maxVol: Infinity,
+    styles: []
 };
 
 function updateFilters() {
@@ -22,6 +23,10 @@ function updateFilters() {
     filterVals.maxPrice = parseInt($("#price-max-filter").text());
     filterVals.minVol = parseInt($("#volume-min-filter").text());
     filterVals.maxVol = parseInt($("#volume-max-filter").text());
+    filterVals.styles = [];
+    $(".checkbox label input:checked").each(function (i) {
+        filterVals.styles.push($(this).val())
+    });
 }
 
 function performFiltering() {
@@ -32,7 +37,8 @@ function performFiltering() {
             && breweryFilter(beer.brewery)
             && priceFilter(beer.minPrice, beer.maxPrice)
             && abvFilter(beer.abv)
-            && volumeFilter(beer.minVolume, beer.maxVolume);
+            && volumeFilter(beer.minVolume, beer.maxVolume)
+            && styleFilter(beer.style);
 
         if (display) {
             $row.show();
@@ -40,6 +46,7 @@ function performFiltering() {
             $row.hide();
         }
     });
+    applyStripes();
 }
 
 function nameFilter(beerName) {
@@ -56,6 +63,12 @@ function abvFilter(beerAbv) {
 }
 function volumeFilter(beerMinimumVolume, beerMaximumVolume) {
     return beerMinimumVolume <= filterVals.maxVol && filterVals.minVol <= beerMaximumVolume;
+}
+function styleFilter(beerStyle) {
+    if (filterVals.styles.length === 0) {
+        return true;
+    }
+    return filterVals.styles.indexOf(beerStyle) !== -1;
 }
 /*
  Functions and objects to initialize the page
@@ -78,8 +91,15 @@ function makeBeerTable() {
         $tableContainer.html(data);
         $("table").tablesorter();
         $tableContainer.fadeIn("slow", function () {
-            tableLoaded = true;
+            applyStripes();
         });
+    });
+}
+function applyStripes() {
+    // Normal bootstrap table-striped malfunctions when rows are hidden. Here's a fix.
+    // Source: http://stackoverflow.com/a/24637866/1675015
+    $("tr:visible").each(function (index) {
+        $(this).toggleClass("stripe", !!(index & 1));
     });
 }
 
@@ -189,6 +209,10 @@ function makeVolumeSlider(volumes) {
 
 function applyListeners() {
     $("#beer-name-filter, #brewery-name-filter").keyup(function () {
+        updateFilters();
+        performFiltering();
+    });
+    $(".checkbox label input").on("click", function () {
         updateFilters();
         performFiltering();
     });

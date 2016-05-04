@@ -2,10 +2,15 @@
     padding-top: 10px;
 }
 
+.stripe {
+    background-color: #f9f9f9;
+}
+
 /* Hacking the sliders into place: */
 #price-slider {
     margin-top: 4px;
 }
+
 #abv-slider {
     margin-top: 5px;
 }
