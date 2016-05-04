@@ -36,7 +36,7 @@
                 <td>{{ beer.minVolume }} - {{ beer.maxVolume }}</td>
             {% endif %}
 
-            <td>{{ beer.abv }}%</td>
+            <td>{{ beer.abv|floatformat:1 }}%</td>
 
             <td>{{ beer.style }}</td>
 

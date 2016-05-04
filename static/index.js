@@ -11,14 +11,16 @@ var filterVals = {
     maxAbv: Infinity,
     minVol: -Infinity,
     maxVol: Infinity,
-    styles: []
+    styles: [],
+    minUntappd: -Infinity,
+    maxUntappd: Infinity
 };
 
 function updateFilters() {
     filterVals.name = $("#beer-name-filter").val();
     filterVals.brewery = $("#brewery-name-filter").val();
-    filterVals.minAbv = parseInt($("#abv-min-filter").text());
-    filterVals.maxAbv = parseInt($("#abv-max-filter").text());
+    filterVals.minAbv = parseFloat($("#abv-min-filter").text());
+    filterVals.maxAbv = parseFloat($("#abv-max-filter").text());
     filterVals.minPrice = parseInt($("#price-min-filter").text());
     filterVals.maxPrice = parseInt($("#price-max-filter").text());
     filterVals.minVol = parseInt($("#volume-min-filter").text());
@@ -27,6 +29,8 @@ function updateFilters() {
     $(".checkbox label input:checked").each(function (i) {
         filterVals.styles.push($(this).val())
     });
+    filterVals.minUntappd = parseFloat($("#untappd-min-filter").text());
+    filterVals.maxUntappd = parseFloat($("#untappd-max-filter").text());
 }
 
 function performFiltering() {
@@ -38,7 +42,8 @@ function performFiltering() {
             && priceFilter(beer.minPrice, beer.maxPrice)
             && abvFilter(beer.abv)
             && volumeFilter(beer.minVolume, beer.maxVolume)
-            && styleFilter(beer.style);
+            && styleFilter(beer.style)
+            && untappdFilter(beer.untappdRating);
 
         if (display) {
             $row.show();
@@ -59,7 +64,7 @@ function priceFilter(beerMinimumPrice, beerMaximumPrice) {
     return beerMinimumPrice <= filterVals.maxPrice && filterVals.minPrice <= beerMaximumPrice;
 }
 function abvFilter(beerAbv) {
-    return beerAbv <= filterVals.maxAbv && filterVals.minAbv <= beerAbv;
+    return filterVals.minAbv <= beerAbv && beerAbv <= filterVals.maxAbv;
 }
 function volumeFilter(beerMinimumVolume, beerMaximumVolume) {
     return beerMinimumVolume <= filterVals.maxVol && filterVals.minVol <= beerMaximumVolume;
@@ -70,11 +75,14 @@ function styleFilter(beerStyle) {
     }
     return filterVals.styles.indexOf(beerStyle) !== -1;
 }
+function untappdFilter(beerRating) {
+    return filterVals.minUntappd <= beerRating && beerRating <= filterVals.maxUntappd;
+}
+
 /*
  Functions and objects to initialize the page
  */
 
-var tableLoaded = false;
 var allBeerData;
 var beerNames = [];
 var beerAbvs = [];
@@ -89,7 +97,9 @@ function makeBeerTable() {
     $.get("/v2/main-table/", function (data) {
         var $tableContainer = $("#table-container");
         $tableContainer.html(data);
-        $("table").tablesorter();
+        var $tables = $("table");
+        $tables.tablesorter();
+        $tables.bind("sortEnd", applyStripes);
         $tableContainer.fadeIn("slow", function () {
             applyStripes();
         });
@@ -154,6 +164,7 @@ function prepareSearchForm() {
     makePriceSlider(beerPrices);
     makeAbvSlider(beerAbvs);
     makeVolumeSlider(beerVolumes);
+    makeUntappdSlider();
 }
 
 function makePriceSlider(prices) {
@@ -201,6 +212,23 @@ function makeVolumeSlider(volumes) {
             var maxVolume = volumes[ui.values[1]];
             $("#volume-min-filter").text(minVolume);
             $("#volume-max-filter").text(maxVolume);
+            updateFilters();
+            performFiltering();
+        }
+    });
+}
+
+function makeUntappdSlider() {
+    $("#untappd-slider").slider({
+        range: true,
+        min: 0, // Ratings are on a scale of 0 to 5 stars
+        max: 5,
+        step: 0.01,
+        values: [0, 5],
+        slide: function (event, ui) {
+            $("#untappd-min-filter").text(ui.values[0]);
+            $("#untappd-max-filter").text(ui.values[1]);
+            console.log(ui.values[0], ui.values[1]);
             updateFilters();
             performFiltering();
         }

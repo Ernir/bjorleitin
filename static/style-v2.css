@@ -7,10 +7,6 @@
 }
 
 /* Hacking the sliders into place: */
-#price-slider {
-    margin-top: 4px;
-}
-
-#abv-slider {
+.form-slider {
     margin-top: 5px;
 }
