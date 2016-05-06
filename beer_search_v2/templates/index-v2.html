@@ -9,6 +9,18 @@
 
 {% block content %}
     <div class="col-sm-8 col-sm-offset-4 col-md-9 col-md-offset-3 main">
+        <p id="results-initial" class="alert alert-info">
+            <span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>
+            Augnablik...
+        </p>
+        <p id="results-found" class="alert alert-success">bjórar fundust.</p>
+        <p id="results-working" class="alert alert-info">
+            <span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>
+            Er að leita!
+        </p>
+        <p id="results-none" class="alert alert-info">Ekkert fannst. Má bjóða þér að leita aftur?</p>
+        <p id="results-error" class="alert alert-danger">Leitarvélin náði ekki sambandi. Er nettengingin ekki örugglega
+            í lagi?</p>
         <div id="table-container" class="table-responsive">
         </div>
     </div>

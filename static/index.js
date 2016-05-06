@@ -37,6 +37,8 @@ function updateAndFilter() {
         filterVals.containers.push($(this).val().toLowerCase());
     });
 
+    var numResults = 0;
+
     $.each(allBeerData, function (i, beer) {
         var $row = $("#row-" + beer.productId);
 
@@ -50,11 +52,13 @@ function updateAndFilter() {
             && containerFilter(beer.containers);
 
         if (display) {
+            numResults += 1;
             $row.show();
         } else {
             $row.hide();
         }
     });
+    updateDisplays(numResults);
     applyStripes();
 
     function nameFilter(beerName) {
@@ -100,6 +104,29 @@ function updateAndFilter() {
 }
 
 /*
+ Helpers for displaying the results
+ */
+
+function updateDisplays(numResults) {
+    // Handling the messages
+    if (numResults === 0) {
+        showMessage("#results-none");
+    } else {
+        if (numResults % 10 !== 1 || numResults === 11) {
+            $("#results-found").text(numResults + " bjórar fundust.");
+        } else { // Result of the form 1+10k, k=0, 2, 3, 4, ...
+            $("#results-found").text(numResults + " bjór fannst");
+        }
+        showMessage("#results-found");
+    }
+}
+
+function showMessage(id) {
+    $(".alert").hide();
+    $(id).show();
+}
+
+/*
  Functions and objects to initialize the page
  */
 
@@ -114,6 +141,7 @@ function makeBeerTable() {
     /*
      One initial AJAX call to create the list of beers.
      */
+    showMessage("#results-working");
     $.get("/v2/main-table/", function (data) {
         var $tableContainer = $("#table-container");
         $tableContainer.html(data);
@@ -137,7 +165,6 @@ function getDataSet() {
     /*
      Get the list of beers in JSON format
      */
-
     $.get("/v2/main-table/json/", function (data) {
         allBeerData = data.beers;
         $.each(allBeerData, function (i, beer) {
@@ -165,6 +192,7 @@ function getDataSet() {
         beerAbvs.sort(saneSort);
         beerVolumes.sort(saneSort);
         prepareSearchForm();
+        updateDisplays(allBeerData.length)
     });
 
     function saneSort(a, b) {
@@ -245,7 +273,6 @@ function makeUntappdSlider() {
         slide: function (event, ui) {
             $("#untappd-min-filter").text(ui.values[0]);
             $("#untappd-max-filter").text(ui.values[1]);
-            console.log(ui.values[0], ui.values[1]);
             updateAndFilter();
         }
     });
