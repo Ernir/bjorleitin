@@ -2,21 +2,22 @@
  Functions and objects related to the core of the filtering functionality
  */
 
-var filterVals = {
-    name: "",
-    brewery: "",
-    minPrice: -Infinity,
-    maxPrice: Infinity,
-    minAbv: -Infinity,
-    maxAbv: Infinity,
-    minVol: -Infinity,
-    maxVol: Infinity,
-    styles: [],
-    minUntappd: -Infinity,
-    maxUntappd: Infinity
-};
+function updateAndFilter() {
+    var filterVals = {
+        name: "",
+        brewery: "",
+        minPrice: -Infinity,
+        maxPrice: Infinity,
+        minAbv: -Infinity,
+        maxAbv: Infinity,
+        minVol: -Infinity,
+        maxVol: Infinity,
+        styles: [],
+        minUntappd: -Infinity,
+        maxUntappd: Infinity,
+        containers: ["flaska", "dós"]
+    };
 
-function updateFilters() {
     filterVals.name = $("#beer-name-filter").val();
     filterVals.brewery = $("#brewery-name-filter").val();
     filterVals.minAbv = parseFloat($("#abv-min-filter").text());
@@ -31,9 +32,11 @@ function updateFilters() {
     });
     filterVals.minUntappd = parseFloat($("#untappd-min-filter").text());
     filterVals.maxUntappd = parseFloat($("#untappd-max-filter").text());
-}
+    filterVals.containers = [];
+    $(".container-button.active").each(function (i) {
+        filterVals.containers.push($(this).val().toLowerCase());
+    });
 
-function performFiltering() {
     $.each(allBeerData, function (i, beer) {
         var $row = $("#row-" + beer.productId);
 
@@ -43,7 +46,8 @@ function performFiltering() {
             && abvFilter(beer.abv)
             && volumeFilter(beer.minVolume, beer.maxVolume)
             && styleFilter(beer.style)
-            && untappdFilter(beer.untappdRating);
+            && untappdFilter(beer.untappdRating)
+            && containerFilter(beer.containers);
 
         if (display) {
             $row.show();
@@ -52,31 +56,47 @@ function performFiltering() {
         }
     });
     applyStripes();
-}
 
-function nameFilter(beerName) {
-    return beerName.toLowerCase().indexOf(filterVals.name.toLowerCase()) !== -1
-}
-function breweryFilter(breweryName) {
-    return breweryName.toLowerCase().indexOf(filterVals.brewery.toLowerCase()) !== -1
-}
-function priceFilter(beerMinimumPrice, beerMaximumPrice) {
-    return beerMinimumPrice <= filterVals.maxPrice && filterVals.minPrice <= beerMaximumPrice;
-}
-function abvFilter(beerAbv) {
-    return filterVals.minAbv <= beerAbv && beerAbv <= filterVals.maxAbv;
-}
-function volumeFilter(beerMinimumVolume, beerMaximumVolume) {
-    return beerMinimumVolume <= filterVals.maxVol && filterVals.minVol <= beerMaximumVolume;
-}
-function styleFilter(beerStyle) {
-    if (filterVals.styles.length === 0) {
-        return true;
+    function nameFilter(beerName) {
+        return beerName.toLowerCase().indexOf(filterVals.name.toLowerCase()) !== -1
     }
-    return filterVals.styles.indexOf(beerStyle) !== -1;
-}
-function untappdFilter(beerRating) {
-    return filterVals.minUntappd <= beerRating && beerRating <= filterVals.maxUntappd;
+
+    function breweryFilter(breweryName) {
+        return breweryName.toLowerCase().indexOf(filterVals.brewery.toLowerCase()) !== -1
+    }
+
+    function priceFilter(beerMinimumPrice, beerMaximumPrice) {
+        return beerMinimumPrice <= filterVals.maxPrice && filterVals.minPrice <= beerMaximumPrice;
+    }
+
+    function abvFilter(beerAbv) {
+        return filterVals.minAbv <= beerAbv && beerAbv <= filterVals.maxAbv;
+    }
+
+    function volumeFilter(beerMinimumVolume, beerMaximumVolume) {
+        return beerMinimumVolume <= filterVals.maxVol && filterVals.minVol <= beerMaximumVolume;
+    }
+
+    function styleFilter(beerStyle) {
+        if (filterVals.styles.length === 0) {
+            return true;
+        }
+        return filterVals.styles.indexOf(beerStyle) !== -1;
+    }
+
+    function untappdFilter(beerRating) {
+        return filterVals.minUntappd <= beerRating && beerRating <= filterVals.maxUntappd;
+    }
+
+    function containerFilter(containers) {
+        // This would be a nice place for array.includes, but browser support is lacking.
+        for (var i = 0; i < containers.length; i++) {
+            if (filterVals.containers.indexOf(containers[i].toLowerCase()) !== -1) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
 
 /*
@@ -178,8 +198,7 @@ function makePriceSlider(prices) {
             var maxPrice = prices[ui.values[1]];
             $("#price-min-filter").text(minPrice);
             $("#price-max-filter").text(maxPrice);
-            updateFilters();
-            performFiltering();
+            updateAndFilter();
         }
     });
 }
@@ -195,8 +214,7 @@ function makeAbvSlider(abvs) {
             var maxAbv = abvs[ui.values[1]];
             $("#abv-min-filter").text(minAbv);
             $("#abv-max-filter").text(maxAbv);
-            updateFilters();
-            performFiltering();
+            updateAndFilter();
         }
     });
 }
@@ -212,8 +230,7 @@ function makeVolumeSlider(volumes) {
             var maxVolume = volumes[ui.values[1]];
             $("#volume-min-filter").text(minVolume);
             $("#volume-max-filter").text(maxVolume);
-            updateFilters();
-            performFiltering();
+            updateAndFilter();
         }
     });
 }
@@ -229,21 +246,23 @@ function makeUntappdSlider() {
             $("#untappd-min-filter").text(ui.values[0]);
             $("#untappd-max-filter").text(ui.values[1]);
             console.log(ui.values[0], ui.values[1]);
-            updateFilters();
-            performFiltering();
+            updateAndFilter();
         }
     });
 }
 
 function applyListeners() {
     $("#beer-name-filter, #brewery-name-filter").keyup(function () {
-        updateFilters();
-        performFiltering();
+        updateAndFilter();
     });
     $(".checkbox label input").on("click", function () {
-        updateFilters();
-        performFiltering();
+        updateAndFilter();
     });
+
+    $(".container-button").on("click", function () {
+        $(this).toggleClass("active");
+        updateAndFilter();
+    })
 }
 
 $(initialize());
