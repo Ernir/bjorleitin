@@ -15,7 +15,8 @@ function updateAndFilter() {
         styles: [],
         minUntappd: -Infinity,
         maxUntappd: Infinity,
-        containers: ["flaska", "dós"]
+        containers: ["flaska", "dós"],
+        country: ""
     };
 
     filterVals.name = $("#beer-name-filter").val();
@@ -36,6 +37,7 @@ function updateAndFilter() {
     $(".container-button.active").each(function (i) {
         filterVals.containers.push($(this).val().toLowerCase());
     });
+    filterVals.country = $("#country-name-filter").val();
 
     var numResults = 0;
 
@@ -49,7 +51,8 @@ function updateAndFilter() {
             && volumeFilter(beer.minVolume, beer.maxVolume)
             && styleFilter(beer.style)
             && untappdFilter(beer.untappdRating)
-            && containerFilter(beer.containers);
+            && containerFilter(beer.containers)
+            && countryFilter(beer.country);
 
         if (display) {
             numResults += 1;
@@ -101,6 +104,10 @@ function updateAndFilter() {
         }
         return false;
     }
+
+    function countryFilter(countryName) {
+        return countryName.toLowerCase().indexOf(filterVals.country.toLowerCase()) !== -1
+    }
 }
 
 /*
@@ -136,6 +143,7 @@ var beerAbvs = [];
 var beerPrices = [];
 var breweryNames = [];
 var beerVolumes = [];
+var beerCountries = [];
 
 function makeBeerTable() {
     /*
@@ -187,6 +195,9 @@ function getDataSet() {
             if (beerVolumes.indexOf(beer.minVolume) === -1) {
                 beerVolumes.push(beer.minVolume);
             }
+            if (beerCountries.indexOf(beer.country) === -1) {
+                beerCountries.push(beer.country);
+            }
         });
         beerPrices.sort(saneSort);
         beerAbvs.sort(saneSort);
@@ -209,6 +220,7 @@ function initialize() {
 function prepareSearchForm() {
     $("#beer-name-filter").typeahead({source: beerNames});
     $("#brewery-name-filter").typeahead({source: breweryNames});
+    $("#country-name-filter").typeahead({source: beerCountries});
     makePriceSlider(beerPrices);
     makeAbvSlider(beerAbvs);
     makeVolumeSlider(beerVolumes);
@@ -279,7 +291,7 @@ function makeUntappdSlider() {
 }
 
 function applyListeners() {
-    $("#beer-name-filter, #brewery-name-filter").keyup(function () {
+    $("#beer-name-filter, #brewery-name-filter, #country-name-filter").keyup(function () {
         updateAndFilter();
     });
     $(".checkbox label input").on("click", function () {
