@@ -149,6 +149,8 @@ def get_brewery_instance(untappd_id, brewery_name, brewery_country, verbose=True
 
 
 def get_country_instance(country_name):
+    if not country_name:
+        country_name = "Óþekkt"
     try:
         country = Country.objects.get(name__iexact=country_name)
     except ObjectDoesNotExist:

@@ -32,7 +32,7 @@ class Country(models.Model):
             first = self.name[0].upper()  # Enforce uppercase
             self.name = first + self.name[1:]
         else:
-            self.name = "Óþekkt"
+            raise ValueError("Attempted to save a Country instance without providing a name")
         super(Country, self).save(*args, **kwargs)
 
     class Meta:
