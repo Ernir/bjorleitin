@@ -1,4 +1,4 @@
-from django.db.models import Max, Min
+from django.db.models import Max, Min, Q
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.generic import View
@@ -31,8 +31,8 @@ class IndexView(BaseView):
         base_query = Product.objects.select_related(
                 "product_type"
         ).filter(
-                product_type__alcohol_category=AlcoholCategory.objects.get(name="beer"),
-                available=True
+                Q(available_in_atvr=True) | Q(available_in_jog=True),
+                product_type__alcohol_category=AlcoholCategory.objects.get(name="beer")
         ).exclude(
                 container=ContainerType.objects.get(name="Gjafaaskja")
         ).exclude(

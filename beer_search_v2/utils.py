@@ -1,4 +1,5 @@
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Q
 import os
 import requests
 from beer_search_v2.models import Brewery, UntappdStyle, Country, AlcoholCategory, ContainerType, Product
@@ -26,8 +27,8 @@ def get_main_display():
             "product_type__untappd_info__brewery__country",
             "product_type__untappd_info__style__simplifies_to"
     ).filter(
+            Q(available_in_atvr=True) | Q(available_in_jog=True),
             product_type__alcohol_category=beer,
-            available=True
     ).exclude(
             container=gift_box
     ).exclude(

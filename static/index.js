@@ -21,8 +21,8 @@ function updateAndFilter() {
 
     filterVals.name = $("#beer-name-filter").val();
     filterVals.brewery = $("#brewery-name-filter").val();
-    filterVals.minAbv = parseFloat($("#abv-min-filter").text());
-    filterVals.maxAbv = parseFloat($("#abv-max-filter").text());
+    filterVals.minAbv = parseFloat($("#abv-min-filter").text().replace(",", "."));
+    filterVals.maxAbv = parseFloat($("#abv-max-filter").text().replace(",", "."));
     filterVals.minPrice = parseInt($("#price-min-filter").text());
     filterVals.maxPrice = parseInt($("#price-max-filter").text());
     filterVals.minVol = parseInt($("#volume-min-filter").text());
@@ -40,7 +40,6 @@ function updateAndFilter() {
     filterVals.country = $("#country-name-filter").val();
 
     var numResults = 0;
-
     $.each(allBeerData, function (i, beer) {
         var $row = $("#row-" + beer.productId);
 
@@ -92,7 +91,10 @@ function updateAndFilter() {
     }
 
     function untappdFilter(beerRating) {
-        return filterVals.minUntappd <= beerRating && beerRating <= filterVals.maxUntappd;
+        if (beerRating != undefined) {
+            return filterVals.minUntappd <= beerRating && beerRating <= filterVals.maxUntappd;
+        }
+        return filterVals.minUntappd === 0 && filterVals.maxUntappd == 5;
     }
 
     function containerFilter(containers) {

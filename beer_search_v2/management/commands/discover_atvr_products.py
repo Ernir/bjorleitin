@@ -74,8 +74,8 @@ class Command(BaseCommand):
     @classmethod
     def prepare_products_for_update(cls):
         # Marking all existing products from ÁTVR as not available until proven wrong.
-        for product in Product.objects.filter(source=Product.ATVR).all():
-            product.available = False
+        for product in Product.objects.filter(atvr_id__isnull=False).all():
+            product.available_in_atvr = False
             product.save()
 
     @classmethod
@@ -110,9 +110,8 @@ class Command(BaseCommand):
             product_type = ProductType.objects.get(name=product.name.strip())
         elif matching_alternates:
             product_type = matching_alternates[0]
-        product.product_type = product_type
 
-        if not product.product_type:  # Otherwise, we create one
+        if not product_type:  # Otherwise, we create one
             product_type = ProductType()
             product_type.name = product.name
             product_type.abv = json_object["ProductAlchoholVolume"]
@@ -123,6 +122,8 @@ class Command(BaseCommand):
 
             product.product_type = product_type
             print("Creating new product type: {0}".format(product_type.name))
+        else:
+            product.product_type = product_type
         product.save()
 
     @classmethod
@@ -154,7 +155,7 @@ class Command(BaseCommand):
             raw_container_name = json_object["ProductContainerType"]
             product.container = cls.find_container_type(raw_container_name)
             cls.update_product_type(product, json_object)
-            product.available = True
+            product.available_in_atvr = True
             new_price = json_object["ProductPrice"]
             product.price = new_price  # We always update the price
 

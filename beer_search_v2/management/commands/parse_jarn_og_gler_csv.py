@@ -11,8 +11,8 @@ class Command(BaseCommand):
     @classmethod
     def prepare_products_for_update(cls):
         # Marking all existing products from Járn og Gler as not available until proven wrong.
-        for product in Product.objects.filter(source=Product.JoG).all():
-            product.available = False
+        for product in Product.objects.filter(jog_id__isnull=False).all():
+            product.available_in_jog = False
             product.save()
 
     @classmethod
@@ -21,7 +21,7 @@ class Command(BaseCommand):
         for data_row in product_list:
             product = cls.get_product_instance(data_row)
             cls.update_product_type(product, data_row)
-            product.available = True
+            product.available_in_jog = True
             new_price = cls.extract_price(data_row[4])
             product.price = new_price  # We always update the price
 
@@ -29,7 +29,7 @@ class Command(BaseCommand):
 
     @classmethod
     def get_product_instance(cls, data_row):
-        product_id = data_row[0]
+        product_id = data_row[0].strip()
         try:  # Checking if we've found the product previously
             product = Product.objects.get(jog_id=product_id)
         except ObjectDoesNotExist:
@@ -92,7 +92,7 @@ class Command(BaseCommand):
     def guess_abv(cls, raw_name):
         m = re.search("(?P<abv>\d+|\d+,\d+)%", raw_name)
         if m:
-            return float(m.group("abv").replace(",","."))
+            return float(m.group("abv").replace(",", "."))
         print("Warning, no abv found for {0}".format(raw_name))
         return 0
 
@@ -110,6 +110,8 @@ class Command(BaseCommand):
             product_reader = csv.reader(csvfile, delimiter=',', quotechar='"')
             for row in product_reader:
                 if row[0]:  # Some rows have no contents
+                    if row[0].strip() == "spirits":  # The file lists not-beers at the bottom
+                        break
                     product_list.append(row)
 
         if len(product_list) > 0:
