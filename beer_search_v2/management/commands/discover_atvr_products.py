@@ -152,24 +152,15 @@ class Command(BaseCommand):
         for json_object in product_list:
             product_id = cls.clean_atvr_id(json_object["ProductID"])
             product = cls.get_product_instance(json_object, product_id)
-            raw_container_name = json_object["ProductContainerType"]
-            product.container = cls.find_container_type(raw_container_name)
-            cls.update_product_type(product, json_object)
+            if not product.container_id:
+                raw_container_name = json_object["ProductContainerType"]
+                product.container = cls.find_container_type(raw_container_name)
+            if not product.product_type_id:
+                cls.update_product_type(product, json_object)
             product.available_in_atvr = True
-            new_price = json_object["ProductPrice"]
-            product.price = new_price  # We always update the price
+            product.price = json_object["ProductPrice"]  # We always update the price
 
             product.save()
-
-    @classmethod
-    def initialize_product(cls, product, json_object):
-        print("New product created: " + json_object["ProductName"])
-        product.name = json_object["ProductName"]
-        product.price = json_object["ProductPrice"]
-        product.volume = int(json_object["ProductBottledVolume"])
-        product.first_seen_at = cls.clean_date(json_object["ProductDateOnMarket"])
-        product.temporary = json_object["ProductIsTemporaryOnSale"]
-        return product
 
     @classmethod
     def get_product_instance(cls, json_object, atvr_id):
@@ -181,9 +172,19 @@ class Command(BaseCommand):
             cls.initialize_product(product, json_object)
         return product
 
+    @classmethod
+    def initialize_product(cls, product, json_object):
+        print("New product created: " + json_object["ProductName"])
+        product.name = json_object["ProductName"]
+        product.price = json_object["ProductPrice"]
+        product.volume = int(json_object["ProductBottledVolume"])
+        product.first_seen_at = cls.clean_date(json_object["ProductDateOnMarket"])
+        product.temporary = json_object["ProductIsTemporaryOnSale"]
+        return product
+
     def handle(self, *args, **options):
         try:
-            product_list = self.get_data(verbose=False)
+            product_list = self.get_data(verbose=True)
         except ConnectionError:
             print("Unable to connect to vinbudin.is")
             product_list = []

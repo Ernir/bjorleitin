@@ -242,6 +242,7 @@ class Product(models.Model):
         return self.first_seen_at > two_months_ago
 
     def save(self, *args, **kwargs):
+        self.name = self.name.strip()  # For everyone's sanity
         self.updated_at = date.today()  # Automatic updates
 
         # Products should not share non-falsey identifiers
