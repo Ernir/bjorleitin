@@ -220,9 +220,10 @@ class Product(models.Model):
     # Boolean/availability fields
     source = models.IntegerField(choices=SOURCE_CHOICES, default=ATVR)
     first_seen_at = models.DateTimeField(null=True)
-    available_in_atvr = models.BooleanField(default=True)
+    available_in_atvr = models.BooleanField(default=False)
     available_in_jog = models.BooleanField(default=False)
     temporary = models.BooleanField(default=False)
+    atvr_stock = JSONField(default={})
 
     # Read-only fields
     updated_at = models.DateField(default=date.today)
