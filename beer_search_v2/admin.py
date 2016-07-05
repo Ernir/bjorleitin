@@ -5,7 +5,7 @@ from django.contrib import admin
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    readonly_fields = ["updated_at", "first_seen_at"]
+    readonly_fields = ["name", "updated_at", "first_seen_at"]
     list_filter = ["source"]
     search_fields = ["name"]
 
@@ -45,7 +45,6 @@ class UntappdDefined(admin.SimpleListFilter):
             return queryset.filter(untappd_info__isnull=False)
         if self.value() == 'false':
             return queryset.filter(untappd_info__isnull=True)
-
 
 
 @admin.register(ProductType)

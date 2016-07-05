@@ -223,7 +223,7 @@ class Product(models.Model):
     available_in_atvr = models.BooleanField(default=False)
     available_in_jog = models.BooleanField(default=False)
     temporary = models.BooleanField(default=False)
-    atvr_stock = JSONField(default={})
+    atvr_stock = JSONField(default={}, blank=True)
 
     # Read-only fields
     updated_at = models.DateField(default=date.today)
