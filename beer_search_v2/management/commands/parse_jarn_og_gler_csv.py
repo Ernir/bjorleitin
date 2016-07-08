@@ -20,7 +20,7 @@ class Command(BaseCommand):
 
         for data_row in product_list:
             product = cls.get_product_instance(data_row)
-            cls.update_product_type(product, data_row)
+            cls.initialize_product_type(product, data_row)
             product.available_in_jog = True
             new_price = cls.extract_price(data_row[4])
             product.price = new_price  # We always update the price
@@ -51,25 +51,26 @@ class Command(BaseCommand):
         return product
 
     @classmethod
-    def update_product_type(cls, product, data_row):
+    def initialize_product_type(cls, product, data_row):
         """
         Each product is an instance of a particular product type, this common info is stored separately.
         """
-        try:  # Checking if this product belongs to type with the same name
-            product_type = ProductType.objects.get(name=product.name)
-            product.product_type = product_type
-        except ObjectDoesNotExist:  # Otherwise, create one
-            product_type = ProductType()
-            product_type.name = product.name
-            product_type.abv = cls.guess_abv(product.name)
-            product_type.country = None
-            product_type.alcohol_category = get_alcohol_category_instance("beer")
-            product_type.save()
+        if not product.product_type:
+            try:  # Checking if this product belongs to type with the same name
+                product_type = ProductType.objects.get(name=product.name)
+                product.product_type = product_type
+            except ObjectDoesNotExist:  # Otherwise, create one
+                product_type = ProductType()
+                product_type.name = product.name
+                product_type.abv = cls.guess_abv(product.name)
+                product_type.country = None
+                product_type.alcohol_category = get_alcohol_category_instance("beer")
+                product_type.save()
 
-            product.product_type = product_type
+                product.product_type = product_type
 
-            print("Creating new product type: {0}".format(product_type.name))
-        product.save()
+                print("Creating new product type: {0}".format(product_type.name))
+            product.save()
 
     @classmethod
     def guess_container_type(cls, raw_name):
