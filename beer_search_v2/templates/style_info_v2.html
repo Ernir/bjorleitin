@@ -1,0 +1,53 @@
+{% extends "base-v2.html" %}
+
+{% block sidebar %}
+    <div class="col-sm-4 col-md-3 sidebar">
+        <ul>
+            {% for style in styles %}
+                <li><a href="{{ style.get_absolute_url }}"> {{ style.name }} </a></li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="col-sm-8 col-sm-offset-4 col-md-9 col-md-offset-3 main">
+        <div class="col-md-offset-3 col-md-6">
+            <p>Bjórleitin safnar upplýsingum um bjórstíla sjálfkrafa í gegnum <a href="https://untappd.com/">Untappd</a>.
+                Til einföldunar fellir Bjórleitin í mörgum tilvikum svipaða eða skylda bjórstíla saman í einn.</p>
+            <p>Stílarnir sem leitin notar eru eftirfarandi, með lýsingum:</p>
+        </div>
+        {% for style in styles %}
+            <div class="row">
+                <div class="col-md-offset-3 col-md-6">
+                    <hr/>
+                    <h3 id="{{ style.slug }}">{{ style.name }}</h3>
+
+                    <div class="text-justify">
+                        {% autoescape off %}
+                            {{ style.html_description }}
+                        {% endautoescape %}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-offset-3 col-md-3">
+                    <h4>Dæmi um bjóra í stílnum</h4>
+                    <ul>
+                        {% for example in style.examples.all %}
+                            <li>{{ example.alias }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h4>Undirstílar</h4>
+                    <ul>
+                        {% for untappd_style in style.untappdstyle_set.all %}
+                            <li>{{ untappd_style.name }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

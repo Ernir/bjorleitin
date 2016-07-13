@@ -38,7 +38,7 @@
 
             <td>{{ beer.abv|floatformat:1 }}%</td>
 
-            <td>{{ beer.style }}</td>
+            <td><a href="{{ beer.style_url }}"> {{ beer.style }}</a></td>
 
             <td>{{ beer.containers|join:", " }}</td>
 

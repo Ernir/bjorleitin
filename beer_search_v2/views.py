@@ -66,3 +66,14 @@ class MainTableView(BaseView):
             return render(request, "main-table.html", self.params)
         elif format == "json":
             return JsonResponse({"beers": self.params["product_list"]})
+
+
+class StyleOverview(BaseView):
+    """
+    A view to display information about the simplified beer styles.
+    """
+
+    def get(self, request):
+        self.params["title"] = "Upplýsingar um bjórstíla"
+        self.params["styles"] = SimplifiedStyle.objects.all()
+        return render(request, "style_info_v2.html", self.params)

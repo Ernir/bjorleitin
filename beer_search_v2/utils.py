@@ -58,6 +58,7 @@ def get_main_display():
                 u_info = product.product_type.untappd_info
                 if u_info.style and u_info.style.simplifies_to:
                     type_dict[pid]["style"] = u_info.style.simplifies_to.name
+                    type_dict[pid]["style_url"] = u_info.style.simplifies_to.get_absolute_url()
                 if u_info.brewery:
                     type_dict[pid]["brewery"] = str(u_info.brewery)
                     if "country" not in type_dict[pid]:  # Country info is shaky, stored with great redundancy

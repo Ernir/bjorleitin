@@ -1,5 +1,8 @@
+from random import sample
+
 from django.contrib.postgres.fields import JSONField, ArrayField
 from django.db import models, IntegrityError
+from django.core.urlresolvers import reverse
 from datetime import date, timedelta
 from django.utils import timezone
 from django.utils.text import slugify
@@ -69,11 +72,30 @@ class SimplifiedStyle(models.Model):
     slug = models.SlugField(max_length=100)
     description = models.TextField(blank=True, default="", null=True)
     html_description = models.TextField()
+    examples = models.ManyToManyField("ProductType", blank=True)  # String specification due to circular reference
+
+    def get_absolute_url(self):
+        return "{}#{}".format(reverse("styles"), self.slug)
 
     def __str__(self):
         return self.name
 
     def save(self, *args, **kwargs):
+
+        product_types = set()
+        untappd_styles = self.untappdstyle_set.all()
+        for untappd_style in untappd_styles:
+            for entity in untappd_style.untappdentity_set.all():
+                for product_type in entity.producttype_set.all():
+                    product_types.add(product_type)
+
+        sample_size = min(5, len(product_types))
+        examples = sample(product_types, sample_size)
+
+        self.examples.clear()
+        for example in examples:
+            self.examples.add(example)
+
         self.slug = slugify(self.name)
         self.html_description = markdown(self.description)
         super(SimplifiedStyle, self).save(*args, **kwargs)
