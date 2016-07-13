@@ -181,7 +181,6 @@ class ProductType(models.Model):
     alcohol_category = models.ForeignKey(AlcoholCategory)
 
     # Additional info
-    alternate_names = ArrayField(models.CharField(max_length=200), blank=True, default=[])
     available = models.BooleanField(default=False)
     needs_announcement = models.BooleanField(default=False)
 
@@ -198,7 +197,7 @@ class ProductType(models.Model):
     def update_availability(self, verbose=True):
         any_available_product = False
         for product in self.product_set.all():
-            if product.available_in_atvr:
+            if product.available_in_atvr or product.available_in_jog:
                 any_available_product = True
         # If there's a change, update
         if self.available != any_available_product:

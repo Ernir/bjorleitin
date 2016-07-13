@@ -102,29 +102,18 @@ class Command(BaseCommand):
         """
         Each product is an instance of a particular product type, this common info is stored separately.
         """
-        product_type = None
-        # Checking if this product belongs to an existing type
-        matching_names = ProductType.objects.filter(name=product.name.strip()).exists()
-        matching_alternates = ProductType.objects.filter(alternate_names__contains=[product.name.strip()])
-        if matching_names:
-            product_type = ProductType.objects.get(name=product.name.strip())
-        elif matching_alternates:
-            product_type = matching_alternates[0]
 
-        if not product_type:  # Otherwise, we create one
+        if not product.product_type_id:
             product_type = ProductType()
             product_type.name = product.name
             product_type.abv = json_object["ProductAlchoholVolume"]
             product_type.country = get_country_instance(json_object["ProductCountryOfOrigin"])
-            alcohol_category_name = json_object["ProductCategory"]["name"]
-            product_type.alcohol_category = get_alcohol_category_instance(alcohol_category_name)
+            product_type.alcohol_category = get_alcohol_category_instance(json_object["ProductCategory"]["name"])
             product_type.save()
 
             product.product_type = product_type
             print("Creating new product type: {0}".format(product_type.name))
-        else:
-            product.product_type = product_type
-        product.save()
+            product.save()
 
     @classmethod
     def find_container_type(cls, atvr_name):
@@ -155,8 +144,7 @@ class Command(BaseCommand):
             if not product.container_id:
                 raw_container_name = json_object["ProductContainerType"]
                 product.container = cls.find_container_type(raw_container_name)
-            if not product.product_type_id:
-                cls.update_product_type(product, json_object)
+            cls.update_product_type(product, json_object)
             product.available_in_atvr = True
             product.price = json_object["ProductPrice"]  # We always update the price
 
