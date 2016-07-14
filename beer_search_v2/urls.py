@@ -7,5 +7,6 @@ urlpatterns = [
     url(r"^bjorstilar/$", views.StyleOverview.as_view(), name="styles"),
     url(r"^main-table/$", views.MainTableView.as_view(), name="main_table"),
     url(r"^main-table/(?P<format>.+)/$", views.MainTableView.as_view(), name="main_table_option"),
+    url(r"^vara/(?P<pid>\d+)/$", views.SingleProductView.as_view(), name="single_product"),
     url(r"^api/", include(router.urls))
 ]

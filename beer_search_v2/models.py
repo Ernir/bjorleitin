@@ -194,6 +194,9 @@ class ProductType(models.Model):
             return self.alias
         return self.name
 
+    def get_absolute_url(self):
+        return reverse("single_product", kwargs={"pid": self.id})
+
     def update_availability(self, verbose=True):
         any_available_product = False
         for product in self.product_set.all():
@@ -262,6 +265,9 @@ class Product(models.Model):
 
         two_months_ago = timezone.now() - timedelta(days=60)
         return self.first_seen_at > two_months_ago
+
+    def get_absolute_url(self):
+        return self.product_type.get_absolute_url()
 
     def save(self, *args, **kwargs):
         self.name = self.name.strip()  # For everyone's sanity

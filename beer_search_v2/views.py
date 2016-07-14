@@ -1,8 +1,8 @@
 from django.db.models import Max, Min, Q
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.views.generic import View
-from beer_search_v2.models import MainQueryResult, Product, AlcoholCategory, ContainerType, SimplifiedStyle
+from beer_search_v2.models import MainQueryResult, Product, AlcoholCategory, ContainerType, SimplifiedStyle, ProductType
 from beer_search_v2.utils import get_main_display
 from django.conf import settings
 
@@ -16,8 +16,7 @@ class BaseView(View):
     def __init__(self):
         super().__init__()
         self.params = {
-            "title": "Bjórleitin",  # Default value
-            "sub_title": "",
+            "title": "",
             "debug": settings.DEBUG
         }
 
@@ -77,3 +76,28 @@ class StyleOverview(BaseView):
         self.params["title"] = "Upplýsingar um bjórstíla"
         self.params["styles"] = SimplifiedStyle.objects.all()
         return render(request, "style_info_v2.html", self.params)
+
+
+class SingleProductView(BaseView):
+    """
+    A "detail" view to display information about a particular product type, including availability and recommendations.
+    """
+
+    def get(self, request, pid):
+        product_type = get_object_or_404(ProductType, id=pid)
+
+        # This is where we find beers which are similar to the
+        others_in_style = []
+        if product_type.untappd_info and product_type.untappd_info.style.simplifies_to:
+            product_type.simple_style = product_type.untappd_info.style.simplifies_to
+            others_in_style = ProductType.objects.filter(
+                    untappd_info__style__simplifies_to=product_type.untappd_info.style.simplifies_to
+            ).filter(
+                    available=True
+            ).all()
+
+        self.params["title"] = product_type.alias
+        self.params["product_type"] = product_type
+        self.params["similar"] = others_in_style
+
+        return render(request, "single-product.html", self.params)
