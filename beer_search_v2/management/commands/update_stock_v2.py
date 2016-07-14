@@ -17,9 +17,9 @@ class Command(BaseCommand):
         try:
             html_doc = requests.get(base_url, params=params).text
         except ConnectionError:
-            print("Could not establish a connection to ATVR.")
-            # Defaults to an undefined stock
-            return None
+            print("Could not establish a connection to ATVR for product {}".format(atvr_id))
+            # Defaults to an empty stock
+            return []
 
         soup = BeautifulSoup(html_doc, 'html.parser')
         stock_status = soup.find(id="div-stock-status")
@@ -35,10 +35,11 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         verbose = True
-        products = Product.objects.filter(available_in_atvr=True).all()
+        products = Product.objects.all()
         for product in products:
             if verbose:
                 print("Updating {}".format(str(product)))
             stock_info = self.get_product_data(product.atvr_id)
+            product.available_in_atvr = not not stock_info  # Forcing it to a boolean
             product.atvr_stock = stock_info
             product.save()
