@@ -6,6 +6,10 @@
     background-color: #f9f9f9;
 }
 
+.unavailable-product {
+    text-decoration: line-through;
+}
+
 /* Hacking the sliders into place: */
 .form-slider {
     margin-top: 5px;

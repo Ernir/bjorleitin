@@ -4,15 +4,17 @@
 {% block sidebar %}
     <div class="col-sm-4 col-md-3 sidebar">
         {% if product_type.simple_style %}
-            Aðrar vörur í stílnum "{{ product_type.simple_style }}":
+            Aðrar vörur í stílnum
+            "<a href="{{ product_type.simple_style.get_absolute_url }}">{{ product_type.simple_style }}</a>":
             <ul>
                 {% for similar_product_type in similar %}
-                    {% if similar_product_type.id != product_type.id %}
-                        <li><a href="{{ similar_product_type.get_absolute_url }}">{{ similar_product_type.alias }}</a>
-                        </li>
-                    {% else %}
-                        <li>{{ similar_product_type.alias }}</li>
-                    {% endif %}
+                    <li {% if not similar_product_type.available %} class="unavailable-product" {% endif %}>
+                        {% if similar_product_type.id != product_type.id %}
+                            <a href="{{ similar_product_type.get_absolute_url }}">{{ similar_product_type.alias }}</a>
+                        {% else %}
+                            {{ similar_product_type.alias }}
+                        {% endif %}
+                    </li>
                 {% endfor %}
             </ul>
         {% endif %}
