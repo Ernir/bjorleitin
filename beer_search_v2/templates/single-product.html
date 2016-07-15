@@ -7,7 +7,12 @@
             Aðrar vörur í stílnum "{{ product_type.simple_style }}":
             <ul>
                 {% for similar_product_type in similar %}
-                    <li><a href="{{ similar_product_type.get_absolute_url }}">{{ similar_product_type.alias }}</a></li>
+                    {% if similar_product_type.id != product_type.id %}
+                        <li><a href="{{ similar_product_type.get_absolute_url }}">{{ similar_product_type.alias }}</a>
+                        </li>
+                    {% else %}
+                        <li>{{ similar_product_type.alias }}</li>
+                    {% endif %}
                 {% endfor %}
             </ul>
         {% endif %}
@@ -28,9 +33,12 @@
         </p>
         <p>
             {% if product_type.untappd_info %}
-                Bjórinn hefur einkunnina {{ product_type.untappd_info.rating|floatformat:2 }} á
+                Varan hefur einkunnina {{ product_type.untappd_info.rating|floatformat:2 }} á
                 <a href="https://untappd.com/beer/{{ product_type.untappd_info.untappd_id }}" target="_blank">
-                    Untappd</a>.
+                    Untappd</a>. Það er hærri einkunn en {{ lower_rated_percentage }}%
+                ({{ lower_rated_count }}/{{ total_count }}) af öllum vörum sem Bjórleitin veit af og hærri einkunn en
+                {{ style_lower_rated_percentage }}% ({{ style_lower_rated_count }}/{{ style_count }}) af bjórum í sama
+                stíl.
             {% endif %}
         </p>
 

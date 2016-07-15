@@ -2,7 +2,9 @@ from django.db.models import Max, Min, Q
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import View
-from beer_search_v2.models import MainQueryResult, Product, AlcoholCategory, ContainerType, SimplifiedStyle, ProductType
+from beer_search_v2.models import MainQueryResult, Product, AlcoholCategory, ContainerType, SimplifiedStyle, \
+    ProductType, \
+    UntappdEntity
 from beer_search_v2.utils import get_main_display
 from django.conf import settings
 
@@ -87,17 +89,32 @@ class SingleProductView(BaseView):
         product_type = get_object_or_404(ProductType, id=pid)
 
         # This is where we find beers which are similar to the
-        others_in_style = []
+        all_in_style = []
         if product_type.untappd_info and product_type.untappd_info.style.simplifies_to:
             product_type.simple_style = product_type.untappd_info.style.simplifies_to
-            others_in_style = ProductType.objects.filter(
+            all_in_style = ProductType.objects.filter(
                     untappd_info__style__simplifies_to=product_type.untappd_info.style.simplifies_to
-            ).filter(
-                    available=True
             ).all()
+
+            total_count = UntappdEntity.objects.count()
+            lower_rated_count = UntappdEntity.objects.filter(rating__lt=product_type.untappd_info.rating).count()
+            lower_rated_percentage = round(lower_rated_count / total_count * 100)
+
+            ue_in_style = UntappdEntity.objects.filter(style__simplifies_to=product_type.simple_style)
+            style_count = ue_in_style.count()
+            style_lower_rated_count = ue_in_style.filter(rating__lt=product_type.untappd_info.rating).count()
+            style_lower_rated_percentage = round(style_lower_rated_count / style_count * 100)
+
+            self.params["total_count"] = total_count
+            self.params["lower_rated_count"] = lower_rated_count
+            self.params["lower_rated_percentage"] = lower_rated_percentage
+
+            self.params["style_count"] = style_count
+            self.params["style_lower_rated_count"] = style_lower_rated_count
+            self.params["style_lower_rated_percentage"] = style_lower_rated_percentage
 
         self.params["title"] = product_type.alias
         self.params["product_type"] = product_type
-        self.params["similar"] = others_in_style
+        self.params["similar"] = all_in_style
 
         return render(request, "single-product.html", self.params)
