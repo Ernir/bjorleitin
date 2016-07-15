@@ -35,7 +35,7 @@
                     <h4>Dæmi um bjóra í stílnum</h4>
                     <ul>
                         {% for example in style.examples.all %}
-                            <li>{{ example.alias }}</li>
+                            <li><a href="{{ example.get_absolute_url }}">{{ example.alias }}</a></li>
                         {% endfor %}
                     </ul>
                 </div>

@@ -69,6 +69,7 @@ class SimplifiedStyle(models.Model):
     """
 
     name = models.CharField(max_length=100)
+    name_in_sentence = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100)
     description = models.TextField(blank=True, default="", null=True)
     html_description = models.TextField()

@@ -27,7 +27,7 @@
         <p class="lead">
             {{ product_type.abv }}%
             {% if product_type.untappd_info %}
-                {{ product_type.simple_style.name|lower }} frá
+                {{ product_type.simple_style.name_in_sentence }} frá
                 {{ product_type.untappd_info.brewery.alias }}.
             {% else %}
                 drykkur.
