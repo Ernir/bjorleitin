@@ -13,7 +13,7 @@ class ATVRProductSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class ATVRProductViewSet(viewsets.ModelViewSet):
-    queryset = Product.objects.select_related("container").filter(source=0).all()
+    queryset = Product.objects.select_related("container").filter(atvr_id__isnull=False).all()
     serializer_class = ATVRProductSerializer
 
 

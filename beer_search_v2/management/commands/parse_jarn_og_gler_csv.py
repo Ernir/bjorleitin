@@ -47,7 +47,6 @@ class Command(BaseCommand):
         product.volume = cls.guess_volume(raw_product_name)
         product.first_seen_at = date.today()
         product.container = cls.guess_container_type(product.name)
-        product.source = Product.JoG
         return product
 
     @classmethod

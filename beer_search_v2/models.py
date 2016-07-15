@@ -235,14 +235,7 @@ class Product(models.Model):
     atvr_id = models.CharField(max_length=100, null=True, blank=True)
     jog_id = models.CharField(max_length=100, null=True, blank=True)
 
-    ATVR, JoG = 0, 1
-    SOURCE_CHOICES = (
-        (ATVR, "ÁTVR"),
-        (JoG, "Járn og Gler")
-    )
-
     # Boolean/availability fields
-    source = models.IntegerField(choices=SOURCE_CHOICES, default=ATVR)
     first_seen_at = models.DateTimeField(null=True)
     available_in_atvr = models.BooleanField(default=False)
     available_in_jog = models.BooleanField(default=False)
