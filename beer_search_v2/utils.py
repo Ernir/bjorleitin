@@ -28,7 +28,7 @@ def get_main_display():
             "product_type__untappd_info__style__simplifies_to"
     ).filter(
             Q(available_in_atvr=True) | Q(available_in_jog=True),
-            product_type__alcohol_category=beer,
+            Q(product_type__alcohol_category=beer) | Q(product_type__untappd_info__isnull=False),
     ).exclude(
             container=gift_box
     ).exclude(
