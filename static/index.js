@@ -16,7 +16,8 @@ function updateAndFilter() {
         minUntappd: -Infinity,
         maxUntappd: Infinity,
         containers: ["flaska", "dós"],
-        country: ""
+        country: "",
+        store: ""
     };
 
     filterVals.name = $("#beer-name-filter").val();
@@ -38,6 +39,7 @@ function updateAndFilter() {
         filterVals.containers.push($(this).val().toLowerCase());
     });
     filterVals.country = $("#country-name-filter").val();
+    filterVals.store = $("#store-name-filter").val();
 
     var numResults = 0;
     $.each(allBeerData, function (i, beer) {
@@ -51,7 +53,8 @@ function updateAndFilter() {
             && styleFilter(beer.style)
             && untappdFilter(beer.untappdRating)
             && containerFilter(beer.containers)
-            && countryFilter(beer.country);
+            && countryFilter(beer.country)
+            && storeFilter(beer.stores);
 
         if (display) {
             numResults += 1;
@@ -110,6 +113,18 @@ function updateAndFilter() {
     function countryFilter(countryName) {
         return countryName.toLowerCase().indexOf(filterVals.country.toLowerCase()) !== -1
     }
+
+    function storeFilter(stores) {
+        if (!stores) {
+            return true;
+        }
+        for (var i = 0; i < stores.length; i++) {
+            if (stores[i].toLowerCase().indexOf(filterVals.store.toLowerCase()) !== -1) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
 
 /*
@@ -146,6 +161,7 @@ var beerPrices = [];
 var breweryNames = [];
 var beerVolumes = [];
 var beerCountries = [];
+var storeNames = [];
 
 function makeBeerTable() {
     /*
@@ -200,6 +216,11 @@ function getDataSet() {
             if (beerCountries.indexOf(beer.country) === -1) {
                 beerCountries.push(beer.country);
             }
+            for (var i = 0; i < beer.stores.length; i++) { // ToDo: find a more efficient way to get all store names
+                if (storeNames.indexOf(beer.stores[i]) === -1) {
+                    storeNames.push(beer.stores[i]);
+                }
+            }
         });
         beerPrices.sort(saneSort);
         beerAbvs.sort(saneSort);
@@ -223,6 +244,7 @@ function prepareSearchForm() {
     $("#beer-name-filter").typeahead({source: beerNames});
     $("#brewery-name-filter").typeahead({source: breweryNames});
     $("#country-name-filter").typeahead({source: beerCountries});
+    $("#store-name-filter").typeahead({source: storeNames});
     makePriceSlider(beerPrices);
     makeAbvSlider(beerAbvs);
     makeVolumeSlider(beerVolumes);
@@ -293,7 +315,7 @@ function makeUntappdSlider() {
 }
 
 function applyListeners() {
-    $("#beer-name-filter, #brewery-name-filter, #country-name-filter").keyup(function () {
+    $("#beer-name-filter, #brewery-name-filter, #country-name-filter, #store-name-filter").keyup(function () {
         updateAndFilter();
     });
     $(".checkbox label input").on("click", function () {

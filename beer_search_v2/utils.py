@@ -13,7 +13,8 @@ def get_main_display():
     the main table on the index page.
     """
 
-    # First we gather the requisite information
+    # First we gather/define the requisite information
+    jog_name = "Sérpöntunarlisti Járns og Glers"
     beer = AlcoholCategory.objects.get(name="beer")
     gift_box = ContainerType.objects.get(name="Gjafaaskja")
     keg = ContainerType.objects.get(name="Kútur")
@@ -48,8 +49,12 @@ def get_main_display():
                 "minVolume": product.volume,
                 "maxVolume": product.volume,
                 "minPrice": product.price,
-                "maxPrice": product.price
+                "maxPrice": product.price,
+                "stores": [status["store"] for status in product.atvr_stock]
             }
+
+            if product.available_in_jog:
+                type_dict[pid]["stores"].append(jog_name)
 
             if product.product_type.country:
                 type_dict[pid]["country"] = product.product_type.country.name
@@ -82,6 +87,10 @@ def get_main_display():
             type_dict[pid]["minPrice"] = min(type_dict[pid]["minPrice"], product.price)
             if product.container.name not in type_dict[pid]["containers"]:
                 type_dict[pid]["containers"].append(product.container.name)
+            type_dict[pid]["stores"].extend([status["store"] for status in product.atvr_stock if
+                                             status["store"] not in type_dict[pid]["stores"]])
+            if product.available_in_jog and jog_name not in type_dict[pid]["stores"]:
+                type_dict[pid]["stores"].append(jog_name)
 
     return [item for item in type_dict.values()]
 
