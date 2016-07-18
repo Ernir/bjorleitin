@@ -1,3 +1,7 @@
+.main-product-image {
+    max-height: 300px;
+}
+
 .navbar-brand {
     padding-top: 10px;
 }

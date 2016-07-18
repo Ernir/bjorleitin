@@ -1,3 +1,4 @@
+import requests
 from random import sample
 
 from django.contrib.postgres.fields import JSONField, ArrayField
@@ -185,6 +186,18 @@ class ProductType(models.Model):
     available = models.BooleanField(default=False)
     needs_announcement = models.BooleanField(default=False)
 
+    # Fluff
+    main_image = models.URLField(default="", blank=True)
+
+    # Methods
+
+    def _update_image_url(self):
+        for product in self.product_set.all():
+            if product.image_url:
+                self.main_image = product.image_url
+                self.save()
+                return
+
     def save(self, *args, **kwargs):
         if not self.alias:  # Aliases are used for sorting
             self.alias = self.name
@@ -246,6 +259,9 @@ class Product(models.Model):
     # Read-only fields
     updated_at = models.DateField(default=date.today)
 
+    # Fluff
+    image_url = models.URLField(default="", blank=True)
+
     # Methods
     def __str__(self):
         name = "{0}, ({1}ml {2})".format(self.name, self.volume, self.container.name)
@@ -259,6 +275,14 @@ class Product(models.Model):
 
         two_months_ago = timezone.now() - timedelta(days=60)
         return self.first_seen_at > two_months_ago
+
+    def _attempt_image_fetch(self):
+        if self.atvr_id and not self.image_url:
+            url = "http://www.vinbudin.is/Portaldata/1/Resources/vorumyndir/original/{}_r.jpg".format(self.atvr_id)
+            r = requests.get(url)
+            if r.status_code == 200:
+                self.image_url = url
+                self.save()
 
     def get_absolute_url(self):
         return self.product_type.get_absolute_url()
