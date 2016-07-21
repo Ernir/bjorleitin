@@ -2,7 +2,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 import os
 import requests
-from beer_search_v2.models import Brewery, UntappdStyle, Country, AlcoholCategory, ContainerType, Product
+from beer_search_v2.models import Brewery, UntappdStyle, Country, AlcoholCategory, ContainerType, Product, \
+    MainQueryResult
 from collections import OrderedDict
 
 
@@ -132,6 +133,11 @@ def update_untappd_item(untappd_entity, verbose=True):
 
     if verbose:
         print("Successfully updated {0} from {1} to {2}".format(untappd_entity.product_name, old_rating, new_rating))
+
+
+def renew_cache():
+    data = get_main_display()
+    MainQueryResult.objects.create(json_contents=data)
 
 
 def get_untappd_style_instance(style_name, verbose=True):

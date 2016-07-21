@@ -5,7 +5,7 @@ from datetime import datetime
 from beer_search_v2.models import Product, ProductType, ContainerType
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import BaseCommand
-from beer_search_v2.utils import get_country_instance, get_alcohol_category_instance
+from beer_search_v2.utils import get_country_instance, get_alcohol_category_instance, renew_cache
 
 
 class Command(BaseCommand):
@@ -183,3 +183,5 @@ class Command(BaseCommand):
 
         for product_type in ProductType.objects.filter().all():
             product_type.update_availability(verbose=False)
+
+        renew_cache()

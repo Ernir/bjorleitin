@@ -1,4 +1,5 @@
 import requests
+from beer_search_v2.utils import renew_cache
 from bs4 import BeautifulSoup
 from beer_search_v2.models import Product
 from django.core.management.base import BaseCommand
@@ -48,3 +49,4 @@ class Command(BaseCommand):
             product.atvr_stock = stock_info
             product.save()
             product.product_type.update_availability(verbose=verbose)
+        renew_cache()
