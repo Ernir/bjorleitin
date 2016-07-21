@@ -168,7 +168,7 @@ function makeBeerTable() {
      One initial AJAX call to create the list of beers.
      */
     showMessage("#results-working");
-    $.get("/v2/main-table/", function (data) {
+    $.get("/main-table/", function (data) {
         var $tableContainer = $("#table-container");
         $tableContainer.html(data);
         var $tables = $("table");
@@ -191,7 +191,7 @@ function getDataSet() {
     /*
      Get the list of beers in JSON format
      */
-    $.get("/v2/main-table/json/", function (data) {
+    $.get("/main-table/json/", function (data) {
         allBeerData = data.beers;
         $.each(allBeerData, function (i, beer) {
             beerNames.push(beer.name);
