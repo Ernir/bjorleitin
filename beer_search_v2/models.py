@@ -333,3 +333,18 @@ class MainQueryResult(models.Model):
 
     class Meta:
         ordering = ("-created_at",)
+
+
+class ModifiableSetting(models.Model):
+    """
+    Each instance represents one "setting" modifiable in the admin.
+    """
+
+    key = models.CharField(max_length=100)
+    value = models.IntegerField()
+
+    def __str__(self):
+        return self.key + ": " + str(self.value)
+
+    class Meta:
+        verbose_name_plural = "modifiable settings"
