@@ -198,6 +198,11 @@ class ProductType(models.Model):
                 self.save()
                 return
 
+    def _is_relevant(self):
+        if self.product_set.count() == 1 and self.product_set.all()[0].container.name in ["Gjafaaskja", "Kútur"]:
+            return False
+        return not not self.untappd_info or self.alcohol_category.name == "beer"
+
     def save(self, *args, **kwargs):
         if not self.alias:  # Aliases are used for sorting
             self.alias = self.name
@@ -217,7 +222,7 @@ class ProductType(models.Model):
             if product.available_in_atvr or product.available_in_jog:
                 any_available_product = True
         # If there's a change, update
-        if self.available != any_available_product and (self.untappd_info or self.alcohol_category.name == "beer"):
+        if self.available != any_available_product and self.is_relevant:
             self.needs_announcement = True
             if verbose:
                 if any_available_product:
@@ -229,6 +234,10 @@ class ProductType(models.Model):
 
     class Meta:
         ordering = ("alias",)
+
+    # Properties
+
+    is_relevant = property(_is_relevant)
 
 
 class Product(models.Model):
