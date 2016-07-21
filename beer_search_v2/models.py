@@ -1,7 +1,7 @@
 import requests
 from random import sample
 
-from django.contrib.postgres.fields import JSONField, ArrayField
+from django.contrib.postgres.fields import JSONField
 from django.db import models, IntegrityError
 from django.core.urlresolvers import reverse
 from datetime import date, timedelta
@@ -217,7 +217,7 @@ class ProductType(models.Model):
             if product.available_in_atvr or product.available_in_jog:
                 any_available_product = True
         # If there's a change, update
-        if self.available != any_available_product:
+        if self.available != any_available_product and (self.untappd_info or self.alcohol_category.name == "beer"):
             self.needs_announcement = True
             if verbose:
                 if any_available_product:

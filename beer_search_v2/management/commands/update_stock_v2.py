@@ -37,9 +37,14 @@ class Command(BaseCommand):
         verbose = True
         products = Product.objects.all()
         for product in products:
-            if verbose:
-                print("Updating {}".format(str(product)))
             stock_info = self.get_product_data(product.atvr_id)
             product.available_in_atvr = not not stock_info  # Forcing it to a boolean
+            if verbose:
+                if product.available_in_atvr:
+                    availability = "available"
+                else:
+                    availability = "unavailable"
+                print("Updating {}, {}".format(str(product), availability))
             product.atvr_stock = stock_info
             product.save()
+            product.product_type.update_availability(verbose=verbose)
