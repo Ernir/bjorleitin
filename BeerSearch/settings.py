@@ -36,7 +36,6 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     "debug_toolbar",
     "beer_search_v2",
-    "crispy_forms",
     "storages",
     "compressor",
     "rest_framework"

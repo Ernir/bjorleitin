@@ -17,16 +17,20 @@
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 <li><a href="{% url "index" %}" title="Fara á leitarsíðuna">Leita</a></li>
-            </ul>
-            <ul class="nav navbar-nav">
                 <li><a href="{% url "styles" %}" title="Yfirlit yfir bjórstíla">Bjórstílar</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                       aria-expanded="false" title="Bjórleitin á samfélagsmiðlum">Samfélagsmiðlar<span
+                            class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="https://twitter.com/bjorleitin">Tilkynningar á Twitter</a></li>
+                    </ul>
+                </li>
             </ul>
+
             <ul class="nav navbar-nav navbar-right">
                 <li>
-                    <div class="facebook-wrapper">
-                        <div class="fb-like" data-href="http://bjorleit.info/" data-layout="button_count"
-                             data-action="like" data-show-faces="false" data-share="true"></div>
-                    </div>
+                    <a href="#" title="Lesa meira um bjórleitina">Um</a></li>
                 </li>
             </ul>
         </div>

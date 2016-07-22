@@ -1,6 +1,10 @@
 {% extends "base-v2.html" %}
 {% load staticfiles %}
 
+{% block metatags %}
+    {% include "open_graph/og_single_product.html" %}
+{% endblock %}
+
 {% block sidebar %}
     <div class="col-sm-4 col-md-3 sidebar">
         {% if product_type.simple_style %}
@@ -25,16 +29,16 @@
     <div class="col-sm-8 col-sm-offset-4 col-md-9 col-md-offset-3 main">
         <div class="row">
             <div class="col-md-6">
-            <h1>{{ product_type.alias }}</h1>
-            <p class="lead">
-                {{ product_type.abv }}%
-                {% if product_type.untappd_info %}
-                    {{ product_type.simple_style.name_in_sentence }} frá
-                    {{ product_type.untappd_info.brewery.alias }}.
-                {% else %}
-                    drykkur.
-                {% endif %}
-            </p>
+                <h1>{{ product_type.alias }}</h1>
+                <p class="lead">
+                    {{ product_type.abv }}%
+                    {% if product_type.untappd_info %}
+                        {{ product_type.simple_style.name_in_sentence }} frá
+                        {{ product_type.untappd_info.brewery.alias }}.
+                    {% else %}
+                        drykkur.
+                    {% endif %}
+                </p>
                 {% if product_type.untappd_info %}
                     Varan hefur einkunnina {{ product_type.untappd_info.rating|floatformat:2 }} á
                     <a href="https://untappd.com/beer/{{ product_type.untappd_info.untappd_id }}" target="_blank">
