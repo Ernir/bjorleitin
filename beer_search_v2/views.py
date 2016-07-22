@@ -118,3 +118,13 @@ class SingleProductView(BaseView):
         self.params["similar"] = all_in_style
 
         return render(request, "single-product.html", self.params)
+
+
+class AboutView(BaseView):
+    """
+    A view to show some information about the page.
+    """
+
+    def get(self, request):
+        self.params["title"] = "Um Bjórleitina"
+        return render(request, "about-v2.html", self.params)

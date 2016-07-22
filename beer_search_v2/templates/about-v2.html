@@ -1,0 +1,35 @@
+{% extends "base-v2.html" %}
+{% load staticfiles %}
+
+{% block sidebar %}
+    <div class="col-sm-4 col-md-3 sidebar">
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="col-sm-8 col-sm-offset-4 col-md-9 col-md-offset-3 main">
+        <h2>Um Bjórleitina</h2>
+        <p>Bjórleitin er hobbýverkefni eins bjóráhugamanns, Eiríks Ernis Þorsteinssonar, sem þyrsti í gott yfirlit
+                yfir hið íslenska bjórúrval.</p>
+
+        <h3>Hvaðan koma gögnin?</h3>
+        <p>Grunngögnunum er safnað af <a href="http://www.vinbudin.is/">síðu vínbúðarinnar</a> með sjálfvirku tóli. <a href="http://www.jarngler.is/serpantanir/">Járn og Gler</a> gefur út sérpöntunarlista í formi MS Excel-skjala sem eru líka greind. Hver bjórtegund er síðan tengd handvirkt við gagnagrunn <a href="https://untappd.com/">Untappd</a> og frekari upplýsingar sóttar þaðan.</p>
+
+        <h4>Hvernig er bjórunum raðað í stíla?</h4>
+        <p>Stílsupplýsingarnar fást frá Untappd (sjá að ofan), en leitin sjálf notar einfaldaða stíla. Við einföldun var fyrst og fremst tekið tillit til íslenskrar orðræðu og fjölda vörutegunda í hverjum stíl fyrir sig.</p>
+
+        <h3>Hversu oft eru bjórarnir uppfærðir?</h3>
+        <p>Birgðastaða og Untappd-einkunnir eru uppfærðar á hverri nóttu. Nýir bjórar eru settir inn ekki sjaldnar en mánaðarlega.</p>
+        <p>Hægt er að fylgjast með því hvenær nýir bjórar detta inn á <a href="https://twitter.com/bjorleitin" target="_blank">Twitter-síðu Bjórleitarinnar</a>.</p>
+
+        <h3>Kemst ég í gögnin?</h3>
+        <p>Ekki ennþá. API fyrir síðuna er í vinnslu.</p>
+
+        <h3>Kemst ég í kóðann?</h3>
+        <p>Já, kóði síðunnar er á <a href="https://github.com/Ernir/bjorleitin">Github</a>.</p>
+
+        <h3>Hvert er samband síðunnar við Vínbúðina og Járn og Gler?</h3>
+        <p>Þessi síða tengist hvorki Vínbúðinni né Járni og Gleri á neinn hátt annan en að nota frá þeim opin gögn.</p>
+
+    </div>
+{% endblock %}
