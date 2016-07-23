@@ -56,5 +56,6 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         beers = Beer.objects.available_beers()
         for beer in beers:
+            print("Updated " + beer.name)
             stock_info = self.get_beer_data(beer.atvr_id)
             self.update_beer_by_id(beer.atvr_id, stock_info)

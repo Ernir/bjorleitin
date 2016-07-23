@@ -1,0 +1,22 @@
+{% load staticfiles %}
+
+<meta property="og:url" content="{{ product_type.get_absolute_url }}"/>
+
+<meta property="og:type" content="website"/>
+
+<meta property="og:title" content="Bjórleitin - {{ product_type.alias }}"/>
+
+<meta property="og:description"
+      content="{{ product_type.abv }}%
+        {% if product_type.untappd_info %}
+            {{ product_type.simple_style.name_in_sentence }} frá
+            {{ product_type.untappd_info.brewery.alias }}.
+        {% else %}
+            drykkur.
+        {% endif %}"/>
+
+<meta property="og:image" content="{% static "images/logo200x200.png" %}"/>
+
+<meta property="fb:app_id" content="453162018180328"/>
+
+<meta property="og:locale" content="is_IS"/>

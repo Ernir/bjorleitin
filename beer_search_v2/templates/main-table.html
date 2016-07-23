@@ -1,0 +1,58 @@
+{% if debug %}
+    <body>
+{% endif %}
+<table class="table table-condensed" id="main-table">
+    <thead>
+    <tr>
+        <th>Bjórtegund</th>
+        <th>Brugghús</th>
+        <th>Verð (kr.)</th>
+        <th>Magn (ml)</th>
+        <th>Styrkur</th>
+        <th>Stíll</th>
+        <th>Ílát</th>
+        <th>Land</th>
+        <th>Untappd</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for beer in product_list %}
+        <tr id="row-{{ beer.productId }}">
+            <td> <a href="{% url "single_product" beer.productId %}">{{ beer.name }}</a> {% if debug %}
+                ( <a href="http://127.0.0.1:8000/admin/beer_search_v2/producttype/{{ beer.productId }}/">breyta</a> )
+            {% endif %}</td>
+
+            <td>{{ beer.brewery }}</td>
+
+            {% if beer.minPrice == beer.maxPrice %}
+                <td>{{ beer.minPrice }}</td>
+            {% else %}
+                <td>{{ beer.minPrice }} - {{ beer.maxPrice }}</td>
+            {% endif %}
+
+            {% if beer.minVolume == beer.maxVolume %}
+                <td>{{ beer.minVolume }}</td>
+            {% else %}
+                <td>{{ beer.minVolume }} - {{ beer.maxVolume }}</td>
+            {% endif %}
+
+            <td>{{ beer.abv|floatformat:1 }}%</td>
+
+            <td><a href="{{ beer.style_url }}"> {{ beer.style }}</a></td>
+
+            <td>{{ beer.containers|join:", " }}</td>
+
+            <td>{{ beer.country }}</td>
+
+            {% if beer.untappdRating %}
+                <td>{{ beer.untappdRating|floatformat:2 }}</td>
+            {% else %}
+                <td>?</td>
+            {% endif %}
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% if debug %}
+    </body>
+{% endif %}

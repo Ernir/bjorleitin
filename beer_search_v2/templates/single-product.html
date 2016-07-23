@@ -1,0 +1,102 @@
+{% extends "base-v2.html" %}
+{% load staticfiles %}
+
+{% block metatags %}
+    {% include "open_graph/og_single_product.html" %}
+{% endblock %}
+
+{% block sidebar %}
+    <div class="col-sm-4 col-md-3 sidebar">
+        {% if product_type.simple_style %}
+            Aðrar vörur í stílnum
+            "<a href="{{ product_type.simple_style.get_absolute_url }}">{{ product_type.simple_style }}</a>":
+            <ul>
+                {% for similar_product_type in similar %}
+                    <li {% if not similar_product_type.available %} class="unavailable-product" {% endif %}>
+                        {% if similar_product_type.id != product_type.id %}
+                            <a href="{{ similar_product_type.get_absolute_url }}">{{ similar_product_type.alias }}</a>
+                        {% else %}
+                            {{ similar_product_type.alias }}
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="col-sm-8 col-sm-offset-4 col-md-9 col-md-offset-3 main">
+        <div class="row">
+            <div class="col-md-6">
+                <h1>{{ product_type.alias }}</h1>
+                <p class="lead">
+                    {{ product_type.abv }}%
+                    {% if product_type.untappd_info %}
+                        {{ product_type.simple_style.name_in_sentence }} frá
+                        {{ product_type.untappd_info.brewery.alias }}.
+                    {% else %}
+                        drykkur.
+                    {% endif %}
+                </p>
+                {% if product_type.untappd_info %}
+                    Varan hefur einkunnina {{ product_type.untappd_info.rating|floatformat:2 }} á
+                    <a href="https://untappd.com/beer/{{ product_type.untappd_info.untappd_id }}" target="_blank">
+                        Untappd</a>. Það er hærri einkunn en {{ lower_rated_percentage }}%
+                    ({{ lower_rated_count }}/{{ total_count }}) af öllum vörum sem Bjórleitin veit af og hærri einkunn
+                    en {{ style_lower_rated_percentage }}% ({{ style_lower_rated_count }}/{{ style_count }}) af vörum í
+                    sama stíl.
+                {% endif %}
+            </div>
+            <div class="col-md-6">
+                {% if product_type.main_image %}
+                    <img src="{{ product_type.main_image }}"
+                         alt="Mynd af {{ product_type.alias }}"
+                         class="main-product-image img-responsive center-block">
+                {% endif %}
+            </div>
+        </div>
+
+        <h3>Birgðastaða</h3>
+        {% if product_type.available %}
+            <div class="row">
+                {% for product in product_type.product_set.all %}
+                    <div class="col-md-6">
+                        {% if product.available_in_jog %}
+                            <p><strong>{{ product.volume }}ml {{ product.container.name|lower }}</strong> fæst á <a
+                                    href="http://www.jarngler.is/serpantanir/">sérpöntunarlista Járns og Glers</a>
+                                á {{ product.price }} krónur. Vöruauðkennið er
+                                <code>{{ product.jog_id }}</code>.</p>
+                        {% endif %}
+                        {% if product.available_in_atvr %}
+                            <p><strong>{{ product.volume }}ml {{ product.container.name|lower }}</strong> fæst í
+                                Vínbúðinni
+                                á {{ product.price }}
+                                krónur.
+                                <a href="http://www.vinbudin.is/Heim/v%C3%B6rur/stoek-vara.aspx/?productid={{ product.atvr_id }}/"
+                                   target="_blank">Sjá á síðu Vínbúðarinnar</a>.</p>
+                            <table class="table table-condensed table-striped">
+                                <thead>
+                                <tr>
+                                    <th>Vínbúð</th>
+                                    <th>Staða</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for stock_entry in product.atvr_stock %}
+                                    <tr>
+                                        <td>{{ stock_entry.store }}</td>
+                                        <td>{{ stock_entry.stock }}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>Bjórleitin finnur þessa vöru því miður hvergi.</p>
+        {% endif %}
+    </div>
+{% endblock %}

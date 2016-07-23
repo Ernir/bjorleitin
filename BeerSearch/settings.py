@@ -35,13 +35,19 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     "debug_toolbar",
-    "beer_search",
-    "crispy_forms",
+    "beer_search_v2",
     "storages",
-    "compressor"
+    "compressor",
+    "rest_framework"
 )
 
 CRISPY_TEMPLATE_PACK = "bootstrap3"
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ]
+}
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.cache.UpdateCacheMiddleware',
@@ -84,7 +90,6 @@ STATICFILES_FINDERS = (
 
 WSGI_APPLICATION = 'BeerSearch.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
@@ -96,7 +101,6 @@ DATABASES["default"]["ENGINE"] = "django_postgrespool"
 
 # Parse database configuration from $DATABASE_URL
 DATABASES['default'] = dj_database_url.config("BEER_DB_URL")
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
@@ -111,15 +115,16 @@ USE_L10N = True
 
 USE_TZ = True
 
-# Local memory cache setup
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+if not DEBUG:
+    # Local memory cache setup
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        }
     }
-}
-CACHE_MIDDLEWARE_ALIAS = "default"
-CACHE_MIDDLEWARE_SECONDS = 60*5
-CACHE_MIDDLEWARE_KEY_PREFIX = ""
+    CACHE_MIDDLEWARE_ALIAS = "default"
+    CACHE_MIDDLEWARE_SECONDS = 60 * 5
+    CACHE_MIDDLEWARE_KEY_PREFIX = ""
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
@@ -130,7 +135,7 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 # Allow all host headers
 ALLOWED_HOSTS = ['*']
 
-#Twitter setup
+# Twitter setup
 
 TWITTER_CONSUMER_KEY = os.environ.get("BEER_TWITTER_CONSUMER_KEY")
 TWITTER_CONSUMER_SECRET = os.environ.get("BEER_TWITTER_CONSUMER_SECRET")
@@ -156,7 +161,9 @@ MEDIA_URL = '//%s.s3.amazonaws.com/media/' % AWS_STORAGE_BUCKET_NAME
 
 # Static file configuration
 
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static')
+]
 
 STATIC_URL = '//%s.s3.amazonaws.com/compressor/' % AWS_STORAGE_BUCKET_NAME
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')

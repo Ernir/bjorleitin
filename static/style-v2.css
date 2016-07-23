@@ -1,0 +1,78 @@
+/* More-or-less center the navbar logo */
+
+.navbar-brand {
+    padding-top: 10px;
+}
+
+/* Prettification for the single product view */
+
+.main-product-image {
+    max-height: 300px;
+}
+
+.unavailable-product {
+    text-decoration: line-through;
+}
+
+/* Make the top of the search form visible on mobile */
+
+@media (max-width: 767px) {
+    #content {
+        padding-top: 20px;
+    }
+}
+
+/* Hacking the search page sliders into place: */
+.form-slider {
+    margin-top: 5px;
+}
+
+/* Stripes for the constantly changing main search table */
+
+.stripe {
+    background-color: #f9f9f9;
+}
+
+/* Wedge the Facebook button into place */
+
+@media (min-width: 768px) {
+    .facebook-wrapper {
+        width: 160px;
+        padding-top: 20px;
+    }
+}
+
+@media (max-width: 767px) {
+    .facebook-wrapper {
+        padding-left: 15px;
+    }
+}
+
+/* Spinning the load indicator for queries. Source: http://www.bootply.com/128062 */
+
+.alert {
+    display: none;
+}
+
+.glyphicon-refresh-animate {
+    -animation: spin 1s infinite linear;
+    -webkit-animation: spin2 1s infinite linear;
+}
+
+@-webkit-keyframes spin2 {
+    from {
+        -webkit-transform: rotate(0deg);
+    }
+    to {
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@keyframes spin {
+    from {
+        transform: scale(1) rotate(0deg);
+    }
+    to {
+        transform: scale(1) rotate(360deg);
+    }
+}

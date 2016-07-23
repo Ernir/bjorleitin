@@ -1,0 +1,92 @@
+{% load static %}
+{% load compress %}
+
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta name="keywords" content="bjór, bjórar, leita að bjór, vínbúðin, bjórstílar, bjórflokkar"/>
+    {% block metatags %}
+    {% endblock %}
+
+    <!-- minified bootstrap -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
+    <!-- theme -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootswatch/3.3.2/flatly/bootstrap.min.css"/>
+
+    <!-- other css -->
+    <link rel="stylesheet"
+          href="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.css"/>
+    {% compress css %}
+        <link rel="stylesheet" href="{% static "dashboard.css" %}"/>
+        <link rel="stylesheet" href="{% static "style-v2.css" %}"/>
+    {% endcompress %}
+
+    <link rel="shortcut icon" type="image/png" sizes="16x16 24x24 32x32 48x48" href="{% static "beer.ico" %}"/>
+
+    <title>Bjórleitin
+        {% if title %}
+            - {{ title }}
+        {% endif %}
+    </title>
+</head>
+<body>
+
+{% include "navbar-v2.html" %}
+<div id="content" class="container-fluid">
+    <div class="row">
+        {% block sidebar %}
+            {% include "search-sidebar.html" %}
+        {% endblock %}
+        {% block content %}
+            This should be overridden.
+        {% endblock %}
+    </div>
+</div>
+
+<!-- minified jQuery -->
+<script type="text/javascript"
+        src="//code.jquery.com/jquery-2.1.1.min.js"></script>
+
+<!-- minified bootstrap -->
+<script type="text/javascript"
+        src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<!-- other libs -->
+<script type="text/javascript"
+        src="//cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.21.5/js/jquery.tablesorter.min.js"></script>
+<script type="text/javascript"
+        src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.1/bootstrap3-typeahead.js"></script>
+<script type="text/javascript"
+        src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+<script type="text/javascript"
+        src="//cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
+<!-- common JS -->
+{% compress js %}
+    <script src="{% static "app-v2.js" %}"></script>
+
+    {% block scripts %}
+    {% endblock %}
+{% endcompress %}
+
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r;
+        i[r] = i[r] || function () {
+                    (i[r].q = i[r].q || []).push(arguments)
+                }, i[r].l = 1 * new Date();
+        a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+        a.async = 1;
+        a.src = g;
+        m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-23333818-3', 'auto');
+    ga('send', 'pageview');
+
+</script>
+
+</body>
+</html>
