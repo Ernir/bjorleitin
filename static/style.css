@@ -1,3 +1,7 @@
+#obsolete-warning {
+    display: block;
+}
+
 /* Search page has multiple alert boxes in HTML,
    hidden on page initialization... */
 .alert {
