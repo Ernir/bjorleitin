@@ -53,6 +53,13 @@ body {
     }
 }
 
+/* Some elements are just not worth it on mobile. */
+@media (max-width: 767px) {
+    .unimportant-sidebar {
+        display: none;
+    }
+}
+
 /* Spinning the load indicator for queries. Source: http://www.bootply.com/128062 */
 
 .alert {
@@ -81,7 +88,6 @@ body {
         transform: scale(1) rotate(360deg);
     }
 }
-
 
 /*
  Offset for internal links. See:
