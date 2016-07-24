@@ -62,7 +62,7 @@ body {
 
 /* Spinning the load indicator for queries. Source: http://www.bootply.com/128062 */
 
-.alert {
+.search-alert {
     display: none;
 }
 

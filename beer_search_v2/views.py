@@ -49,6 +49,12 @@ class IndexView(BaseView):
                 max_volume=Max("volume")
         )
         self.params["styles"] = SimplifiedStyle.objects.all()
+
+        first_visit = request.session.get("first_visit", True)
+        if first_visit:
+            request.session["first_visit"] = False
+        self.params["show_welcome"] = first_visit
+
         return render(request, "index-v2.html", self.params)
 
 

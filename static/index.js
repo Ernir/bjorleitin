@@ -146,7 +146,7 @@ function updateDisplays(numResults) {
 }
 
 function showMessage(id) {
-    $(".alert").hide();
+    $(".search-alert").hide();
     $(id).show();
 }
 

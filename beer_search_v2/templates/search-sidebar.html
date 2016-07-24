@@ -1,4 +1,12 @@
 <div class="col-sm-4 col-md-3 sidebar">
+    {% if show_welcome %}
+        <div class="alert alert-info alert-dismissible">
+            Velkomin á Bjórleitina! Leitin fer sjálfkrafa í gang þegar leitarskilyrði eru gefin.
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    {% endif %}
     <form id="main-form">
         <div class="form-group">
             <label for="beer-name-filter">Nafn</label>
