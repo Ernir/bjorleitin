@@ -150,6 +150,25 @@ class UntappdEntity(models.Model):
         verbose_name_plural = "Untappd entities"
 
 
+class RatebeerEntity(models.Model):
+    """
+    Maintains information coming from the Ratebeer database.
+    """
+
+    ratebeer_id = models.IntegerField(unique=True)
+    name = models.CharField(max_length=200)
+    score = models.IntegerField()
+    number_of_ratings = models.IntegerField()
+    levenshtein_confidence = models.IntegerField()
+
+    def __str__(self):
+        return str("{0} ({1})".format(self.name, self.score))
+
+    class Meta:
+        ordering = ("name",)
+        verbose_name_plural = "Ratebeer entities"
+
+
 class AlcoholCategory(models.Model):
     """
     Denotes one category of alcohols, e.g. "red wine".
@@ -180,6 +199,7 @@ class ProductType(models.Model):
     # FK fields
     country = models.ForeignKey(Country, null=True, default=None, blank=True)
     untappd_info = models.ForeignKey(UntappdEntity, null=True, default=None, blank=True)
+    ratebeer_info = models.ForeignKey(RatebeerEntity, null=True, default=None, blank=True)
     alcohol_category = models.ForeignKey(AlcoholCategory)
 
     # Additional info
