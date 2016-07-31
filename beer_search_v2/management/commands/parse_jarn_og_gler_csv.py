@@ -54,7 +54,7 @@ class Command(BaseCommand):
         """
         Each product is an instance of a particular product type, this common info is stored separately.
         """
-        if not product.product_type:
+        if not product.product_type_id:
             try:  # Checking if this product belongs to type with the same name
                 product_type = ProductType.objects.get(name=product.name)
                 product.product_type = product_type
@@ -63,7 +63,10 @@ class Command(BaseCommand):
                 product_type.name = product.name
                 product_type.abv = cls.guess_abv(product.name)
                 product_type.country = None
-                product_type.alcohol_category = get_alcohol_category_instance("beer")
+                if product_type.abv < 35:  # Arbitrary number that decides what's not a beer
+                    product_type.alcohol_category = get_alcohol_category_instance("beer")
+                else:
+                    product_type.alcohol_category = get_alcohol_category_instance("strong")
                 product_type.save()
 
                 product.product_type = product_type
