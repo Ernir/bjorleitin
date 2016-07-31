@@ -34,6 +34,13 @@ class Command(BaseCommand):
 
     @classmethod
     def post_to_ratebeer(cls, searchstring, beername, breweryname):
+        """
+
+        :param searchstring: A string that will be sent to Ratebeer as a search term
+        :param beername: The beer's name as defined by the beer search, used for comparison
+        :param breweryname: The brewery name, as defined by the beer search, used for comparison
+        :return: A list of search query results
+        """
         r = requests.post('http://www.ratebeer.com/findbeer.asp', data={'BeerName': searchstring})
         soup = BeautifulSoup(r.text, 'html5lib')
         rb = soup.find_all('a', class_='rate')
@@ -56,42 +63,54 @@ class Command(BaseCommand):
 
     @classmethod
     def perform_searches(cls, beer_name, brewery_name):
+        """
+        Iteratively calls post_to_ratebeer to try to find the
+        """
+
+        # First try with just the beer name
+        found_beers = cls.post_to_ratebeer(beer_name, beer_name, "")
+        if 0 < len(found_beers) < 20:  # Very many or no results are not acceptable
+            return found_beers
+
+        # Then, try including the brewery name, and chopping out words
         search_components = "{} {}".format(beer_name, brewery_name).strip().split()
         print("Looking for {}".format(" ".join(search_components)))
-        found_beers = []
         chopped_words = 0
         while chopped_words < len(search_components) and not found_beers:
             search_string = " ".join(search_components[:len(search_components) - chopped_words])
             found_beers = cls.post_to_ratebeer(search_string, beer_name, brewery_name)
             chopped_words += 1
-        else:
-            if chopped_words > 0:
-                print("Match found by chopping off {} words.".format(chopped_words))
         if not found_beers:
             print("Found nothing for {}".format(" ".join(search_components)))
         return found_beers
 
+    def add_arguments(self, parser):
+        parser.add_argument("start_index", type=int, default=0)
+
     def handle(self, *args, **options):
         print("Finding relevant products")
-        beers = [
-            product for product in ProductType.objects.filter(ratebeer_info__isnull=True).all() if product.is_relevant
-            ]  # No DB-filtering by property
+        beers = ProductType.objects.filter(ratebeer_info__isnull=True, untappd_info__isnull=False).all()
+        beers = beers[options["start_index"]:]
         for beer in beers:
-            if beer.untappd_info:
-                brewery_name = beer.untappd_info.brewery.alias
-            else:
-                brewery_name = ""
-
-            found_beers = self.perform_searches(beer.alias, brewery_name)
-
+            found_beers = self.perform_searches(beer.alias, beer.untappd_info.brewery.alias)
             if found_beers:
-                rb = sorted(found_beers, key=lambda found: found["lev"])[0]  # Find best match according to lev
+                found_beers = found_beers[:20]
+                rb = sorted(found_beers, key=lambda found: found["lev"])  # Find best match according to lev
                 user_input = ""
-                while user_input.lower() not in ["y", "n", "break"]:
-                    user_input = input(
-                            "Best match is {}. Does this look right to you? (y/n/break): ".format(rb["rbname"])
-                    )
-                    if user_input == "y":
+                while user_input.lower() not in ["n", "break"]:
+                    if len(rb) > 1:
+                        for i, rb_info in enumerate(found_beers):
+                            print("{}: {}".format(i, rb_info["rbname"]))
+                        user_input = input("Does this look right to you? (<number>/n/break): ")
+                        try:
+                            user_input = int(user_input)
+                        except ValueError:
+                            pass
+                    else:
+                        print("Precisely one result, assuming correctness")
+                        user_input = 0
+                    if user_input in list(range(0, len(found_beers))):
+                        rb = rb[user_input]
                         beer.ratebeer_info = RatebeerEntity.objects.create(
                                 ratebeer_id=rb["rbid"],
                                 name=rb["rbname"],
@@ -100,6 +119,7 @@ class Command(BaseCommand):
                                 levenshtein_confidence=rb["lev"]
                         )
                         beer.save()
+                        break
                 if user_input == "break":
                     print("Stopping")
                     break
