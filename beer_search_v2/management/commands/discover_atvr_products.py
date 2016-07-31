@@ -36,6 +36,7 @@ class Command(BaseCommand):
         items_per_iteration = 100
 
         request_params = {
+            "category": "beer",  # This whole k-v pair can be omitted, to search all products
             "skip": 0,
             "count": items_per_iteration,
             "orderBy": "name asc"
