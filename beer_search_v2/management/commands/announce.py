@@ -38,12 +38,8 @@ class Command(BaseCommand):
         tweet_length = 140
         domain = "http://bjorleit.info"  # No need to get fancy
         url = "{}{}".format(domain, product_type.get_absolute_url())
-        if product_type.available:
-            body = "{} fannst".format(product_type.alias)[:(tweet_length - len(url) - 1)]
-        else:
-            body = "{} er ekki lengur á skrá.".format(product_type.alias)[:(tweet_length - len(url) - 1)]
-        message = "{}\n{}".format(body, url)
-        return message
+        body = "{} er nú í boði.".format(product_type.alias)[:(tweet_length - len(url) - 1)]
+        return "{}\n{}".format(body, url)
 
     def handle(self, *args, **options):
         """

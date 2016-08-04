@@ -243,7 +243,8 @@ class ProductType(models.Model):
                 any_available_product = True
         # If there's a change, update
         if self.available != any_available_product and self.is_relevant:
-            self.needs_announcement = True
+            if any_available_product:
+                self.needs_announcement = True
             if verbose:
                 if any_available_product:
                     print("{0} is now available".format(self.name))
