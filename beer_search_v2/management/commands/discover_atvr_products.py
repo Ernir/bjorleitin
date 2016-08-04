@@ -105,15 +105,19 @@ class Command(BaseCommand):
         """
 
         if not product.product_type_id:
-            product_type = ProductType()
-            product_type.name = product.name
-            product_type.abv = json_object["ProductAlchoholVolume"]
-            product_type.country = get_country_instance(json_object["ProductCountryOfOrigin"])
-            product_type.alcohol_category = get_alcohol_category_instance(json_object["ProductCategory"]["name"])
-            product_type.save()
+            try:
+                product_type = ProductType.objects.get(name=product.name)
+                print("Associated {} with a pre-existing ProductType by name".format(product.name))
+            except ObjectDoesNotExist:
+                product_type = ProductType()
+                product_type.name = product.name
+                product_type.abv = json_object["ProductAlchoholVolume"]
+                product_type.country = get_country_instance(json_object["ProductCountryOfOrigin"])
+                product_type.alcohol_category = get_alcohol_category_instance(json_object["ProductCategory"]["name"])
+                product_type.save()
+                print("Created new product type: {0}".format(product_type.name))
 
             product.product_type = product_type
-            print("Creating new product type: {0}".format(product_type.name))
             product.save()
 
     @classmethod
