@@ -61,14 +61,17 @@
         {% if product_type.available %}
             <div class="row">
                 {% for product in product_type.product_set.all %}
-                    <div class="col-md-6">
-                        {% if product.available_in_jog %}
+
+                    {% if product.available_in_jog %}
+                        <div class="col-md-6">
                             <p><strong>{{ product.volume }}ml {{ product.container.name|lower }}</strong> fæst á <a
                                     href="http://www.jarngler.is/serpantanir/">sérpöntunarlista Járns og Glers</a>
                                 á {{ product.price }} krónur. Vöruauðkennið er
                                 <code>{{ product.jog_id }}</code>.</p>
-                        {% endif %}
-                        {% if product.available_in_atvr %}
+                        </div>
+                    {% endif %}
+                    {% if product.available_in_atvr %}
+                        <div class="col-md-6">
                             <p><strong>{{ product.volume }}ml {{ product.container.name|lower }}</strong> fæst í
                                 Vínbúðinni
                                 á {{ product.price }}
@@ -91,8 +94,9 @@
                                 {% endfor %}
                                 </tbody>
                             </table>
-                        {% endif %}
-                    </div>
+                        </div>
+                    {% endif %}
+
                 {% endfor %}
             </div>
         {% else %}
