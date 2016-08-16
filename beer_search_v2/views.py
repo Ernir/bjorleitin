@@ -4,7 +4,7 @@ from django.shortcuts import render, get_object_or_404
 from django.views.generic import View
 from beer_search_v2.models import MainQueryResult, Product, AlcoholCategory, ContainerType, SimplifiedStyle, \
     ProductType, \
-    UntappdEntity
+    UntappdEntity, Brewery
 from beer_search_v2.utils import get_main_display
 from django.conf import settings
 
@@ -49,6 +49,7 @@ class IndexView(BaseView):
                 max_volume=Max("volume")
         )
         self.params["styles"] = SimplifiedStyle.objects.all()
+        self.params["breweries"] = Brewery.objects.values("alias")
 
         first_visit = request.session.get("first_visit", True)
         if first_visit:
