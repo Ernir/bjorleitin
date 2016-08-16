@@ -1,4 +1,4 @@
-<div class="col-sm-4 col-md-3 sidebar">
+<div class="col-sm-4 col-md-3 sidebar" xmlns="http://www.w3.org/1999/html">
     {% if show_welcome %}
         <div class="alert alert-info alert-dismissible">
             Velkomin á Bjórleitina! Leitin fer sjálfkrafa í gang þegar leitarskilyrði eru gefin.
@@ -35,27 +35,16 @@
             <div id="abv-slider" class="col-xs-8 form-slider"></div>
             <div id="abv-max-filter" class="col-xs-2 text-center">{{ extremes.max_abv }}</div>
         </div>
-        <div class="panel panel-default">
-            <div class="panel-heading" role="tab" id="headingOne">
-                <h4 class="panel-title">
-                    <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne"
-                       aria-expanded="true" aria-controls="collapseOne">
-                        Bjórstílar
-                    </a>
-                </h4>
-            </div>
-            <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
-                <div class="panel-body">
-                    <div class="form-group">
-                        {% for style in styles %}
-                            <div class="checkbox">
-                                <label>
-                                    <input type="checkbox" value="{{ style.name }}"> {{ style.name }}
-                                </label>
-                            </div>
-                        {% endfor %}
-                    </div>
-                </div>
+        <div class="form-group row">
+            <div class="col-xs-12">
+                <label for="style-filter">Bjórstílar</label>
+                <select id="style-filter" class="form-control input-md select2-multiple" multiple="multiple">
+                    {% for style in styles %}
+                        <option value="{{ style.name }}">
+                            {{ style.name }}
+                        </option>
+                    {% endfor %}
+                </select>
             </div>
         </div>
         <div class="form-group row">

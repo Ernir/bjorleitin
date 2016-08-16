@@ -7,6 +7,12 @@
     {% include "open_graph/og_index.html" %}
 {% endblock %}
 
+{% block styles %}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-theme/0.1.0-beta.6/select2-bootstrap.min.css"
+          rel="stylesheet"/>
+{% endblock %}
+
 {% block sidebar %}
     {% include "search-sidebar.html" %}
 {% endblock %}
@@ -23,13 +29,14 @@
             Er að leita!
         </p>
         <p id="results-none" class="alert alert-info search-alert">Ekkert fannst. Má bjóða þér að leita aftur?</p>
-        <p id="results-error" class="alert alert-danger search-alert">Leitarvélin náði ekki sambandi. Er nettengingin ekki örugglega
-            í lagi?</p>
+        <p id="results-error" class="alert alert-danger search-alert">Leitarvélin náði ekki sambandi.
+            Er nettengingin ekki örugglega í lagi?</p>
         <div id="table-container" class="table-responsive">
         </div>
     </div>
 {% endblock %}
 
 {% block scripts %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.full.min.js"></script>
     <script src="{% static "index.js" %}"></script>
 {% endblock %}

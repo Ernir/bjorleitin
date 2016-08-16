@@ -29,7 +29,7 @@ function updateAndFilter() {
     filterVals.minVol = parseInt($("#volume-min-filter").text());
     filterVals.maxVol = parseInt($("#volume-max-filter").text());
     filterVals.styles = [];
-    $(".checkbox label input:checked").each(function (i) {
+    $("select option:selected").each(function (i) {
         filterVals.styles.push($(this).val())
     });
     filterVals.minUntappd = parseFloat($("#untappd-min-filter").text());
@@ -235,6 +235,7 @@ function getDataSet() {
 }
 
 function initialize() {
+    initializeSelect2();
     makeBeerTable();
     getDataSet();
     applyListeners();
@@ -318,6 +319,9 @@ function applyListeners() {
     $("#beer-name-filter, #brewery-name-filter, #country-name-filter, #store-name-filter").keyup(function () {
         updateAndFilter();
     });
+    $("select").change(function () {
+        updateAndFilter();
+    });
     $(".checkbox label input").on("click", function () {
         updateAndFilter();
     });
@@ -326,6 +330,15 @@ function applyListeners() {
         $(this).toggleClass("active");
         updateAndFilter();
     })
+}
+
+function initializeSelect2() {
+    // The actual initialization:
+    $("select").select2({
+        theme: "bootstrap",
+        placeholder: "Nafn stíls",
+        containerCssClass: ":all:"
+    });
 }
 
 $(initialize());
