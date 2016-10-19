@@ -50,6 +50,7 @@ class IndexView(BaseView):
         )
         self.params["styles"] = SimplifiedStyle.objects.all()
         self.params["breweries"] = Brewery.objects.values("alias")
+        self.params["product_types"] = ProductType.objects.filter(available=True).all()
 
         first_visit = request.session.get("first_visit", True)
         if first_visit:

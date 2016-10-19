@@ -20,11 +20,11 @@ function updateAndFilter() {
         store: ""
     };
 
-    filterVals.name = $("#beer-name-filter").val();
+    filterVals.name = $("#beer-name-filter").find("option:selected").text();
+    console.log(filterVals.name);
     filterVals.breweries = [];
     $("#brewery-name-filter").find("option:selected").each(function (i) {
-        filterVals.breweries.push($(this).val())
-        console.log(filterVals);
+        filterVals.breweries.push($(this).val());
     });
     filterVals.minAbv = parseFloat($("#abv-min-filter").text().replace(",", "."));
     filterVals.maxAbv = parseFloat($("#abv-max-filter").text().replace(",", "."));
@@ -71,6 +71,9 @@ function updateAndFilter() {
     applyStripes();
 
     function nameFilter(beerName) {
+        if (!beerName || !filterVals.name){
+            return true;
+        }
         return beerName.toLowerCase().indexOf(filterVals.name.toLowerCase()) !== -1;
     }
 
@@ -162,7 +165,6 @@ function showMessage(id) {
  */
 
 var allBeerData;
-var beerNames = [];
 var beerAbvs = [];
 var beerPrices = [];
 var beerVolumes = [];
@@ -200,7 +202,6 @@ function getDataSet() {
     $.get("/main-table/json/", function (data) {
         allBeerData = data.beers;
         $.each(allBeerData, function (i, beer) {
-            beerNames.push(beer.name);
             if (beerAbvs.indexOf(beer.abv)) {
                 beerAbvs.push(beer.abv)
             }
@@ -228,7 +229,7 @@ function getDataSet() {
         beerPrices.sort(saneSort);
         beerAbvs.sort(saneSort);
         beerVolumes.sort(saneSort);
-        prepareSearchForm();
+        deferredInitializeSearchForm();
         updateDisplays(allBeerData.length)
     });
 
@@ -238,14 +239,38 @@ function getDataSet() {
 }
 
 function initialize() {
-    initializeSelect2();
+    initializeSearchForm();
     makeBeerTable();
     getDataSet();
     applyListeners();
 }
 
-function prepareSearchForm() {
-    $("#beer-name-filter").typeahead({source: beerNames});
+function initializeSearchForm() {
+    /*
+     Not all form fields are initialized here. See deferredInitializeSearchForm.
+     */
+    $("#beer-name-filter").select2({
+        theme: "bootstrap",
+        containerCssClass: ":all:",
+        placeholder: "Nafn bjórs",
+        allowClear: true
+    });
+
+    $("#style-filter").select2({
+        theme: "bootstrap",
+        containerCssClass: ":all:",
+        placeholder: "Nafn stíls"
+    });
+
+    $("#brewery-name-filter").select2({
+        theme: "bootstrap",
+        containerCssClass: ":all:",
+        placeholder: "Nafn brugghúss"
+    });
+
+}
+
+function deferredInitializeSearchForm() {
     $("#country-name-filter").typeahead({source: beerCountries});
     $("#store-name-filter").typeahead({source: storeNames});
     makePriceSlider(beerPrices);
@@ -331,20 +356,6 @@ function applyListeners() {
     $(".container-button").on("click", function () {
         $(this).toggleClass("active");
         updateAndFilter();
-    })
-}
-
-function initializeSelect2() {
-    $("#style-filter").select2({
-        theme: "bootstrap",
-        containerCssClass: ":all:",
-        placeholder: "Nafn stíls"
-    });
-
-    $("#brewery-name-filter").select2({
-        theme: "bootstrap",
-        containerCssClass: ":all:",
-        placeholder: "Nafn brugghúss"
     })
 }
 
