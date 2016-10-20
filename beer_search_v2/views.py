@@ -30,7 +30,7 @@ class IndexView(BaseView):
 
     def get(self, request):
         base_query = Product.objects.select_related(
-                "product_type"
+                "product_type", "container", "product_type__alcohol_category"
         ).filter(
                 Q(available_in_atvr=True) | Q(available_in_jog=True),
                 product_type__alcohol_category=AlcoholCategory.objects.get(name="beer")

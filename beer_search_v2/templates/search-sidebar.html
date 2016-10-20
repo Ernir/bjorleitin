@@ -11,10 +11,9 @@
         <div class="form-group row">
             <div class="col-xs-12">
                 <label for="beer-name-filter">Nafn</label>
-                <select id="beer-name-filter" class="form-control">
-                    <option value=""></option>
-                    {% for pt in product_types %}
-                        <option value="{{ pt.alias }}">{{ pt.alias }}</option>
+                <select id="beer-name-filter" class="form-control select2-multiple" multiple="multiple">
+                    {% for product_type in product_types %}
+                        <option value="{{ product_type.alias }}">{{ product_type.alias }}</option>
                     {% endfor %}
                 </select>
             </div>

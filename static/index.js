@@ -4,7 +4,7 @@
 
 function updateAndFilter() {
     var filterVals = {
-        name: "",
+        names: [],
         breweries: [],
         minPrice: -Infinity,
         maxPrice: Infinity,
@@ -20,8 +20,10 @@ function updateAndFilter() {
         store: ""
     };
 
-    filterVals.name = $("#beer-name-filter").find("option:selected").text();
-    console.log(filterVals.name);
+    filterVals.names = [];
+    $("#beer-name-filter").find("option:selected").each(function (i) {
+        filterVals.names.push($(this).val());
+    });
     filterVals.breweries = [];
     $("#brewery-name-filter").find("option:selected").each(function (i) {
         filterVals.breweries.push($(this).val());
@@ -71,10 +73,10 @@ function updateAndFilter() {
     applyStripes();
 
     function nameFilter(beerName) {
-        if (!beerName || !filterVals.name){
+        if (filterVals.names.length === 0) {
             return true;
         }
-        return beerName.toLowerCase().indexOf(filterVals.name.toLowerCase()) !== -1;
+        return filterVals.names.indexOf(beerName) !== -1;
     }
 
     function breweryFilter(breweryName) {
@@ -252,8 +254,7 @@ function initializeSearchForm() {
     $("#beer-name-filter").select2({
         theme: "bootstrap",
         containerCssClass: ":all:",
-        placeholder: "Nafn bjórs",
-        allowClear: true
+        placeholder: "Nafn bjórs"
     });
 
     $("#style-filter").select2({
