@@ -3,6 +3,8 @@
  */
 
 function updateAndFilter() {
+    // Initializing a default object of values which will be compared to each successive product, to determine if that
+    // particular product should be included in a final list.
     var filterVals = {
         names: [],
         breweries: [],
@@ -16,10 +18,11 @@ function updateAndFilter() {
         minUntappd: -Infinity,
         maxUntappd: Infinity,
         containers: ["flaska", "dós"],
-        country: "",
-        store: ""
+        countries: [],
+        stores: []
     };
 
+    // Finding all beer names, breweries, styles, countries and stores selected by the user.
     filterVals.names = [];
     $("#beer-name-filter").find("option:selected").each(function (i) {
         filterVals.names.push($(this).val());
@@ -28,24 +31,33 @@ function updateAndFilter() {
     $("#brewery-name-filter").find("option:selected").each(function (i) {
         filterVals.breweries.push($(this).val());
     });
+    filterVals.styles = [];
+    $("#style-filter").find("option:selected").each(function (i) {
+        filterVals.styles.push($(this).val());
+    });
+    filterVals.countries = [];
+    $("#country-name-filter").find("option:selected").each(function (i) {
+        filterVals.countries.push($(this).val())
+    });
+    filterVals.stores = [];
+    $("#store-name-filter").find("option:selected").each(function (i) {
+        filterVals.stores.push($(this).val())
+    });
+
+    // Finding the extreme values of ABV, price, volume and Untappd Rating selected by the user.
     filterVals.minAbv = parseFloat($("#abv-min-filter").text().replace(",", "."));
     filterVals.maxAbv = parseFloat($("#abv-max-filter").text().replace(",", "."));
     filterVals.minPrice = parseInt($("#price-min-filter").text());
     filterVals.maxPrice = parseInt($("#price-max-filter").text());
     filterVals.minVol = parseInt($("#volume-min-filter").text());
     filterVals.maxVol = parseInt($("#volume-max-filter").text());
-    filterVals.styles = [];
-    $("#style-filter").find("option:selected").each(function (i) {
-        filterVals.styles.push($(this).val());
-    });
     filterVals.minUntappd = parseFloat($("#untappd-min-filter").text());
     filterVals.maxUntappd = parseFloat($("#untappd-max-filter").text());
+
     filterVals.containers = [];
     $(".container-button.active").each(function (i) {
         filterVals.containers.push($(this).val().toLowerCase());
     });
-    filterVals.country = $("#country-name-filter").val();
-    filterVals.store = $("#store-name-filter").val();
 
     var numResults = 0;
     $.each(allBeerData, function (i, beer) {
@@ -123,15 +135,18 @@ function updateAndFilter() {
     }
 
     function countryFilter(countryName) {
-        return countryName.toLowerCase().indexOf(filterVals.country.toLowerCase()) !== -1
+        if (filterVals.countries.length === 0) {
+            return true;
+        }
+        return filterVals.countries.indexOf(countryName) !== -1;
     }
 
     function storeFilter(stores) {
-        if (!stores) {
+        if (filterVals.stores.length === 0) {
             return true;
         }
         for (var i = 0; i < stores.length; i++) {
-            if (stores[i].toLowerCase().indexOf(filterVals.store.toLowerCase()) !== -1) {
+            if (filterVals.stores.indexOf(stores[i]) !== -1) {
                 return true;
             }
         }
@@ -166,11 +181,14 @@ function showMessage(id) {
  Functions and objects to initialize the page
  */
 
-var allBeerData;
+var allBeerData = [];
+var beerNames = [];
+var breweryNames = [];
+var styleNames = [];
 var beerAbvs = [];
 var beerPrices = [];
 var beerVolumes = [];
-var beerCountries = [];
+var countryNames = [];
 var storeNames = [];
 
 function makeBeerTable() {
@@ -204,6 +222,13 @@ function getDataSet() {
     $.get("/main-table/json/", function (data) {
         allBeerData = data.beers;
         $.each(allBeerData, function (i, beer) {
+            beerNames.push(beer.name);
+            if (breweryNames.indexOf(beer.brewery) === -1) {
+                breweryNames.push(beer.brewery);
+            }
+            if (styleNames.indexOf(beer.style) === -1) {
+                styleNames.push(beer.style);
+            }
             if (beerAbvs.indexOf(beer.abv)) {
                 beerAbvs.push(beer.abv)
             }
@@ -219,8 +244,8 @@ function getDataSet() {
             if (beerVolumes.indexOf(beer.minVolume) === -1) {
                 beerVolumes.push(beer.minVolume);
             }
-            if (beerCountries.indexOf(beer.country) === -1) {
-                beerCountries.push(beer.country);
+            if (countryNames.indexOf(beer.country) === -1) {
+                countryNames.push(beer.country);
             }
             for (var i = 0; i < beer.stores.length; i++) { // ToDo: find a more efficient way to get all store names
                 if (storeNames.indexOf(beer.stores[i]) === -1) {
@@ -231,6 +256,10 @@ function getDataSet() {
         beerPrices.sort(saneSort);
         beerAbvs.sort(saneSort);
         beerVolumes.sort(saneSort);
+        storeNames.sort();
+        breweryNames.sort();
+        styleNames.sort();
+        countryNames.sort();
         deferredInitializeSearchForm();
         updateDisplays(allBeerData.length)
     });
@@ -241,39 +270,53 @@ function getDataSet() {
 }
 
 function initialize() {
-    initializeSearchForm();
+    $("select").select2({
+            theme: "bootstrap",
+            containerCssClass: ":all:"
+        }
+    ); // These values are later overridden in deferredInitializeSearchForm.
     makeBeerTable();
     getDataSet();
     applyListeners();
 }
 
-function initializeSearchForm() {
-    /*
-     Not all form fields are initialized here. See deferredInitializeSearchForm.
-     */
+function deferredInitializeSearchForm() {
+
     $("#beer-name-filter").select2({
         theme: "bootstrap",
         containerCssClass: ":all:",
-        placeholder: "Nafn bjórs"
-    });
-
-    $("#style-filter").select2({
-        theme: "bootstrap",
-        containerCssClass: ":all:",
-        placeholder: "Nafn stíls"
+        placeholder: "Nafn bjórs",
+        data: beerNames
     });
 
     $("#brewery-name-filter").select2({
         theme: "bootstrap",
         containerCssClass: ":all:",
-        placeholder: "Nafn brugghúss"
+        placeholder: "Nafn brugghúss",
+        data: breweryNames
     });
 
-}
+    $("#style-filter").select2({
+        theme: "bootstrap",
+        containerCssClass: ":all:",
+        placeholder: "Nafn stíls",
+        data: styleNames
+    });
 
-function deferredInitializeSearchForm() {
-    $("#country-name-filter").typeahead({source: beerCountries});
-    $("#store-name-filter").typeahead({source: storeNames});
+    $("#country-name-filter").select2({
+        theme: "bootstrap",
+        containerCssClass: ":all:",
+        placeholder: "Nafn upprunalands",
+        data: countryNames
+    });
+
+    $("#store-name-filter").select2({
+        theme: "bootstrap",
+        containerCssClass: ":all:",
+        placeholder: "Nafn sölustaðs eða vörulista",
+        data: storeNames
+    });
+
     makePriceSlider(beerPrices);
     makeAbvSlider(beerAbvs);
     makeVolumeSlider(beerVolumes);

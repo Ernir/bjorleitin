@@ -11,22 +11,14 @@
         <div class="form-group row">
             <div class="col-xs-12">
                 <label for="beer-name-filter">Nafn</label>
-                <select id="beer-name-filter" class="form-control select2-multiple" multiple="multiple">
-                    {% for product_type in product_types %}
-                        <option value="{{ product_type.alias }}">{{ product_type.alias }}</option>
-                    {% endfor %}
+                <select id="beer-name-filter" class="form-control input-md select2-multiple" multiple="multiple">
                 </select>
             </div>
         </div>
         <div class="form-group row">
             <div class="col-xs-12">
                 <label for="brewery-name-filter">Brugghús</label>
-                <select id="brewery-name-filter" class="form-control select2-multiple" multiple="multiple">
-                    {% for brewery in breweries %}
-                        <option value="{{ brewery.alias }}">
-                            {{ brewery.alias }}
-                        </option>
-                    {% endfor %}
+                <select id="brewery-name-filter" class="form-control input-md select2-multiple" multiple="multiple">
                 </select>
             </div>
         </div>
@@ -49,14 +41,15 @@
             <div id="abv-max-filter" class="col-xs-2 text-center">{{ extremes.max_abv }}</div>
         </div>
         <div class="form-group row">
+            <div class="col-xs-12"><strong>Untappd einkunn</strong></div>
+            <div id="untappd-min-filter" class="col-xs-2 text-center">0</div>
+            <div id="untappd-slider" class="col-xs-8 form-slider"></div>
+            <div id="untappd-max-filter" class="col-xs-2 text-center">5</div>
+        </div>
+        <div class="form-group row">
             <div class="col-xs-12">
                 <label for="style-filter">Bjórstílar</label>
                 <select id="style-filter" class="form-control input-md select2-multiple" multiple="multiple">
-                    {% for style in styles %}
-                        <option value="{{ style.name }}">
-                            {{ style.name }}
-                        </option>
-                    {% endfor %}
                 </select>
             </div>
         </div>
@@ -72,21 +65,17 @@
                     value="dós">Dósir
             </button>
         </div>
-        <div class="form-group">
-            <label for="country-name-filter">Upprunaland</label>
-            <input class="form-control" id="country-name-filter" name="country_name" placeholder="Nafn lands"
-                   type="text"/>
-        </div>
         <div class="form-group row">
-            <div class="col-xs-12"><strong>Untappd einkunn</strong></div>
-            <div id="untappd-min-filter" class="col-xs-2 text-center">0</div>
-            <div id="untappd-slider" class="col-xs-8 form-slider"></div>
-            <div id="untappd-max-filter" class="col-xs-2 text-center">5</div>
+            <div class="col-xs-12">
+                <label for="country-name-filter">Upprunaland</label>
+                <select id="country-name-filter" class="form-control input-md select2-multiple" multiple="multiple">
+                </select>
+            </div>
         </div>
         <div class="form-group">
             <label for="store-name-filter">Sölustaður:</label>
-            <input class="form-control" id="store-name-filter" name="store_name" placeholder="Nafn verslunar/lista"
-                   type="text"/>
+            <select id="store-name-filter" class="form-control input-md select2-multiple" multiple="multiple">
+            </select>
         </div>
     </form>
 </div>
