@@ -55,7 +55,7 @@ function updateAndFilter() {
     filterVals.maxUntappd = parseFloat($("#untappd-max-filter").text());
 
     filterVals.containers = [];
-    $(".container-button.active").each(function (i) {
+    $(".container-filter:checked").each(function (i) {
         filterVals.containers.push($(this).val().toLowerCase());
     });
 
@@ -282,40 +282,20 @@ function initialize() {
 
 function deferredInitializeSearchForm() {
 
-    $("#beer-name-filter").select2({
-        theme: "bootstrap",
-        containerCssClass: ":all:",
-        placeholder: "Nafn bjórs",
-        data: beerNames
-    });
+    var selectIds = ["#beer-name-filter", "#brewery-name-filter", "#style-filter", "#country-name-filter",
+        "#store-name-filter"
+    ];
+    var placeholders = ["Nafn bjórs", "Nafn brugghúss", "Nafn stíls", "Nafn upprunalands", "Sölustaður eða vörulisti"];
+    var datasources = [beerNames, breweryNames, styleNames, countryNames, storeNames];
 
-    $("#brewery-name-filter").select2({
-        theme: "bootstrap",
-        containerCssClass: ":all:",
-        placeholder: "Nafn brugghúss",
-        data: breweryNames
-    });
-
-    $("#style-filter").select2({
-        theme: "bootstrap",
-        containerCssClass: ":all:",
-        placeholder: "Nafn stíls",
-        data: styleNames
-    });
-
-    $("#country-name-filter").select2({
-        theme: "bootstrap",
-        containerCssClass: ":all:",
-        placeholder: "Nafn upprunalands",
-        data: countryNames
-    });
-
-    $("#store-name-filter").select2({
-        theme: "bootstrap",
-        containerCssClass: ":all:",
-        placeholder: "Nafn sölustaðs eða vörulista",
-        data: storeNames
-    });
+    for (var i = 0; i < selectIds.length; i++) {
+        $(selectIds[i]).select2({
+            theme: "bootstrap",
+            containerCssClass: ":all:",
+            placeholder: placeholders[i],
+            data: datasources[i]
+        });
+    }
 
     makePriceSlider(beerPrices);
     makeAbvSlider(beerAbvs);
