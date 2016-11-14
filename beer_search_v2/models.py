@@ -56,6 +56,11 @@ class Brewery(models.Model):
             return self.alias
         return self.name
 
+    def save(self, *args, **kwargs):
+        if not self.alias:
+            self.alias = self.name
+        super(Brewery, self).save(*args, **kwargs)
+
     class Meta:
         verbose_name_plural = "breweries"
         ordering = ("name",)

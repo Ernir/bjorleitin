@@ -6,6 +6,7 @@ from beer_search_v2.models import Product, ProductType, ContainerType
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import BaseCommand
 from beer_search_v2.utils import get_country_instance, get_alcohol_category_instance, renew_cache
+from .update_stock_v2 import Command as StockUpdateCommand
 
 
 class Command(BaseCommand):
@@ -69,7 +70,6 @@ class Command(BaseCommand):
                 request_params["skip"] += items_per_iteration
             else:
                 break
-
         return accumulated_list
 
     @classmethod
@@ -150,7 +150,8 @@ class Command(BaseCommand):
                 raw_container_name = json_object["ProductContainerType"]
                 product.container = cls.find_container_type(raw_container_name)
             cls.update_product_type(product, json_object)
-            product.available_in_atvr = True
+            product.available_in_atvr = not not product.atvr_stock
+
             product.price = json_object["ProductPrice"]  # We always update the price
 
             product.save()
@@ -173,6 +174,8 @@ class Command(BaseCommand):
         product.volume = int(json_object["ProductBottledVolume"])
         product.first_seen_at = cls.clean_date(json_object["ProductDateOnMarket"])
         product.temporary = json_object["ProductIsTemporaryOnSale"]
+        product.atvr_stock = StockUpdateCommand().get_product_data(product.atvr_id)
+
         return product
 
     def handle(self, *args, **options):
@@ -186,7 +189,6 @@ class Command(BaseCommand):
             self.prepare_products_for_update()
             self.update_products(product_list)
 
-        for product_type in ProductType.objects.filter().all():
-            product_type.update_availability(verbose=False)
+        print("It is now recommended to run update_stock_v2")
 
         renew_cache()

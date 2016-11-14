@@ -5,7 +5,6 @@ from beer_search_v2.models import Product
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import BaseCommand
 
-
 class Command(BaseCommand):
     def get_product_data(self, atvr_id):
         """
