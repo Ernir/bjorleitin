@@ -130,12 +130,12 @@ class ProductListView(BaseView):
 
         try:
             the_list = ProductList.objects.get(slug=slug)
+            self.params["product_list"] = the_list.products.all()
+            self.params["title"] = the_list.name
         except ObjectDoesNotExist:
-            the_list = []
+            self.params["product_list"] = []
 
-        self.params["title"] = the_list.name
-        self.params["product_list"] = the_list.products.all()
-        self.params["all_lists"] = ProductList.objects.all()
+        self.params["all_lists"] = ProductList.objects.filter(visible=True).all()
 
         print(self.params["product_list"])
 

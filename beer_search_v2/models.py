@@ -355,6 +355,7 @@ class ProductList(models.Model):
 
     name = models.CharField(max_length=200)
     slug = models.SlugField(max_length=200)
+    visible = models.BooleanField(default=False)
     description = models.TextField()
     products = models.ManyToManyField(Product)
 
