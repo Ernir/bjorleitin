@@ -8,11 +8,11 @@
 {% block sidebar %}
     <div class="col-sm-4 col-md-3 sidebar unimportant-sidebar">
         <p>Allir listar sem bjórleitin hefur skilgreint:</p>
-        <li>
+        <ul>
             {% for l in all_lists %}
-                <a href="{{ l.get_absolute_url }}">{{ l.name }}</a>
+                <li><a href="{{ l.get_absolute_url }}">{{ l.name }}</a></li>
             {% endfor %}
-        </li>
+        </ul>
     </div>
 {% endblock %}
 
