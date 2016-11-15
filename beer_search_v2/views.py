@@ -130,14 +130,22 @@ class ProductListView(BaseView):
 
         try:
             the_list = ProductList.objects.get(slug=slug)
-            self.params["product_list"] = the_list.products.all()
+            products = the_list.products.prefetch_related(
+                "container",
+                "product_type",
+                "product_type__country"
+            ).select_related(
+                "product_type__untappd_info",
+                "product_type__untappd_info__style",
+                "product_type__untappd_info__style__simplifies_to",
+                "product_type__untappd_info__brewery__country",
+            ).all()
+            self.params["product_list"] = products
             self.params["title"] = the_list.name
         except ObjectDoesNotExist:
             self.params["product_list"] = []
 
         self.params["all_lists"] = ProductList.objects.filter(visible=True).all()
-
-        print(self.params["product_list"])
 
         return render(request, "product-list.html", self.params)
 
