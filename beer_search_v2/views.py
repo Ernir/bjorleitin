@@ -1,9 +1,10 @@
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Max, Min, Q
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import View
 from beer_search_v2.models import MainQueryResult, Product, AlcoholCategory, ContainerType, SimplifiedStyle, \
-    ProductType, UntappdEntity
+    ProductType, UntappdEntity, ProductList
 from beer_search_v2.utils import get_main_display
 from django.conf import settings
 
@@ -122,6 +123,23 @@ class SingleProductView(BaseView):
         self.params["similar"] = all_in_style
 
         return render(request, "single-product.html", self.params)
+
+
+class ProductListView(BaseView):
+    def get(self, request, slug):
+
+        try:
+            the_list = ProductList.objects.get(slug=slug)
+        except ObjectDoesNotExist:
+            the_list = []
+
+        self.params["title"] = the_list.name
+        self.params["product_list"] = the_list.products.all()
+        self.params["all_lists"] = ProductList.objects.all()
+
+        print(self.params["product_list"])
+
+        return render(request, "product-list.html", self.params)
 
 
 class AboutView(BaseView):

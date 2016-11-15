@@ -150,6 +150,9 @@ class UntappdEntity(models.Model):
     def __str__(self):
         return str("{0} ({1})".format(self.product_name, self.untappd_id))
 
+    def get_absolute_url(self):
+        return "https://untappd.com/beer/{}".format(self.untappd_id)
+
     class Meta:
         ordering = ("untappd_id",)
         verbose_name_plural = "Untappd entities"
@@ -343,6 +346,23 @@ class Product(models.Model):
 
     class Meta:
         ordering = ("name", "container__name", "volume")
+
+
+class ProductList(models.Model):
+    """
+    Used to present handpicked lists of products to the users
+    """
+
+    name = models.CharField(max_length=200)
+    slug = models.SlugField(max_length=200)
+    description = models.TextField()
+    products = models.ManyToManyField(Product)
+
+    def get_absolute_url(self):
+        return reverse("list_product", kwargs={"slug": self.slug})
+
+    def __str__(self):
+        return self.name
 
 
 class MainQueryResult(models.Model):

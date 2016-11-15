@@ -1,0 +1,74 @@
+<table class="table table-condensed">
+    <thead>
+    <tr>
+        <th>Bjórtegund</th>
+        <th>Brugghús</th>
+        <th>Verð (kr.)</th>
+        <th>Magn (ml)</th>
+        <th>Styrkur</th>
+        <th>Stíll</th>
+        <th>Ílát</th>
+        <th>Land</th>
+        <th>Untappd</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for product in product_list %}
+        <tr id="row-{{ product.id }}">
+            <td><a href="{% url "single_product" product.product_type.id %}">{{ product.product_type.alias }}</a>
+                {% if debug %}
+                    ( <a href="http://127.0.0.1:8000/admin/beer_search_v2/product/{{ product.id }}/">breyta</a> )
+                {% endif %}
+            </td>
+
+            <td>
+                {% if product.product_type.untappd_info %}
+                    {{ product.product_type.untappd_info.brewery.alias }}
+                {% else %}
+                    ?
+                {% endif %}
+            </td>
+
+            <td>{{ product.price }}</td>
+
+            <td>{{ product.volume }}</td>
+
+            <td>{{ product.product_type.abv|floatformat:1 }}%</td>
+
+            <td>
+                {% if product.product_type.untappd_info.style.simplifies_to %}
+                    <a href="{{ product.product_type.untappd_info.style.simplifies_to.get_absolute_url }}">
+                        {{ product.product_type.untappd_info.style.simplifies_to.name }}
+                    </a>
+                {% else %}
+                    ?
+                {% endif %}
+            </td>
+
+            <td>{{ product.container }}</td>
+
+            <td>
+                {% if product.product_type.country %}
+                    {{ product.product_type.country }}
+                {% elif product.product_type.untappd_info.brewery.country %}
+                    {{ product.product_type.untappd_info.brewery.country.name }}
+                {% elif product.product_type.untappd_info.brewery.country_name %}
+                    {{ product.product_type.untappd_info.brewery.country_name}}
+                {% else %}
+                    ?
+                {% endif %}
+            </td>
+
+            <td>
+                {% if product.product_type.untappd_info %}
+                    <a href="{{ product.product_type.untappd_info.get_absolute_url }}">
+                        {{ product.product_type.untappd_info.rating|floatformat:2 }}
+                    </a>
+                {% else %}
+                    ?
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

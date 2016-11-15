@@ -1,5 +1,5 @@
 from beer_search_v2.models import Product, ProductType, AlcoholCategory, SimplifiedStyle, UntappdStyle, UntappdEntity, \
-    ContainerType, Brewery, MainQueryResult, Country, ModifiableSetting, RatebeerEntity
+    ContainerType, Brewery, MainQueryResult, Country, ModifiableSetting, RatebeerEntity, ProductList
 from django.contrib import admin
 
 
@@ -66,6 +66,11 @@ class UntappdEntityAdmin(admin.ModelAdmin):
 @admin.register(Brewery)
 class BreweryAdmin(admin.ModelAdmin):
     search_fields = ["name"]
+
+
+@admin.register(ProductList)
+class ProductTypeListAdmin(admin.ModelAdmin):
+    filter_horizontal = ["products"]
 
 admin.site.register(AlcoholCategory)
 admin.site.register(Country)
