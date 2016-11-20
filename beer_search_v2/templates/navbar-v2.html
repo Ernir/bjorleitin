@@ -27,11 +27,21 @@
                         <li><a href="https://www.facebook.com/bjorleit/" target="_blank">Bjórleitin á Facebook</a></li>
                     </ul>
                 </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                       aria-expanded="false" title="Listar">Listar<span
+                            class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        {% for l in product_lists %}
+                            <li><a href="{{ l.get_absolute_url }}">{{ l.name }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </li>
             </ul>
 
             <ul class="nav navbar-nav navbar-right">
                 <li>
-                    <a href="{% url "about" %}" title="Lesa meira um bjórleitina">Um</a></li>
+                    <a href="{% url "about" %}" title="Lesa meira um bjórleitina">Um</a>
                 </li>
             </ul>
         </div>

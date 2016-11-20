@@ -1,4 +1,4 @@
-<table class="table table-condensed">
+<table class="table table-condensed table-striped">
     <thead>
     <tr>
         <th>Bjórtegund</th>
@@ -53,7 +53,7 @@
                 {% elif product.product_type.untappd_info.brewery.country %}
                     {{ product.product_type.untappd_info.brewery.country.name }}
                 {% elif product.product_type.untappd_info.brewery.country_name %}
-                    {{ product.product_type.untappd_info.brewery.country_name}}
+                    {{ product.product_type.untappd_info.brewery.country_name }}
                 {% else %}
                     ?
                 {% endif %}

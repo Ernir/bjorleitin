@@ -19,7 +19,8 @@ class BaseView(View):
         super().__init__()
         self.params = {
             "title": "",
-            "debug": settings.DEBUG
+            "debug": settings.DEBUG,
+            "product_lists": ProductList.objects.filter(visible=True).all()
         }
 
 
@@ -126,21 +127,24 @@ class SingleProductView(BaseView):
 
 
 class ProductListView(BaseView):
-    def get(self, request, slug):
+    def get(self, request, slug=None):
 
         try:
+            if not slug:
+                raise ObjectDoesNotExist
             the_list = ProductList.objects.get(slug=slug)
             products = the_list.products.prefetch_related(
-                "container",
-                "product_type",
-                "product_type__country"
+                    "container",
+                    "product_type",
+                    "product_type__country"
             ).select_related(
-                "product_type__untappd_info",
-                "product_type__untappd_info__style",
-                "product_type__untappd_info__style__simplifies_to",
-                "product_type__untappd_info__brewery__country",
+                    "product_type__untappd_info",
+                    "product_type__untappd_info__style",
+                    "product_type__untappd_info__style__simplifies_to",
+                    "product_type__untappd_info__brewery__country",
             ).all()
             self.params["product_list"] = products
+            self.params["description"] = the_list.description
             self.params["title"] = the_list.name
         except ObjectDoesNotExist:
             self.params["product_list"] = []

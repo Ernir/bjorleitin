@@ -358,12 +358,16 @@ class ProductList(models.Model):
     visible = models.BooleanField(default=False)
     description = models.TextField()
     products = models.ManyToManyField(Product)
+    created_at = models.DateField(default=date.today)
 
     def get_absolute_url(self):
         return reverse("list_product", kwargs={"slug": self.slug})
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        ordering = ("-created_at",)
 
 
 class MainQueryResult(models.Model):
