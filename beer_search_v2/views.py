@@ -100,7 +100,7 @@ class SingleProductView(BaseView):
             product_type.simple_style = product_type.untappd_info.style.simplifies_to
             all_in_style = ProductType.objects.filter(
                     untappd_info__style__simplifies_to=product_type.untappd_info.style.simplifies_to
-            ).all()
+            )
 
             total_count = UntappdEntity.objects.count()
             lower_rated_count = UntappdEntity.objects.filter(rating__lt=product_type.untappd_info.rating).count()
@@ -121,7 +121,8 @@ class SingleProductView(BaseView):
 
         self.params["title"] = product_type.alias
         self.params["product_type"] = product_type
-        self.params["similar"] = all_in_style
+        self.params["similar_by_name"] = all_in_style.order_by("alias").all()
+        self.params["similar_by_rating"] = all_in_style.order_by("-untappd_info__rating").all()
 
         return render(request, "single-product.html", self.params)
 

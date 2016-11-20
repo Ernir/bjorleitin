@@ -8,19 +8,81 @@
 {% block sidebar %}
     <div class="col-sm-4 col-md-3 sidebar unimportant-sidebar">
         {% if product_type.simple_style %}
-            Aðrar vörur í stílnum
-            "<a href="{{ product_type.simple_style.get_absolute_url }}">{{ product_type.simple_style }}</a>":
-            <ul>
-                {% for similar_product_type in similar %}
-                    <li {% if not similar_product_type.available %} class="unavailable-product" {% endif %}>
-                        {% if similar_product_type.id != product_type.id %}
-                            <a href="{{ similar_product_type.get_absolute_url }}">{{ similar_product_type.alias }}</a>
-                        {% else %}
-                            {{ similar_product_type.alias }}
-                        {% endif %}
+            <div>
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation" class="active">
+                        <a href="#by-name"
+                           id="by-name-tab"
+                           role="tab"
+                           data-toggle="tab"
+                           aria-controls="by-name"
+                           aria-expanded="true">
+                            Eftir nafni
+                        </a>
                     </li>
-                {% endfor %}
-            </ul>
+                    <li role="presentation" class="">
+                        <a href="#by-rating"
+                           role="tab"
+                           id="by-rating-tab"
+                           data-toggle="tab"
+                           aria-controls="by-rating"
+                           aria-expanded="false">
+                            Eftir einkunn
+                        </a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane fade active in" role="tabpanel" id="by-name" aria-labelledby="by-name-tab">
+                        <p>Aðrar vörur í stílnum
+                            "<a href="{{ product_type.simple_style.get_absolute_url }}">
+                                {{ product_type.simple_style }}
+                            </a>", í stafrófsröð:
+                        </p>
+                        <ul>
+                            {% for similar_product_type in similar_by_name %}
+                                <li
+                                        {% if not similar_product_type.available %}
+                                            class="unavailable-product"
+                                        {% endif %}
+                                >
+                                    {% if similar_product_type.id != product_type.id %}
+                                        <a href="{{ similar_product_type.get_absolute_url }}">
+                                            {{ similar_product_type.alias }}
+                                        </a>
+                                    {% else %}
+                                        {{ similar_product_type.alias }}
+                                    {% endif %}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="tab-pane fade" role="tabpanel" id="by-rating" aria-labelledby="by-rating-tab">
+                        <p>Aðrar vörur í stílnum
+                            "<a href="{{ product_type.simple_style.get_absolute_url }}">
+                                {{ product_type.simple_style }}
+                            </a>", eftir Untappd-einkunn:
+                        </p>
+                        <ol>
+                            {% for similar_product_type in similar_by_rating %}
+                                <li
+                                        {% if not similar_product_type.available %}
+                                            class="unavailable-product"
+                                        {% endif %}
+                                >
+                                    {% if similar_product_type.id != product_type.id %}
+                                        <a href="{{ similar_product_type.get_absolute_url }}">
+                                            {{ similar_product_type.alias }}
+                                        </a>
+                                    {% else %}
+                                        {{ similar_product_type.alias }}
+                                    {% endif %}
+                                    ({{ similar_product_type.untappd_info.rating|floatformat:2 }})
+                                </li>
+                            {% endfor %}
+                        </ol>
+                    </div>
+                </div>
+            </div>
         {% endif %}
     </div>
 {% endblock %}
@@ -33,7 +95,11 @@
                 <p class="lead">
                     {{ product_type.abv }}%
                     {% if product_type.untappd_info %}
-                        {{ product_type.simple_style.name_in_sentence }} frá
+                        <a href="{{ product_type.simple_style.get_absolute_url }}"
+                           data-toggle="tooltip" title="{{ product_type.untappd_info.style.name }}">
+                            {{ product_type.simple_style.name_in_sentence }}
+                        </a>
+                        frá
                         {{ product_type.untappd_info.brewery.alias }}.
                     {% else %}
                         drykkur.
