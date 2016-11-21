@@ -6,7 +6,7 @@ from beer_search_v2.models import Product, ProductType, ContainerType
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import BaseCommand
 from beer_search_v2.utils import get_country_instance, get_alcohol_category_instance, renew_cache
-from .update_stock_v2 import Command as StockUpdateCommand
+from .update_stock import Command as StockUpdateCommand
 
 
 class Command(BaseCommand):
@@ -189,6 +189,6 @@ class Command(BaseCommand):
             self.prepare_products_for_update()
             self.update_products(product_list)
 
-        print("It is now recommended to run update_stock_v2")
+        print("It is now recommended to run update_stock")
 
         renew_cache()
