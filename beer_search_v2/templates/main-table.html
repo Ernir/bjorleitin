@@ -17,7 +17,11 @@
     </thead>
     <tbody>
     {% for beer in product_list %}
-        <tr id="row-{{ beer.productId }}">
+        <tr id="row-{{ beer.productId }}"
+            {% if not beer.available %}
+                class="unavailable-product"
+            {% endif %}
+        >
             <td> <a href="{% url "single_product" beer.productId %}">{{ beer.name }}</a> {% if debug %}
                 ( <a href="http://127.0.0.1:8000/admin/beer_search_v2/producttype/{{ beer.productId }}/">breyta</a> )
             {% endif %}</td>

@@ -29,7 +29,7 @@ def get_main_display():
             "product_type__untappd_info__brewery__country",
             "product_type__untappd_info__style__simplifies_to"
     ).filter(
-            Q(available_in_atvr=True) | Q(available_in_jog=True),
+            # Q(available_in_atvr=True) | Q(available_in_jog=True),
             Q(product_type__alcohol_category=beer) | Q(product_type__untappd_info__isnull=False),
     ).exclude(
             container=gift_box
@@ -51,7 +51,8 @@ def get_main_display():
                 "maxVolume": product.volume,
                 "minPrice": product.price,
                 "maxPrice": product.price,
-                "stores": [status["store"] for status in product.atvr_stock]
+                "stores": [status["store"] for status in product.atvr_stock],
+                "available": product.available_in_atvr or product.available_in_jog
             }
 
             if product.available_in_jog:

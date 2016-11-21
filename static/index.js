@@ -19,7 +19,8 @@ function updateAndFilter() {
         maxUntappd: Infinity,
         containers: ["flaska", "dós"],
         countries: [],
-        stores: []
+        stores: [],
+        showUnavailable: false
     };
 
     // Finding all beer names, breweries, styles, countries and stores selected by the user.
@@ -53,13 +54,13 @@ function updateAndFilter() {
     filterVals.maxVol = parseInt($("#volume-max-filter").text());
     filterVals.minUntappd = parseFloat($("#untappd-min-filter").text());
     filterVals.maxUntappd = parseFloat($("#untappd-max-filter").text());
+    filterVals.showUnavailable = $("#availability-filter").is(":checked");
 
     filterVals.containers = [];
     $(".container-filter:checked").each(function (i) {
         filterVals.containers.push($(this).val().toLowerCase());
     });
 
-    var numResults = 0;
     $.each(allBeerData, function (i, beer) {
         var $row = $("#row-" + beer.productId);
 
@@ -72,16 +73,16 @@ function updateAndFilter() {
             && untappdFilter(beer.untappdRating)
             && containerFilter(beer.containers)
             && countryFilter(beer.country)
-            && storeFilter(beer.stores);
+            && storeFilter(beer.stores)
+            && availabilityFilter(beer.available);
 
         if (display) {
-            numResults += 1;
             $row.show();
         } else {
             $row.hide();
         }
     });
-    updateDisplays(numResults);
+    updateDisplays($("table tr:visible").length);
     applyStripes();
 
     function nameFilter(beerName) {
@@ -152,6 +153,10 @@ function updateAndFilter() {
         }
         return false;
     }
+
+    function availabilityFilter(available) {
+        return available || filterVals.showUnavailable;
+    }
 }
 
 /*
@@ -203,6 +208,8 @@ function makeBeerTable() {
         $tables.tablesorter();
         $tables.bind("sortEnd", applyStripes);
         $tableContainer.fadeIn("slow", function () {
+            $tables.find(".unavailable-product").hide();
+            updateDisplays($tables.find("tr:visible").length);
             applyStripes();
         });
     });
@@ -261,7 +268,6 @@ function getDataSet() {
         styleNames.sort();
         countryNames.sort();
         deferredInitializeSearchForm();
-        updateDisplays(allBeerData.length)
     });
 
     function saneSort(a, b) {
