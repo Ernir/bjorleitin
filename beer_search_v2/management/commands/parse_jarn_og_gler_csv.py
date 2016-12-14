@@ -8,6 +8,12 @@ from datetime import date
 
 
 class Command(BaseCommand):
+
+    def __init__(self):
+        super()
+        self.stop_mode = False
+
+
     @classmethod
     def prepare_products_for_update(cls):
         # Marking all existing products from Járn og Gler as not available until proven wrong.
@@ -15,42 +21,42 @@ class Command(BaseCommand):
             product.available_in_jog = False
             product.save()
 
-    @classmethod
-    def update_products(cls, product_list):
+    def update_products(self, product_list):
 
         for data_row in product_list:
-            product = cls.get_product_instance(data_row)
-            cls.initialize_product_type(product, data_row)
+            product = self.get_product_instance(data_row)
+            self.update_product_type(product, data_row)
             product.available_in_jog = True
-            new_price = cls.extract_price(data_row[4])
+            new_price = self.extract_price(data_row[4])
             product.price = new_price  # We always update the price
 
             product.save()
 
-    @classmethod
-    def get_product_instance(cls, data_row):
+    def get_product_instance(self, data_row):
         product_id = data_row[0].strip()
         try:  # Checking if we've found the product previously
             product = Product.objects.get(jog_id=product_id)
         except ObjectDoesNotExist:
             product = Product()
             product.jog_id = product_id
-            cls.initialize_product(product, data_row)
+            self.initialize_product(product, data_row)
         return product
 
-    @classmethod
-    def initialize_product(cls, product, data_row):
-        raw_product_name = data_row[1]  # This is usually a terrible name, but it's what we have
-        print("Creating new product: " + raw_product_name)
-        product.name = raw_product_name
-        product.price = cls.extract_price(data_row[4])
-        product.volume = cls.guess_volume(raw_product_name)
+    def initialize_product(self, product, data_row):
+        if not self.stop_mode:
+            product_name = data_row[1]  # This is usually a terrible name, but it's what we have
+        else:
+            product_name = input("Enter a new name for {}, {}: ".format(data_row[0], data_row[1])) or data_row[1]
+        print("Creating new product: " + product_name)
+        product.name = product_name
+        product.price = self.extract_price(data_row[4])
+        product.volume = self.guess_volume(data_row[1])
         product.first_seen_at = date.today()
-        product.container = cls.guess_container_type(product.name)
+        product.container = self.guess_container_type(data_row[1])
         return product
 
     @classmethod
-    def initialize_product_type(cls, product, data_row):
+    def update_product_type(cls, product, data_row):
         """
         Each product is an instance of a particular product type, this common info is stored separately.
         """
@@ -61,7 +67,7 @@ class Command(BaseCommand):
             except ObjectDoesNotExist:  # Otherwise, create one
                 product_type = ProductType()
                 product_type.name = product.name
-                product_type.abv = cls.guess_abv(product.name)
+                product_type.abv = cls.guess_abv(data_row[1])
                 product_type.country = None
                 if product_type.abv < 35:  # Arbitrary number that decides what's not a beer
                     product_type.alcohol_category = get_alcohol_category_instance("beer")
@@ -106,10 +112,19 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument("filename", type=str)
+        parser.add_argument(
+                "--stop_mode",
+                dest="stop_mode",
+                default=False,
+                action="store_true",
+                help="Makes the CLI stop to ask names for each product"
+        )
 
     def handle(self, *args, **options):
         product_list = []
+
         with open(options["filename"], newline='') as csvfile:
+            self.stop_mode = options["stop_mode"]
             product_reader = csv.reader(csvfile, delimiter=',', quotechar='"')
             for row in product_reader:
                 if row[0]:  # Some rows have no contents

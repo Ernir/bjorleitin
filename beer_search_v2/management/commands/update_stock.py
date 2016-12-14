@@ -73,4 +73,4 @@ class Command(BaseCommand):
             products = Product.objects.filter(atvr_id__isnull=False).all()
             for product in products:
                 self.process_product(product, verbose)
-            renew_cache()
+        renew_cache()
