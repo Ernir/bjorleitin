@@ -118,11 +118,11 @@ class SingleProductView(BaseView):
             self.params["style_count"] = style_count
             self.params["style_lower_rated_count"] = style_lower_rated_count
             self.params["style_lower_rated_percentage"] = style_lower_rated_percentage
+            self.params["similar_by_name"] = all_in_style.order_by("alias").all()
+            self.params["similar_by_rating"] = all_in_style.order_by("-untappd_info__rating").all()
 
         self.params["title"] = product_type.alias
         self.params["product_type"] = product_type
-        self.params["similar_by_name"] = all_in_style.order_by("alias").all()
-        self.params["similar_by_rating"] = all_in_style.order_by("-untappd_info__rating").all()
 
         return render(request, "single-product.html", self.params)
 
