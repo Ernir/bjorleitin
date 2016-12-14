@@ -27,8 +27,12 @@ class Command(BaseCommand):
 
         Tweets the given message using a Tweepy API handle.
         """
-        api_handle.update_status(message_body)
-        print("Tweeted the following: {0}".format(message_body))
+        try:
+            api_handle.update_status(message_body)
+        except tweepy.TweepError as e:
+            if e.api_code == 187:
+                print("Did not tweet {} due to a duplicate tweet error, continuing".format(message_body))
+        print("Tweeted the following: {}".format(message_body))
 
     def construct_message(self, product_type):
         """
