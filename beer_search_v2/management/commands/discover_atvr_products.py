@@ -183,7 +183,9 @@ class Command(BaseCommand):
         product.volume = int(json_object["ProductBottledVolume"])
         product.first_seen_at = cls.clean_date(json_object["ProductDateOnMarket"])
         product.temporary = json_object["ProductIsTemporaryOnSale"]
-        product.atvr_stock = StockUpdateCommand().get_product_data(product.atvr_id)
+
+        stock_information = StockUpdateCommand().get_product_data(product.atvr_id)
+        product.atvr_stock = stock_information["stores"]
 
         return product
 
