@@ -10,8 +10,12 @@ from .update_stock import Command as StockUpdateCommand
 
 
 class Command(BaseCommand):
-    @classmethod
-    def get_data(cls, verbose=True):
+
+    def __init__(self):
+        self.verbose = True
+        super().__init__()
+
+    def get_data(self):
         """
         Steals product data from the internal API of vinbudin.is.
         :return: A list of products, as a JSON array. Format not particularly well defined.
@@ -61,7 +65,7 @@ class Command(BaseCommand):
             data = data["data"]  # Nesting fun
 
             num_fetched = len(data)
-            if verbose:
+            if self.verbose:
                 print("Fetched " + str(num_fetched) + " products")
 
             if num_fetched > 0:
@@ -140,19 +144,24 @@ class Command(BaseCommand):
 
         return container_type
 
-    @classmethod
-    def update_products(cls, product_list):
+
+    def update_products(self, product_list):
 
         for json_object in product_list:
-            product_id = cls.clean_atvr_id(json_object["ProductID"])
-            product = cls.get_product_instance(json_object, product_id)
+            product_id = self.clean_atvr_id(json_object["ProductID"])
+            product = self.get_product_instance(json_object, product_id)
             if not product.container_id:
                 raw_container_name = json_object["ProductContainerType"]
-                product.container = cls.find_container_type(raw_container_name)
-            cls.update_product_type(product, json_object)
+                product.container = self.find_container_type(raw_container_name)
+            self.update_product_type(product, json_object)
             product.available_in_atvr = not not product.atvr_stock
 
-            product.price = json_object["ProductPrice"]  # We always update the price
+            new_price = json_object["ProductPrice"]
+            if product.price != new_price and self.verbose:
+                print("Price change for {}, changing from {} to {} krónur".format(
+                        str(product), product.price, new_price)
+                )
+            product.price = new_price  # We always update the price
 
             product.save()
 
@@ -180,7 +189,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         try:
-            product_list = self.get_data(verbose=True)
+            product_list = self.get_data()
         except ConnectionError:
             print("Unable to connect to vinbudin.is")
             product_list = []
