@@ -4,6 +4,11 @@ from django.core.management.base import BaseCommand
 
 
 class Command(BaseCommand):
+
+    def __init__(self):
+        self.verbose = True
+        super().__init__()
+
     def get_indices(self):
         """
 
@@ -31,9 +36,19 @@ class Command(BaseCommand):
 
         start_index_setting.save()
 
+    def add_arguments(self, parser):
+        parser.add_argument(
+                "--verbose",
+                dest="verbose",
+                help="specify how much the script should write",
+                default=True,
+                action="store_true"
+        )
+
     def handle(self, *args, **options):
+        self.verbose = not not options["verbose"]
         untappd_entities = UntappdEntity.objects.all()
         start_index, end_index = self.get_indices()
         for entity in untappd_entities[start_index:end_index]:
-            update_untappd_item(entity)
+            update_untappd_item(entity, self.verbose)
         self.update_indices(end_index)

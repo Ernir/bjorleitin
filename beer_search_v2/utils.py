@@ -108,7 +108,14 @@ def update_untappd_item(untappd_entity, verbose=True):
 
     json_data = requests.get(url, params=payload).json()
 
-    assert json_data["meta"]["code"] == 200
+    try:
+        assert json_data["meta"]["code"] == 200
+    except AssertionError:
+        if verbose:
+            print("Update of entity {} for {} did not complete successfully".format(
+                    untappd_entity.untappd_id, untappd_entity
+            ))
+        return
 
     old_rating = untappd_entity.rating
     new_rating = json_data["response"]["beer"]["rating_score"]
