@@ -82,7 +82,7 @@ function updateAndFilter() {
             $row.hide();
         }
     });
-    updateDisplays($("table tr:visible").length);
+    updateDisplays($("table tr:visible").length-1);
     applyStripes();
 
     function nameFilter(beerName) {
@@ -209,7 +209,7 @@ function makeBeerTable() {
         $tables.bind("sortEnd", applyStripes);
         $tableContainer.fadeIn("slow", function () {
             $tables.find(".unavailable-product").hide();
-            updateDisplays($tables.find("tr:visible").length);
+            updateDisplays($tables.find("tr:visible").length-1); // -1 to exclude the always-visible header row
             applyStripes();
         });
     });
