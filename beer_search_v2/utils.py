@@ -126,21 +126,34 @@ def update_untappd_item(untappd_entity, verbose=True):
         style = get_untappd_style_instance(style_name)
         untappd_entity.style = style
         if verbose:
-            print("Added style {0} to {1}.".format(style_name, untappd_entity.product_name))
+            print("Added style {0} to {1}.".format(style_name, untappd_entity.untappd_name))
 
     if untappd_entity.brewery is None:
         untappd_id = json_data["response"]["beer"]["brewery"]["brewery_id"]
-        untappd_name = json_data["response"]["beer"]["brewery"]["brewery_name"]
+        untappd_brewery_name = json_data["response"]["beer"]["brewery"]["brewery_name"]
         country_name = json_data["response"]["beer"]["brewery"]["country_name"]
-        brewery = get_brewery_instance(untappd_id, untappd_name, country_name)
+        brewery = get_brewery_instance(untappd_id, untappd_brewery_name, country_name)
         untappd_entity.brewery = brewery
         if verbose:
-            print("Added brewery {0} to {1}.".format(untappd_name, untappd_entity.product_name))
+            print("Added brewery {0} to {1}.".format(untappd_brewery_name, untappd_entity.untappd_name))
+
+    if not untappd_entity.untappd_name:
+        untappd_entity.untappd_name = json_data["response"]["beer"]["beer_name"]
+        if verbose:
+            print("Added untappd API name {} to entity {}.".format(
+                    untappd_entity.untappd_name,
+                    untappd_entity.untappd_id)
+            )
+
+    if not untappd_entity.logo_url:
+        untappd_entity.logo_url = json_data["response"]["beer"]["beer_label"]
+        if verbose:
+            print("Added logo to {}.".format(untappd_entity.untappd_name))
 
     untappd_entity.save()
 
     if verbose:
-        print("Successfully updated {0} from {1} to {2}".format(untappd_entity.product_name, old_rating, new_rating))
+        print("Successfully updated {0} from {1} to {2}".format(untappd_entity.untappd_name, old_rating, new_rating))
 
 
 def renew_cache():

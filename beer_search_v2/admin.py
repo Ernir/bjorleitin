@@ -59,8 +59,8 @@ class SimplifiedStyleAdmin(admin.ModelAdmin):
 
 @admin.register(UntappdEntity)
 class UntappdEntityAdmin(admin.ModelAdmin):
-    search_fields = ["product_name", "untappd_id"]
-    readonly_fields = ["product_name"]
+    search_fields = ["untappd_name", "untappd_id"]
+    readonly_fields = ["untappd_name"]
 
 
 @admin.register(Brewery)

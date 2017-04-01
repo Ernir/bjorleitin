@@ -139,22 +139,17 @@ class UntappdEntity(models.Model):
     brewery = models.ForeignKey(Brewery, null=True, default=None, blank=True)
     style = models.ForeignKey(UntappdStyle, null=True, default=None, blank=True)
     rating = models.FloatField(null=True, default=None, blank=True)
-
-    product_name = models.CharField(max_length=200, default="UNKNOWN")
-
-    def save(self, *args, **kwargs):
-        if self.producttype_set.count() > 0:
-            self.product_name = str(self.producttype_set.first())
-        super(UntappdEntity, self).save(*args, **kwargs)
+    logo_url = models.URLField(default="", blank=True)
+    untappd_name = models.CharField(max_length=200, default="", blank=True)
 
     def __str__(self):
-        return str("{0} ({1})".format(self.product_name, self.untappd_id))
+        return str("{0} ({1})".format(self.untappd_name, self.untappd_id))
 
     def get_absolute_url(self):
         return "https://untappd.com/beer/{}".format(self.untappd_id)
 
     class Meta:
-        ordering = ("untappd_id",)
+        ordering = ("untappd_name",)
         verbose_name_plural = "Untappd entities"
 
 
@@ -219,12 +214,21 @@ class ProductType(models.Model):
 
     # Methods
 
-    def _update_image_url(self):
+    def _update_image_url(self, verbose=True):
         for product in self.product_set.all():
             if product.image_url:
                 self.main_image = product.image_url
                 self.save()
+                if verbose:
+                    print("Assigned ATVR image to {}".format(str(self)))
                 return
+        if self.untappd_info and self.untappd_info.logo_url:
+            self.main_image = self.untappd_info.logo_url
+            if verbose:
+                print("Assigned Untappd image to {}".format(str(self)))
+            return
+        if verbose:
+            print("No image found for {}".format(str(self)))
 
     def _is_relevant(self):
         if self.product_set.count() == 1 and self.product_set.all()[0].container.name in ["Gjafaaskja", "Kútur"]:
@@ -234,6 +238,8 @@ class ProductType(models.Model):
     def save(self, *args, **kwargs):
         if not self.alias:  # Aliases are used for sorting
             self.alias = self.name
+        if not self.main_image:
+            self._update_image_url()
         super(ProductType, self).save(*args, **kwargs)
 
     def __str__(self):
@@ -314,13 +320,17 @@ class Product(models.Model):
         two_months_ago = timezone.now() - timedelta(days=60)
         return self.first_seen_at > two_months_ago
 
-    def _attempt_image_fetch(self):
-        if self.atvr_id and not self.image_url:
+    def _attempt_image_fetch(self, verbose=True):
+        if self.atvr_id:
             url = "http://www.vinbudin.is/Portaldata/1/Resources/vorumyndir/original/{}_r.jpg".format(self.atvr_id)
             r = requests.get(url)
-            if r.status_code == 200:
+            if r.status_code == 200 and int(r.headers["Content-Length"]) > 0:
                 self.image_url = url
                 self.save()
+                if verbose:
+                    print("Updated image URL for {}".format(str(self)))
+            elif verbose:
+                print("Failed to update image for {}".format(str(self)))
 
     def get_absolute_url(self):
         return self.product_type.get_absolute_url()
@@ -336,7 +346,10 @@ class Product(models.Model):
                 raise IntegrityError("Product with given ÁTVR ID already exists")
         if self.jog_id:
             if Product.objects.filter(jog_id=self.jog_id).count() > 1:
-                raise IntegrityError("Product with given Járn og Gler ID already exists")
+                raise IntegrityError("Product with given Jár-n og Gler ID already exists")
+
+        if not self.image_url:
+            self._attempt_image_fetch()
 
         super(Product, self).save(*args, **kwargs)
 

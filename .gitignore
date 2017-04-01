@@ -6,4 +6,4 @@ staticfiles
 *.sh
 *.json
 prettify_json.py
-latest.dump
+*.dump
