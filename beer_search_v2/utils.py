@@ -93,6 +93,10 @@ def get_main_display():
                                              status["store"] not in type_dict[pid]["stores"]])
             if product.available_in_jog and jog_name not in type_dict[pid]["stores"]:
                 type_dict[pid]["stores"].append(jog_name)
+            type_dict[pid]["available"] = type_dict[pid]["available"] or product.available_in_atvr or product.available_in_jog
+
+        if pid == 2908:
+            print(type_dict[pid])
 
     return [item for item in type_dict.values()]
 
