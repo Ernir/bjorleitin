@@ -5,12 +5,11 @@ from datetime import datetime
 from beer_search_v2.models import Product, ProductType, ContainerType
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import BaseCommand
-from beer_search_v2.utils import get_country_instance, get_alcohol_category_instance, renew_cache
+from beer_search_v2.utils import get_country_instance, get_alcohol_category_instance
 from .update_stock import Command as StockUpdateCommand
 
 
 class Command(BaseCommand):
-
     def __init__(self):
         self.verbose = True
         super().__init__()
@@ -144,9 +143,7 @@ class Command(BaseCommand):
 
         return container_type
 
-
     def update_products(self, product_list):
-
         for json_object in product_list:
             product_id = self.clean_atvr_id(json_object["ProductID"])
             product = self.get_product_instance(json_object, product_id)
@@ -155,6 +152,9 @@ class Command(BaseCommand):
                 product.container = self.find_container_type(raw_container_name)
             self.update_product_type(product, json_object)
             product.available_in_atvr = not not product.atvr_stock
+
+            if not product.first_seen_at:
+                product.first_seen_at = self.clean_date(json_object["ProductDateOnMarket"])
 
             new_price = json_object["ProductPrice"]
             if product.price != new_price and self.verbose:
@@ -201,5 +201,3 @@ class Command(BaseCommand):
             self.update_products(product_list)
 
         print("It is now recommended to run update_stock")
-
-        renew_cache()

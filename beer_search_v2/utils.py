@@ -2,8 +2,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 import os
 import requests
-from beer_search_v2.models import Brewery, UntappdStyle, Country, AlcoholCategory, ContainerType, Product, \
-    MainQueryResult
+from beer_search_v2.models import Brewery, UntappdStyle, Country, AlcoholCategory, ContainerType, Product
 from collections import OrderedDict
 
 
@@ -29,7 +28,6 @@ def get_main_display():
             "product_type__untappd_info__brewery__country",
             "product_type__untappd_info__style__simplifies_to"
     ).filter(
-            # Q(available_in_atvr=True) | Q(available_in_jog=True),
             Q(product_type__alcohol_category=beer) | Q(product_type__untappd_info__isnull=False),
     ).exclude(
             container=gift_box
@@ -52,7 +50,8 @@ def get_main_display():
                 "minPrice": product.price,
                 "maxPrice": product.price,
                 "stores": [status["store"] for status in product.atvr_stock],
-                "available": product.available_in_atvr or product.available_in_jog
+                "available": product.available_in_atvr or product.available_in_jog,
+                "firstSeenAt": product.first_seen_at
             }
 
             if product.available_in_jog:
@@ -93,10 +92,10 @@ def get_main_display():
                                              status["store"] not in type_dict[pid]["stores"]])
             if product.available_in_jog and jog_name not in type_dict[pid]["stores"]:
                 type_dict[pid]["stores"].append(jog_name)
-            type_dict[pid]["available"] = type_dict[pid]["available"] or product.available_in_atvr or product.available_in_jog
-
-        if pid == 2908:
-            print(type_dict[pid])
+            type_dict[pid]["available"] = type_dict[pid][
+                                              "available"] or product.available_in_atvr or product.available_in_jog
+            if type_dict[pid]["firstSeenAt"] and product.first_seen_at:  # These are sometimes None...
+                type_dict[pid]["firstSeenAt"] = min(type_dict[pid]["firstSeenAt"], product.first_seen_at)
 
     return [item for item in type_dict.values()]
 
@@ -158,11 +157,6 @@ def update_untappd_item(untappd_entity, verbose=True):
 
     if verbose:
         print("Successfully updated {0} from {1} to {2}".format(untappd_entity.untappd_name, old_rating, new_rating))
-
-
-def renew_cache():
-    data = get_main_display()
-    MainQueryResult.objects.create(json_contents=data)
 
 
 def get_untappd_style_instance(style_name, verbose=True):

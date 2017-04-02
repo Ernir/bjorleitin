@@ -1,5 +1,4 @@
 import requests
-from beer_search_v2.utils import renew_cache
 from bs4 import BeautifulSoup
 from beer_search_v2.models import Product
 from django.core.exceptions import ObjectDoesNotExist
@@ -98,4 +97,3 @@ class Command(BaseCommand):
             products = Product.objects.filter(atvr_id__isnull=False).all()
             for product in products:
                 self.process_product(product)
-        renew_cache()

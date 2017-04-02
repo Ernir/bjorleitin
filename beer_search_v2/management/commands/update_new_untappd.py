@@ -1,5 +1,5 @@
-from beer_search_v2.utils import update_untappd_item, get_main_display, renew_cache
-from beer_search_v2.models import UntappdEntity, MainQueryResult
+from beer_search_v2.utils import update_untappd_item
+from beer_search_v2.models import UntappdEntity
 from django.core.management.base import BaseCommand
 
 
@@ -12,5 +12,4 @@ class Command(BaseCommand):
         for entity in entities:
             update_untappd_item(entity, verbose)
         if verbose:
-            print("Entities updated, caching result")
-        renew_cache()
+            print("Entities updated")

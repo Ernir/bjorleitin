@@ -1,7 +1,7 @@
 import csv
 import re
 from beer_search_v2.models import Product, ContainerType, ProductType
-from beer_search_v2.utils import get_alcohol_category_instance, renew_cache
+from beer_search_v2.utils import get_alcohol_category_instance
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import BaseCommand
 from datetime import date
@@ -51,7 +51,7 @@ class Command(BaseCommand):
         product.name = product_name
         product.price = self.extract_price(data_row[4])
         product.volume = self.guess_volume(data_row[1])
-        product.first_seen_at = date.today()
+        product.first_seen_at = date.today()  # ToDo change to UTC datetime object
         product.container = self.guess_container_type(data_row[1])
         return product
 
@@ -138,4 +138,3 @@ class Command(BaseCommand):
 
         for product_type in ProductType.objects.filter().all():
             product_type.update_availability(verbose=False)
-        renew_cache()

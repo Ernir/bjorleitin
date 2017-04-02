@@ -3,7 +3,7 @@ from django.db.models import Max, Min, Q
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import View
-from beer_search_v2.models import MainQueryResult, Product, AlcoholCategory, ContainerType, SimplifiedStyle, \
+from beer_search_v2.models import Product, AlcoholCategory, ContainerType, SimplifiedStyle, \
     ProductType, UntappdEntity, ProductList
 from beer_search_v2.utils import get_main_display
 from django.conf import settings
@@ -64,10 +64,7 @@ class MainTableView(BaseView):
     """
 
     def get(self, request, format="html"):
-        if settings.DEBUG:
-            self.params["product_list"] = get_main_display()
-        else:
-            self.params["product_list"] = MainQueryResult.objects.first().json_contents
+        self.params["product_list"] = get_main_display()
 
         if format == "html":
             return render(request, "main-table.html", self.params)

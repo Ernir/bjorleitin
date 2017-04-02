@@ -1,5 +1,5 @@
 from beer_search_v2.models import Product, ProductType, AlcoholCategory, SimplifiedStyle, UntappdStyle, UntappdEntity, \
-    ContainerType, Brewery, MainQueryResult, Country, ModifiableSetting, RatebeerEntity, ProductList
+    ContainerType, Brewery, Country, ModifiableSetting, RatebeerEntity, ProductList
 from django.contrib import admin
 
 
@@ -72,10 +72,10 @@ class BreweryAdmin(admin.ModelAdmin):
 class ProductTypeListAdmin(admin.ModelAdmin):
     filter_horizontal = ["products"]
 
+
 admin.site.register(AlcoholCategory)
 admin.site.register(Country)
 admin.site.register(RatebeerEntity)
 admin.site.register(UntappdStyle)
 admin.site.register(ContainerType)
-admin.site.register(MainQueryResult)
 admin.site.register(ModifiableSetting)

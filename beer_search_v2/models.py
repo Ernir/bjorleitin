@@ -329,7 +329,7 @@ class Product(models.Model):
                 self.save()
                 if verbose:
                     print("Updated image URL for {}".format(str(self)))
-            elif verbose:
+            elif verbose and self.available_in_atvr:
                 print("Failed to update image for {}".format(str(self)))
 
     def get_absolute_url(self):
@@ -378,22 +378,6 @@ class ProductList(models.Model):
 
     def __str__(self):
         return self.name
-
-    class Meta:
-        ordering = ("-created_at",)
-
-
-class MainQueryResult(models.Model):
-    """
-    Does not represent an actual entity.
-    Used for queryset caching, storing results in JSON format.
-    """
-
-    json_contents = JSONField()
-    created_at = models.DateTimeField(default=now)
-
-    def __str__(self):
-        return str(self.created_at)
 
     class Meta:
         ordering = ("-created_at",)
