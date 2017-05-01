@@ -255,17 +255,18 @@ class ProductType(models.Model):
         for product in self.product_set.all():
             if product.available_in_atvr or product.available_in_jog:
                 any_available_product = True
-        # If there's a change, update
-        if self.available != any_available_product and self.is_relevant:
+        change_detected = self.available != any_available_product
+
+        self.needs_announcement = any_available_product and change_detected and self._is_relevant
+        self.available = any_available_product
+
+        self.save()
+        if change_detected and self.is_relevant and verbose:
             if any_available_product:
-                self.needs_announcement = True
-            if verbose:
-                if any_available_product:
-                    print("{0} is now available".format(self.name))
-                else:
-                    print("{0} is no longer available".format(self.name))
-            self.available = any_available_product
-            self.save()
+                print("{0} is now available".format(self.name))
+            else:
+                print("{0} is no longer available".format(self.name))
+
 
     class Meta:
         ordering = ("alias",)
