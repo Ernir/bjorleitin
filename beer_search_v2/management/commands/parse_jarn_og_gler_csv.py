@@ -8,11 +8,9 @@ from datetime import date
 
 
 class Command(BaseCommand):
-
     def __init__(self):
         super()
         self.stop_mode = False
-
 
     @classmethod
     def prepare_products_for_update(cls):
@@ -43,6 +41,12 @@ class Command(BaseCommand):
         return product
 
     def initialize_product(self, product, data_row):
+        product_id = data_row[0].strip()
+        if product_id[-3:] == "dós":
+            preexisting_products = Product.objects.filter(jog_id__istartswith=product_id[:-3])
+            if len(preexisting_products) == 1:
+                product.product_type = preexisting_products[0].product_type
+                print("Associating {} with {} by product ID".format(product_id, str(product.product_type)))
         if not self.stop_mode:
             product_name = data_row[1]  # This is usually a terrible name, but it's what we have
         else:
@@ -52,7 +56,7 @@ class Command(BaseCommand):
         product.price = self.extract_price(data_row[4])
         product.volume = self.guess_volume(data_row[1])
         product.first_seen_at = date.today()  # ToDo change to UTC datetime object
-        product.container = self.guess_container_type(data_row[1])
+        product.container = self.guess_container_type(data_row)
         return product
 
     @classmethod
@@ -81,8 +85,8 @@ class Command(BaseCommand):
             product.save()
 
     @classmethod
-    def guess_container_type(cls, raw_name):
-        if "dós" in raw_name:
+    def guess_container_type(cls, data_row):
+        if "dós" in data_row[0] or "dós" in data_row[1]:
             return ContainerType.objects.get(name="Dós")
         else:
             return ContainerType.objects.get(name="Flaska")
@@ -108,7 +112,12 @@ class Command(BaseCommand):
     @classmethod
     def extract_price(cls, price_string):
         # Price strings are dirty and require extraction
-        return int("".join([c for c in price_string if c.isdigit()]))
+        price = "".join([c for c in price_string if c.isdigit()])
+        if price:
+            return int(price)
+        else:
+            print("WARNING: No price found")
+            return 0
 
     def add_arguments(self, parser):
         parser.add_argument("filename", type=str)
