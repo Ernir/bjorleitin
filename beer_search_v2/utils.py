@@ -96,6 +96,8 @@ def get_main_display():
                                               "available"] or product.available_in_atvr or product.available_in_jog
             if type_dict[pid]["firstSeenAt"] and product.first_seen_at:  # These are sometimes None...
                 type_dict[pid]["firstSeenAt"] = min(type_dict[pid]["firstSeenAt"], product.first_seen_at)
+            elif product.first_seen_at:
+                type_dict[pid]["firstSeenAt"] = product.first_seen_at
 
     return [item for item in type_dict.values()]
 
