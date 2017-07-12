@@ -22,7 +22,7 @@ class Command(BaseCommand):
         assert json_data["meta"]["code"] == 200
 
         found = json_data["response"]["beers"]["items"]
-        return [item["beer"] for item in found]
+        return [item for item in found]
 
     def find_unknowns(self):
         return Product.objects.select_related(
@@ -38,8 +38,9 @@ class Command(BaseCommand):
         )
 
     def get_user_opinion(self, found):
-        for i, beer in enumerate(found):
-            print("{}: {} ({})".format(i, beer["beer_name"], beer["bid"]))
+        for i, item in enumerate(found):
+            print("{}: {} ({}, {})".format(i, item["beer"]["beer_name"], item["beer"]["bid"],
+                                           item["brewery"]["brewery_name"]))
 
         user_selected_beer = input("Enter the index of the correct beer, if any: ")
         try:
@@ -58,15 +59,15 @@ class Command(BaseCommand):
         for product in unknown_beers:
             product_type = product.product_type
             if product_type.untappd_info is None:
-                found_beers = self.search_for_beer(product_type.alias)
-                if found_beers:
+                found_items = self.search_for_beer(product_type.alias)
+                if found_items:
                     print("Potential matches found for {}:".format(product_type.alias))
-                    user_selected_beer = self.get_user_opinion(found_beers)
-                    if user_selected_beer is not None:
+                    selected_item = self.get_user_opinion(found_items)
+                    if selected_item is not None:
                         try:
-                            new_untappd_entity = UntappdEntity.objects.create(untappd_id=user_selected_beer["bid"])
+                            new_untappd_entity = UntappdEntity.objects.create(untappd_id=selected_item["beer"]["bid"])
                         except IntegrityError:
-                            new_untappd_entity = UntappdEntity.objects.get(untappd_id=user_selected_beer["bid"])
+                            new_untappd_entity = UntappdEntity.objects.get(untappd_id=selected_item["beer"]["bid"])
                         update_untappd_item(new_untappd_entity, True)
                         product_type.untappd_info = new_untappd_entity
                         product_type.save()
