@@ -34,12 +34,14 @@ class Command(BaseCommand):
         # First we try to find stock statuses for various
         stock_status = soup.find(id="div-stock-status")
         if stock_status:
-            store_names = stock_status.find_all(class_="store")
+            store_containers = stock_status.find_all(class_="store")
         else:
-            store_names = []  # If the div can't be found, conclude the stock is empty.
+            store_containers = []  # If the div can't be found, conclude the stock is empty.
         store_info = []
-        for store in store_names:
-            store_info.append({"store": store.string, "stock": int(store.next_sibling.string)})
+        for store in store_containers:
+            name = store.find("a").string
+            stock = int(''.join(ele for ele in store.next_sibling.string if ele.isdigit()))
+            store_info.append({"store": name, "stock": stock})
         product_info["stores"] = store_info
 
         # Then we find the product's current price
