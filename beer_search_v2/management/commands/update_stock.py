@@ -40,14 +40,14 @@ class Command(BaseCommand):
         store_info = []
         for store in store_containers:
             name = store.find("a").string
-            stock = int(''.join(ele for ele in store.next_sibling.string if ele.isdigit()))
+            stock = int(''.join(c for c in store.next_sibling.string if c.isdigit()))
             store_info.append({"store": name, "stock": stock})
         product_info["stores"] = store_info
 
         # Then we find the product's current price
         price = soup.find(class_="money")
         if price:
-            product_info["price"] = int("".join([c for c in price.string if c.isdigit()]))
+            product_info["price"] = int("".join(c for c in price.string if c.isdigit()))
 
         product_info["success"] = True
         return product_info

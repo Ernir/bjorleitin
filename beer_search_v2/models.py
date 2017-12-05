@@ -267,7 +267,6 @@ class ProductType(models.Model):
             else:
                 print("{0} is no longer available".format(self.name))
 
-
     class Meta:
         ordering = ("alias",)
 
@@ -360,6 +359,86 @@ class Product(models.Model):
 
     class Meta:
         ordering = ("name", "container__name", "volume")
+
+
+class ATVRProduct(models.Model):
+    """
+
+    Represents one product sold in ATVR.
+
+    """
+
+    # Core fields
+    name = models.CharField(max_length=200)
+    atvr_id = models.CharField(max_length=10, unique=True)
+    price = models.IntegerField(null=True)
+    volume = models.IntegerField(null=True)
+
+    CONTAINER_CHOICES = (
+        ("DS.", "Dós"),
+        ("FL.", "Flaska"),
+        ("KÚT", "Kútur"),
+        ("ASKJA", "Gjafaaskja"),
+        ("ANNAD", "Ótilgreint")
+    )
+    container = models.CharField(max_length=5, choices=CONTAINER_CHOICES)
+
+    # Most of the data storage is deferred to Untappd.
+    untappd_info = models.ForeignKey(UntappdEntity, null=True)
+
+    # Boolean/availability fields
+    first_seen_at = models.DateTimeField(null=True)
+    temporary = models.BooleanField(default=False)
+    atvr_stock = JSONField(default={}, blank=True)
+
+    # Read-only fields
+    updated_at = models.DateField(default=date.today)
+
+    # Fluff
+    image_url = models.URLField(default="", blank=True)
+
+    # Methods
+    def __str__(self):
+        name = "{0}, ({1}ml {2})".format(self.name, self.volume, self.container)
+        return name
+
+    def _price_per_litre(self):
+        return int(self.price / self.volume * 1000)
+
+    def _available_in_atvr(self):
+        return not not self.atvr_stock
+
+    def _attempt_image_fetch(self, verbose=True):
+        url = "http://www.vinbudin.is/Portaldata/1/Resources/vorumyndir/original/{}_r.jpg".format(self.atvr_id)
+        r = requests.get(url)
+        if r.status_code == 200 and int(r.headers["Content-Length"]) > 0:
+            self.image_url = url
+            self.save()
+            if verbose:
+                print("Updated image URL for {}".format(str(self)))
+        elif verbose and self.available_in_atvr:
+            print("Failed to update image for {}".format(str(self)))
+
+    def get_absolute_url(self):
+        return self.untappd_info.get_absolute_url()
+
+    def save(self, *args, **kwargs):
+        self.name = self.name.strip()  # For everyone's sanity
+        self.updated_at = date.today()  # Automatic updates
+
+        # Products should not share non-falsey identifiers
+
+        if not self.image_url:
+            self._attempt_image_fetch()
+
+        super(ATVRProduct, self).save(*args, **kwargs)
+
+    # Properties
+    price_per_litre = property(_price_per_litre)
+    available_in_atvr = property(_available_in_atvr)
+
+    class Meta:
+        ordering = ("name", "container", "volume")
 
 
 class ProductList(models.Model):

@@ -45,6 +45,10 @@ REST_FRAMEWORK = {
     ]
 }
 
+FIXTURE_DIRS = (
+    os.path.join(BASE_DIR, 'beer_search_v2/fixtures/')
+)
+
 MIDDLEWARE_CLASSES = (
     'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.gzip.GZipMiddleware',
