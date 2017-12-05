@@ -441,6 +441,59 @@ class ATVRProduct(models.Model):
         ordering = ("name", "container", "volume")
 
 
+class JoGProduct(models.Model):
+    """
+
+    Represents one product available on the JoG special product list.
+
+    """
+
+    # Core fields
+    name = models.CharField(max_length=200)
+    jog_id = models.CharField(max_length=100, unique=True)
+    price = models.IntegerField(null=True)
+    volume = models.IntegerField(null=True)
+
+    CONTAINER_CHOICES = (
+        ("DS.", "Dós"),
+        ("FL.", "Flaska"),
+        ("KÚT", "Kútur")
+    )
+    container = models.CharField(max_length=5, choices=CONTAINER_CHOICES)
+
+    # Most of the data storage is deferred to Untappd.
+    untappd_info = models.ForeignKey(UntappdEntity, null=True)
+
+    # Boolean/availability fields
+    first_seen_at = models.DateTimeField(null=True)
+    available_in_jog = models.BooleanField(default=False)
+
+    # Read-only fields
+    updated_at = models.DateField(default=date.today)
+
+    # Methods
+    def __str__(self):
+        name = "{0}, ({1}ml {2})".format(self.name, self.volume, self.container)
+        return name
+
+    def _price_per_litre(self):
+        return int(self.price / self.volume * 1000)
+
+    def get_absolute_url(self):
+        return self.untappd_info.get_absolute_url()
+
+    def save(self, *args, **kwargs):
+        self.name = self.name.strip()  # For everyone's sanity
+        self.updated_at = date.today()  # Automatic updates
+        super(JoGProduct, self).save(*args, **kwargs)
+
+    # Properties
+    price_per_litre = property(_price_per_litre)
+
+    class Meta:
+        ordering = ("name", "container", "volume")
+
+
 class ProductList(models.Model):
     """
     Used to present handpicked lists of products to the users

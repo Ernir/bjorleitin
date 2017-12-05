@@ -1,5 +1,5 @@
 from beer_search_v2.models import Product, ProductType, AlcoholCategory, SimplifiedStyle, UntappdStyle, UntappdEntity, \
-    ContainerType, Brewery, Country, ModifiableSetting, RatebeerEntity, ProductList, ATVRProduct
+    ContainerType, Brewery, Country, ModifiableSetting, RatebeerEntity, ProductList, ATVRProduct, JoGProduct
 from django.contrib import admin
 
 
@@ -80,3 +80,4 @@ admin.site.register(UntappdStyle)
 admin.site.register(ContainerType)
 admin.site.register(ModifiableSetting)
 admin.site.register(ATVRProduct)
+admin.site.register(JoGProduct)
