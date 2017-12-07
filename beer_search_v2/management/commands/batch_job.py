@@ -11,7 +11,7 @@ class Command(BaseCommand):
         """
 
         # Copy over old-style Product data
-        products = []  # Product.objects.filter(atvr_id__isnull=False).all():
+        products = Product.objects.filter(atvr_id__isnull=False).all()
         for p in products:
             try:
                 newp = ATVRProduct.objects.get(atvr_id=p.atvr_id)
@@ -23,7 +23,7 @@ class Command(BaseCommand):
             newp.name = p.name
             newp.price = p.price
             newp.volume = p.volume
-            newp.container = self.get_container(p.container.name)
+            newp.container = p.container
             if p.product_type.untappd_info_id:
                 newp.untappd_info = p.product_type.untappd_info
             newp.first_seen_at = p.first_seen_at
@@ -49,7 +49,7 @@ class Command(BaseCommand):
             newp.name = p.name
             newp.price = p.price
             newp.volume = p.volume
-            newp.container = self.get_container(p.container.name)
+            newp.container = p.container
             if p.product_type.untappd_info_id:
                 newp.untappd_info = p.product_type.untappd_info
             newp.first_seen_at = p.first_seen_at
@@ -61,17 +61,3 @@ class Command(BaseCommand):
                 print("Created {}".format(newp))
             else:
                 print("Updated {}".format(newp))
-
-    def get_container(self, container_long_name):
-        CONTAINER_CHOICES = (
-            ("DS.", "Dós"),
-            ("FL.", "Flaska"),
-            ("KÚT", "Kútur"),
-            ("ASKJA", "Gjafaaskja"),
-            ("ANNAD", "Ótilgreint")
-        )
-
-        for short, long in CONTAINER_CHOICES:
-            if container_long_name == long:
-                return short
-        return "ANNAD"

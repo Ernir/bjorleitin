@@ -125,6 +125,8 @@ def update_untappd_item(untappd_entity, verbose=True):
     old_rating = untappd_entity.rating
     new_rating = json_data["response"]["beer"]["rating_score"]
     untappd_entity.rating = new_rating
+    untappd_entity.abv = json_data["response"]["beer"]["beer_abv"]
+    untappd_entity.ibu = json_data["response"]["beer"]["beer_ibu"]
 
     if untappd_entity.style is None:
         style_name = json_data["response"]["beer"]["beer_style"]

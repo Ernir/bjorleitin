@@ -136,6 +136,8 @@ class UntappdEntity(models.Model):
     Maintains information coming from the Untappd rating database.
     """
     untappd_id = models.IntegerField(unique=True)
+    abv = models.FloatField(null=True, default=None)
+    ibu = models.IntegerField(null=True, default=None)
     brewery = models.ForeignKey(Brewery, null=True, default=None, blank=True)
     style = models.ForeignKey(UntappdStyle, null=True, default=None, blank=True)
     rating = models.FloatField(null=True, default=None, blank=True)
@@ -373,15 +375,7 @@ class ATVRProduct(models.Model):
     atvr_id = models.CharField(max_length=10, unique=True)
     price = models.IntegerField(null=True)
     volume = models.IntegerField(null=True)
-
-    CONTAINER_CHOICES = (
-        ("DS.", "Dós"),
-        ("FL.", "Flaska"),
-        ("KÚT", "Kútur"),
-        ("ASKJA", "Gjafaaskja"),
-        ("ANNAD", "Ótilgreint")
-    )
-    container = models.CharField(max_length=5, choices=CONTAINER_CHOICES)
+    container = models.ForeignKey(ContainerType)
 
     # Most of the data storage is deferred to Untappd.
     untappd_info = models.ForeignKey(UntappdEntity, null=True)
@@ -454,12 +448,7 @@ class JoGProduct(models.Model):
     price = models.IntegerField(null=True)
     volume = models.IntegerField(null=True)
 
-    CONTAINER_CHOICES = (
-        ("DS.", "Dós"),
-        ("FL.", "Flaska"),
-        ("KÚT", "Kútur")
-    )
-    container = models.CharField(max_length=5, choices=CONTAINER_CHOICES)
+    container = models.ForeignKey(ContainerType)
 
     # Most of the data storage is deferred to Untappd.
     untappd_info = models.ForeignKey(UntappdEntity, null=True)
