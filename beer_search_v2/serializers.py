@@ -1,21 +1,32 @@
 from rest_framework import routers, serializers, viewsets
-from beer_search_v2.models import Product
+from beer_search_v2.models import Product, ATVRProduct, UntappdEntity
 
 
 class ATVRProductSerializer(serializers.HyperlinkedModelSerializer):
-    container = serializers.StringRelatedField(
-            read_only=True,
-    )
+    class Meta:
+        model = ATVRProduct
+        fields = ("name", "price", "volume", "atvr_id", "container")
+
+
+class UntappdEntitySerializer(serializers.HyperlinkedModelSerializer):
+    brewery = serializers.StringRelatedField()
+    style = serializers.StringRelatedField()
 
     class Meta:
-        model = Product
-        fields = ("name", "price", "volume", "product_id", "container")
+        model = UntappdEntity
+        fields = ("untappd_id", "brewery", "style", "rating", "logo_url", "untappd_name")
 
 
 class ATVRProductViewSet(viewsets.ModelViewSet):
-    queryset = Product.objects.select_related("container").filter(atvr_id__isnull=False).all()
+    queryset = ATVRProduct.objects.all()
     serializer_class = ATVRProductSerializer
+
+
+class UntappdEntryViewSet(viewsets.ModelViewSet):
+    queryset = UntappdEntity.objects.prefetch_related("style", "style__simplifies_to", "brewery").all()
+    serializer_class = UntappdEntitySerializer
 
 
 router = routers.DefaultRouter()
 router.register(r"products", ATVRProductViewSet)
+router.register(r"untappd-entries", UntappdEntryViewSet)

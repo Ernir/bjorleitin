@@ -102,6 +102,11 @@ def get_main_display():
     return [item for item in type_dict.values()]
 
 
+def get_main_display_v3():
+    # TODO: Use the SQL in mainquery.sql to replace get_main_display
+    pass
+
+
 def update_untappd_item(untappd_entity, verbose=True):
     url = "https://api.untappd.com/v4/beer/info/{0}/".format(untappd_entity.untappd_id)
 
