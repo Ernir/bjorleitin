@@ -19,20 +19,20 @@ def get_main_display():
     gift_box = ContainerType.objects.get(name="Gjafaaskja")
     keg = ContainerType.objects.get(name="Kútur")
     products = Product.objects.select_related(
-            "container",
-            "product_type",
-            "product_type__country",
-            "product_type__alcohol_category",
-            "product_type__untappd_info",
-            "product_type__untappd_info__brewery",
-            "product_type__untappd_info__brewery__country",
-            "product_type__untappd_info__style__simplifies_to"
+        "container",
+        "product_type",
+        "product_type__country",
+        "product_type__alcohol_category",
+        "product_type__untappd_info",
+        "product_type__untappd_info__brewery",
+        "product_type__untappd_info__brewery__country",
+        "product_type__untappd_info__style__simplifies_to"
     ).filter(
-            Q(product_type__alcohol_category=beer) | Q(product_type__untappd_info__isnull=False),
+        Q(product_type__alcohol_category=beer) | Q(product_type__untappd_info__isnull=False),
     ).exclude(
-            container=gift_box
+        container=gift_box
     ).exclude(
-            container=keg
+        container=keg
     ).order_by("product_type__alias")
 
     # Then we curate it
@@ -123,15 +123,13 @@ def update_untappd_item(untappd_entity, verbose=True):
     except AssertionError:
         if verbose:
             print("Update of entity {} for {} did not complete successfully".format(
-                    untappd_entity.untappd_id, untappd_entity
+                untappd_entity.untappd_id, untappd_entity
             ))
         return
 
     old_rating = untappd_entity.rating
     new_rating = json_data["response"]["beer"]["rating_score"]
     untappd_entity.rating = new_rating
-    untappd_entity.abv = json_data["response"]["beer"]["beer_abv"]
-    untappd_entity.ibu = json_data["response"]["beer"]["beer_ibu"]
 
     if untappd_entity.style is None:
         style_name = json_data["response"]["beer"]["beer_style"]
@@ -153,8 +151,8 @@ def update_untappd_item(untappd_entity, verbose=True):
         untappd_entity.untappd_name = json_data["response"]["beer"]["beer_name"]
         if verbose:
             print("Added untappd API name {} to entity {}.".format(
-                    untappd_entity.untappd_name,
-                    untappd_entity.untappd_id)
+                untappd_entity.untappd_name,
+                untappd_entity.untappd_id)
             )
 
     if not untappd_entity.logo_url:
@@ -162,10 +160,27 @@ def update_untappd_item(untappd_entity, verbose=True):
         if verbose:
             print("Added logo to {}.".format(untappd_entity.untappd_name))
 
+    old_abv = untappd_entity.abv
+    new_abv = json_data["response"]["beer"]["beer_abv"]
+    untappd_entity.abv = new_abv
+    old_ibu = untappd_entity.ibu
+    new_ibu = json_data["response"]["beer"]["beer_ibu"]
+    untappd_entity.ibu = new_ibu
+
     untappd_entity.save()
 
     if verbose:
-        print("Successfully updated {0} from {1} to {2}".format(untappd_entity.untappd_name, old_rating, new_rating))
+        print("Successfully updated rating {0} from {1} to {2}".format(
+            untappd_entity.untappd_name, old_rating, new_rating)
+        )
+        if old_abv != new_abv:
+            print("Successfully updated abv of {} from {} to {}".format(
+                untappd_entity.untappd_name, old_abv, new_abv
+            ))
+        if old_ibu != new_ibu:
+            print("Successfully updated ibu of {} from {} to {}".format(
+                untappd_entity.untappd_name, old_ibu, new_ibu
+            ))
 
 
 def get_untappd_style_instance(style_name, verbose=True):
