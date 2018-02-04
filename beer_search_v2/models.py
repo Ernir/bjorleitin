@@ -136,8 +136,8 @@ class UntappdEntity(models.Model):
     Maintains information coming from the Untappd rating database.
     """
     untappd_id = models.IntegerField(unique=True)
-    abv = models.FloatField(null=True, default=None)
-    ibu = models.IntegerField(null=True, default=None)
+    abv = models.FloatField(null=True, default=None, blank=True)
+    ibu = models.IntegerField(null=True, default=None, blank=True)
     brewery = models.ForeignKey(Brewery, null=True, default=None, blank=True)
     style = models.ForeignKey(UntappdStyle, null=True, default=None, blank=True)
     rating = models.FloatField(null=True, default=None, blank=True)
