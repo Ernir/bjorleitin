@@ -9,6 +9,10 @@ from beer_search_v2.utils import get_main_display
 from django.conf import settings
 
 
+class GoodByeView(View):
+    def get(self, request):
+        return render(request, "so-long.html", {})
+
 class BaseView(View):
     """
     An "abstract view" to manage the elements all of the site's
@@ -31,22 +35,22 @@ class IndexView(BaseView):
 
     def get(self, request):
         base_query = Product.objects.select_related(
-                "product_type", "container", "product_type__alcohol_category"
+            "product_type", "container", "product_type__alcohol_category"
         ).filter(
-                product_type__alcohol_category=AlcoholCategory.objects.get(name="beer")
+            product_type__alcohol_category=AlcoholCategory.objects.get(name="beer")
         ).exclude(
-                container=ContainerType.objects.get(name="Gjafaaskja")
+            container=ContainerType.objects.get(name="Gjafaaskja")
         ).exclude(
-                container=ContainerType.objects.get(name="Kútur")
+            container=ContainerType.objects.get(name="Kútur")
         )
 
         self.params["extremes"] = base_query.aggregate(
-                min_abv=Min("product_type__abv"),
-                max_abv=Max("product_type__abv"),
-                min_price=Min("price"),
-                max_price=Max("price"),
-                min_volume=Min("volume"),
-                max_volume=Max("volume")
+            min_abv=Min("product_type__abv"),
+            max_abv=Max("product_type__abv"),
+            min_price=Min("price"),
+            max_price=Max("price"),
+            min_volume=Min("volume"),
+            max_volume=Max("volume")
         )
 
         first_visit = request.session.get("first_visit", True)
@@ -95,7 +99,7 @@ class SingleProductView(BaseView):
         if product_type.untappd_info and product_type.untappd_info.style.simplifies_to:
             product_type.simple_style = product_type.untappd_info.style.simplifies_to
             all_in_style = ProductType.objects.filter(
-                    untappd_info__style__simplifies_to=product_type.untappd_info.style.simplifies_to
+                untappd_info__style__simplifies_to=product_type.untappd_info.style.simplifies_to
             )
 
             total_count = UntappdEntity.objects.count()
@@ -131,14 +135,14 @@ class ProductListView(BaseView):
                 raise ObjectDoesNotExist
             the_list = ProductList.objects.get(slug=slug)
             products = the_list.products.prefetch_related(
-                    "container",
-                    "product_type",
-                    "product_type__country"
+                "container",
+                "product_type",
+                "product_type__country"
             ).select_related(
-                    "product_type__untappd_info",
-                    "product_type__untappd_info__style",
-                    "product_type__untappd_info__style__simplifies_to",
-                    "product_type__untappd_info__brewery__country",
+                "product_type__untappd_info",
+                "product_type__untappd_info__style",
+                "product_type__untappd_info__style__simplifies_to",
+                "product_type__untappd_info__brewery__country",
             ).all()
             self.params["product_list"] = products
             self.params["description"] = the_list.description
